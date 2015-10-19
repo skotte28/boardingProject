@@ -4,27 +4,6 @@ import javax.swing.*;
 
 public class BoardingView extends JFrame/* implements ChangeListener*/{
 
-    private String[] aircraftTypeStrings = {"B737", "A320"};
-    private JComboBox aircraftTypeList = new JComboBox(aircraftTypeStrings);
-
-    private String[] boardingMethodStrings = {"Back-to-front", "Outside-in", "Random", "Even-odd"};
-    private JComboBox boardingMethodList = new JComboBox(boardingMethodStrings);
-
-
-    /*Additional options*/
-    private String[] doorsUsedStrings = {"Front only", "Front & Rear"};
-    private JComboBox doorsUsedList = new JComboBox(doorsUsedStrings);
-
-
-    private JButton startSimulation = new JButton("Run"); //Make this grey out when running
-
-    /* Simulation Rate Slider */
-    static final int SIM_RATE_MIN = 1;
-    static final int SIM_RATE_MAX = 14;
-    static final int SIM_RATE_INIT = 7;
-
-    JSlider simulationRate = new JSlider(JSlider.HORIZONTAL, SIM_RATE_MIN, SIM_RATE_MAX, SIM_RATE_INIT);
-
     /*
     simulationRate.addChangeListener(this);
 
@@ -38,24 +17,15 @@ public class BoardingView extends JFrame/* implements ChangeListener*/{
     */
     BoardingView(){
 
-        JPanel settingsPanel = new JPanel();
+        JPanel settingsPanel = new SettingsPanel();
         JPanel windowPaint = new WindowPaint();
-        settingsPanel.add(aircraftTypeList);
-        settingsPanel.add(boardingMethodList);
-        settingsPanel.add(startSimulation);
-
-        /*Additional options*/
-        settingsPanel.add(doorsUsedList);
-
-        settingsPanel.add(simulationRate);
-
 
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setSize(1500, 800);
         settingsPanel.setLayout(new BoxLayout(settingsPanel, BoxLayout.Y_AXIS));
 
         this.add(settingsPanel, BorderLayout.WEST);
-        this.add(windowPaint);
+        this.add(windowPaint, BorderLayout.EAST);
 
 
     }
