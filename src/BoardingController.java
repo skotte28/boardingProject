@@ -10,15 +10,18 @@ public class BoardingController {
         this.theView = theView;
         this.theModel = theModel;
 
-        /*this.theView.addBoardingListener(new BoardingListener());*/
+        //this.theView.addBoardingListener(new BoardingListener());*
+        //this.theView.settingsPanel();
     }
 
-    class BoardingListener implements ActionListener{
+/*    class BoardingListener implements ActionListener{
 
         public void actionPerformed(ActionEvent e) {
-
+            try{
+                theView.setMeRed();
+            }
         }
 
-    }
+    }*/
 
 }

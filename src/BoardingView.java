@@ -17,15 +17,17 @@ public class BoardingView extends JFrame/* implements ChangeListener*/{
     */
     BoardingView(){
 
-        JPanel settingsPanel = new SettingsPanel();
-        JPanel windowPaint = new WindowPaint();
+        /*JPanel settingsPanel = new SettingsPanel();
+        JPanel windowPaint = new WindowPanel();
+        JPanel queuePanel = new QueuePanel();
 
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setSize(1500, 800);
         settingsPanel.setLayout(new BoxLayout(settingsPanel, BoxLayout.Y_AXIS));
 
         this.add(settingsPanel, BorderLayout.WEST);
-        this.add(windowPaint, BorderLayout.EAST);
+        this.add(windowPaint, BorderLayout.CENTER);
+        this.add(queuePanel, BorderLayout.SOUTH);*/
 
 
     }
