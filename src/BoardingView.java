@@ -1,35 +1,42 @@
 import java.awt.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.util.Set;
 
 import javax.swing.*;
 
 public class BoardingView extends JFrame/* implements ChangeListener*/{
 
-    /*
-    simulationRate.addChangeListener(this);
+    final int STANDARD_WINDOW_WIDTH = 1500;
+    final int STANDARD_WINDOW_HEIGHT = 800;
 
-    simulationRate.setMajorTickSpacing(10);
-    simulationRate.setMinorTickSpacing(1);
-    simulationRate.setPaintTicks(true);
-    simulationRate.setPaintLabels(true);
-    simulationRate.setBorder(
-            BorderFactory.createEmptyBorder(0,0,10,0));
-            )
-    */
-    BoardingView(){
+    private QueuePanel queuePanel;
+    private SettingsPanel settingsPanel;
+    private WindowPanel windowPanel;
 
-        /*JPanel settingsPanel = new SettingsPanel();
-        JPanel windowPaint = new WindowPanel();
-        JPanel queuePanel = new QueuePanel();
+    public BoardingView(){
 
-        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        this.setSize(1500, 800);
-        settingsPanel.setLayout(new BoxLayout(settingsPanel, BoxLayout.Y_AXIS));
+        addWindowListener(new WindowCloser());
+
+        settingsPanel = new SettingsPanel();
+        windowPanel = new WindowPanel();
+        queuePanel = new QueuePanel();
+
+        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);        //Could replace the WindowCloser?
+        this.setSize(STANDARD_WINDOW_WIDTH, STANDARD_WINDOW_HEIGHT);
 
         this.add(settingsPanel, BorderLayout.WEST);
-        this.add(windowPaint, BorderLayout.CENTER);
-        this.add(queuePanel, BorderLayout.SOUTH);*/
+        this.add(windowPanel, BorderLayout.CENTER);
+        this.add(queuePanel, BorderLayout.SOUTH);
 
 
+    }
+
+    /* Exits the application upon window closure - currently from TradeViewer */
+    private class WindowCloser extends WindowAdapter{
+        public void windowClosing(WindowEvent event){
+            System.exit(0);
+        }
     }
 
     /*Slide listen, from here: http://da2i.univ-lille1.fr/doc/tutorial-java/uiswing/components/examples/SliderDemo.java*/
