@@ -4,5 +4,5 @@
         <id>1</id> <!-- First seat in the aircraft -->
         <name>1A</name> <!-- Seat ID used on ticket -->
         <route>E1</route> <!-- One step towards the "east" (right)-->
-    </seat> 
+    </seat>
 </seat_routes>

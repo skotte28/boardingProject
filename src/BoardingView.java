@@ -13,6 +13,7 @@ public class BoardingView extends JFrame/* implements ChangeListener*/{
     private QueuePanel queuePanel;
     private SettingsPanel settingsPanel;
     private WindowPanel windowPanel;
+    private TestPane testPane;
 
     public BoardingView(){
 
@@ -21,14 +22,15 @@ public class BoardingView extends JFrame/* implements ChangeListener*/{
         settingsPanel = new SettingsPanel();
         windowPanel = new WindowPanel();
         queuePanel = new QueuePanel();
+        testPane = new TestPane();
 
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);        //Could replace the WindowCloser?
         this.setSize(STANDARD_WINDOW_WIDTH, STANDARD_WINDOW_HEIGHT);
 
         this.add(settingsPanel, BorderLayout.WEST);
-        this.add(windowPanel, BorderLayout.CENTER);
+        //this.add(windowPanel, BorderLayout.CENTER);
+        this.add(testPane, BorderLayout.CENTER);
         this.add(queuePanel, BorderLayout.SOUTH);
-
 
     }
 
