@@ -1,3 +1,5 @@
+import Aircraft.AircraftType;
+
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -34,7 +36,13 @@ public class SettingsPanel extends JPanel {
     static final int SIM_RATE_INIT = 1;
     JSlider simulationRate = new JSlider(JSlider.HORIZONTAL, SIM_RATE_MIN, SIM_RATE_MAX, SIM_RATE_INIT);
 
-    SettingsPanel() {
+    String selectedAircraft = aircraftTypeList.getSelectedItem().toString();
+
+    public String getSelectedAircraft() {
+        return selectedAircraft;
+    }
+
+    SettingsPanel(TestPane testPane) {
 
         simulationRate.setMajorTickSpacing(2);
         simulationRate.setMinorTickSpacing(1);
@@ -68,11 +76,14 @@ public class SettingsPanel extends JPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 System.out.println("Running");
+
+                /* A lot of printing */
                 String selectedAircraft = aircraftTypeList.getSelectedItem().toString();
+                //BoardingModel.setAircraftType();
                 String selectedBoardingMethod = boardingMethodList.getSelectedItem().toString();
                 String selectedDoorsUsed = doorsUsedList.getSelectedItem().toString();
-                System.out.println(selectedAircraft+" "+selectedBoardingMethod+" "+selectedDoorsUsed);
-
+                System.out.println(selectedAircraft + " " + selectedBoardingMethod + " " + selectedDoorsUsed);
+                AircraftType.getLayout(selectedAircraft);
                 //Should run something based on this...
             }
         });
@@ -89,10 +100,18 @@ public class SettingsPanel extends JPanel {
             }
         });
 
+        /* Changing the aircraft model selected is intended to show in the layout */
+        aircraftTypeList.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                System.out.println("Looks like something's changed");
+                //boardingModel.setAircraftType(aircraftTypeList.getSelectedItem().toString());
+            }
+        });
+
 //    void addRunListener(ActionListener listenForRunButton){
 //        startSimulation.addActionListener(listenForRunButton);
 //    }
-
 
     }
 

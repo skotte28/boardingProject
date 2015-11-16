@@ -6,5 +6,14 @@ package Aircraft;
 public class Layout {
     Long id;
     String name;
-    /*Grid grid;*/
+
 }
+/*
+public List<Point> getLayout(){
+
+    List<Point>
+
+    return
+}
+
+*/

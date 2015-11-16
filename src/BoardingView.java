@@ -10,19 +10,16 @@ public class BoardingView extends JFrame/* implements ChangeListener*/{
     final int STANDARD_WINDOW_WIDTH = 1500;
     final int STANDARD_WINDOW_HEIGHT = 800;
 
-    private QueuePanel queuePanel;
     private SettingsPanel settingsPanel;
-    private WindowPanel windowPanel;
     private TestPane testPane;
+    private BoardingModel boardingModel;
 
     public BoardingView(){
 
         addWindowListener(new WindowCloser());
 
-        settingsPanel = new SettingsPanel();
-        windowPanel = new WindowPanel();
-        queuePanel = new QueuePanel();
-        testPane = new TestPane();
+        settingsPanel = new SettingsPanel(testPane);
+        testPane = new TestPane(boardingModel);
 
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);        //Could replace the WindowCloser?
         this.setSize(STANDARD_WINDOW_WIDTH, STANDARD_WINDOW_HEIGHT);
@@ -30,7 +27,6 @@ public class BoardingView extends JFrame/* implements ChangeListener*/{
         this.add(settingsPanel, BorderLayout.WEST);
         //this.add(windowPanel, BorderLayout.CENTER);
         this.add(testPane, BorderLayout.CENTER);
-        this.add(queuePanel, BorderLayout.SOUTH);
 
     }
 

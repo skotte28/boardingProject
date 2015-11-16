@@ -1,3 +1,4 @@
+import Aircraft.AircraftType;
 import com.sun.org.apache.xpath.internal.SourceTree;
 import org.w3c.dom.css.Rect;
 
@@ -19,17 +20,19 @@ import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
 public class TestPane extends JPanel {
-
+    final private int CELL_DIMENSION = 9;
     private int columnCount = 140;
     private int rowCount = 16;
     private List<Rectangle> cells;
     private List<Point> selectedCell;
     private List<Point> layoutCells;
+    String selectedAircraft;
 
-    public TestPane() {
+    public TestPane(BoardingModel boardingModel) {
         cells = new ArrayList<>(columnCount * rowCount);
         selectedCell = new ArrayList<Point>();
         layoutCells = new ArrayList<Point>();
+        //layoutCells = BoardingModel.getLayout(selectedAircraft);
 
         for(int i = 0; i < 140; i++){
             for(int n = 0; n<=0; n++){
@@ -46,8 +49,8 @@ public class TestPane extends JPanel {
                 int width = getWidth();
                 int height = getHeight();
 
-                int cellWidth = width / columnCount;
-                int cellHeight = height / rowCount;
+                int cellWidth = CELL_DIMENSION;
+                int cellHeight = CELL_DIMENSION;
 
                 int xOffset = (width - (columnCount * cellWidth)) / 2;
                 int yOffset = (height - (rowCount * cellHeight)) / 2;
@@ -106,8 +109,8 @@ public class TestPane extends JPanel {
         int width = getWidth();
         int height = getHeight();
 
-        int cellWidth = 9;
-        int cellHeight = 9;
+        int cellWidth = CELL_DIMENSION;
+        int cellHeight = CELL_DIMENSION;
 
         int xOffset = (width - (columnCount * cellWidth)) / 2;
         int yOffset = (height - (rowCount * cellHeight)) / 2;
