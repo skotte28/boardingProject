@@ -20,7 +20,7 @@ import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
 public class TestPane extends JPanel {
-    final private int CELL_DIMENSION = 9;
+    private int CELL_DIMENSION = 9;
     private int columnCount = 140;
     private int rowCount = 16;
     private List<Rectangle> cells;
@@ -28,17 +28,27 @@ public class TestPane extends JPanel {
     private List<Point> layoutCells;
     String selectedAircraft;
 
-    public TestPane(BoardingModel boardingModel) {
+    public void setLayoutCells(List<Point> layoutCells) {
+        this.layoutCells = layoutCells;
+    }
+
+
+
+    public TestPane() {
+        System.out.println(CELL_DIMENSION);
+        System.out.println("Calls TestPane");
         cells = new ArrayList<>(columnCount * rowCount);
         selectedCell = new ArrayList<Point>();
         layoutCells = new ArrayList<Point>();
         //layoutCells = BoardingModel.getLayout(selectedAircraft);
 
+        /*
+        Old testing layout painter
         for(int i = 0; i < 140; i++){
             for(int n = 0; n<=0; n++){
                 layoutCells.add(new Point(i,n));
             }
-        }
+        }*/
 
         MouseAdapter mouseHandler;
         mouseHandler = new MouseAdapter() {

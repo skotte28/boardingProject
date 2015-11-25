@@ -7,6 +7,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.BorderLayout;
+import java.util.*;
 
 
 /**
@@ -16,18 +17,22 @@ public class SettingsPanel extends JPanel {
 
     GridLayout experimentLayout = new GridLayout(0, 2);
 
+    private java.util.List<Point> layoutCells;
+
     private String[] aircraftTypeStrings = {"B737", "A320"};
-    private JComboBox aircraftTypeList = new JComboBox(aircraftTypeStrings);
+    protected JComboBox aircraftTypeList = new JComboBox(aircraftTypeStrings);
 
     private String[] boardingMethodStrings = {"Back-to-front", "Outside-in", "Random", "Even-odd"};
     private JComboBox boardingMethodList = new JComboBox(boardingMethodStrings);
+
+    private String[] capacityStrings = {"100", "75", "50", "25"};
+    private JComboBox capacityList = new JComboBox(capacityStrings);
 
     /*Additional options*/
     private String[] doorsUsedStrings = {"Front only", "Front & Rear"};
     private JComboBox doorsUsedList = new JComboBox(doorsUsedStrings);
 
-
-    private JButton startSimulation = new JButton("Run"); //Make this grey out when running
+    protected JButton startSimulation = new JButton("Run"); //Make this grey out when running
     private JButton pauseSimulation = new JButton("Pause"); //Make this grey out when running
 
     /* Simulation Rate Slider */
@@ -36,14 +41,34 @@ public class SettingsPanel extends JPanel {
     static final int SIM_RATE_INIT = 1;
     JSlider simulationRate = new JSlider(JSlider.HORIZONTAL, SIM_RATE_MIN, SIM_RATE_MAX, SIM_RATE_INIT);
 
-    String selectedAircraft = aircraftTypeList.getSelectedItem().toString();
+    private String selectedAircraft;
+
+    public void setSelectedAircraft(){
+        selectedAircraft = aircraftTypeList.getSelectedItem().toString();
+    }
 
     public String getSelectedAircraft() {
+        System.out.println(selectedAircraft);
         return selectedAircraft;
     }
 
-    SettingsPanel(TestPane testPane) {
+    public String getSelectedBoardingMethod() {
+        System.out.println(boardingMethodList.getSelectedItem().toString());
+        return boardingMethodList.getSelectedItem().toString();
+    }
 
+    public int getSelectedCapacity() {
+        System.out.println(Integer.parseInt(capacityList.getSelectedItem().toString()));
+        return Integer.parseInt(capacityList.getSelectedItem().toString());
+    }
+
+    public String getDoorsUsed() {
+        System.out.println(doorsUsedList.getSelectedItem().toString());
+        return doorsUsedList.getSelectedItem().toString();
+    }
+
+    SettingsPanel() {
+        System.out.println("Calls SettingsPanel");
         simulationRate.setMajorTickSpacing(2);
         simulationRate.setMinorTickSpacing(1);
         simulationRate.setPaintTicks(true);
@@ -63,6 +88,7 @@ public class SettingsPanel extends JPanel {
 
         this.add(aircraftTypeList);
         this.add(boardingMethodList);
+        this.add(capacityList);
 
         /*Additional options*/
         this.add(doorsUsedList);
@@ -72,12 +98,13 @@ public class SettingsPanel extends JPanel {
         this.add(pauseSimulation);
         this.add(simulationRate);
 
-        startSimulation.addActionListener(new ActionListener() {
+
+/*        startSimulation.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 System.out.println("Running");
 
-                /* A lot of printing */
+                *//* A lot of printing *//*
                 String selectedAircraft = aircraftTypeList.getSelectedItem().toString();
                 //BoardingModel.setAircraftType();
                 String selectedBoardingMethod = boardingMethodList.getSelectedItem().toString();
@@ -86,33 +113,13 @@ public class SettingsPanel extends JPanel {
                 AircraftType.getLayout(selectedAircraft);
                 //Should run something based on this...
             }
-        });
-
-        pauseSimulation.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                System.out.println("Paused");
-                if(pauseSimulation.getText().equals("Pause")){
-                    pauseSimulation.setText("Resume");
-                } else {
-                    pauseSimulation.setText("Pause");
-                }
-            }
-        });
-
-        /* Changing the aircraft model selected is intended to show in the layout */
-        aircraftTypeList.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                System.out.println("Looks like something's changed");
-                //boardingModel.setAircraftType(aircraftTypeList.getSelectedItem().toString());
-            }
-        });
-
-//    void addRunListener(ActionListener listenForRunButton){
-//        startSimulation.addActionListener(listenForRunButton);
-//    }
-
+        });*/
     }
-
+/*
+    private class ButtonListener implements ActionListener {
+        public void actionPerformed(ActionEvent e){
+            System.out.println("I pressed this button");
+            layoutCells = AircraftType.getLayout(aircraftTypeList.getSelectedItem().toString());
+        }
+    }*/
 }
