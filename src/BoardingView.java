@@ -3,11 +3,6 @@ import Aircraft.AircraftType;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.util.Set;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
 import javax.swing.*;
 
@@ -23,25 +18,59 @@ public class BoardingView extends JFrame/* implements ChangeListener*/{
     final int STANDARD_WINDOW_HEIGHT = 800;
 
     protected SettingsPanel settingsPanel;
-    protected TestPane testPane;
+    protected AnimationPanel animationPanel;
     protected AircraftType aircraftType;
+    protected QueuePanel queuePanel;
+
+    GridBagConstraints gbc = new GridBagConstraints();
 
     public BoardingView(){
 
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
-        settingsPanel = new SettingsPanel();
-        testPane = new TestPane();
-
-        panelFramer.setLayout(new BoxLayout(panelFramer, BoxLayout.X_AXIS));
-
         setSize(STANDARD_WINDOW_WIDTH, STANDARD_WINDOW_HEIGHT);
 
+        settingsPanel = new SettingsPanel();
+        animationPanel = new AnimationPanel();
+        queuePanel = new QueuePanel();
+
+        /* BoxLayout
+        panelFramer.setLayout(new BoxLayout(panelFramer, BoxLayout.X_AXIS));
+
         panelFramer.add(settingsPanel, BorderLayout.WEST);
-        //this.add(windowPanel, BorderLayout.CENTER);
-        panelFramer.add(testPane, BorderLayout.CENTER);
+        panelFramer.add(animationPanel, BorderLayout.CENTER);
+        panelFramer.add(queuePanel, BorderLayout.EAST);
+        */
+
+
+        panelFramer.setLayout(new GridBagLayout());
+        gbc.weighty = 1;
+        gbc.insets = new Insets(5,5,5,5);
+
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+
+        gbc.gridwidth = 1;
+        gbc.gridheight = 2;
+
+        gbc.fill = GridBagConstraints.VERTICAL;
+        panelFramer.add(settingsPanel,gbc);
+
+        gbc.gridx = 1;
+        gbc.gridy = 0;
+        gbc.weightx = 8;
+
+        gbc.gridheight = 1;
+
+        gbc.fill = GridBagConstraints.BOTH;
+        panelFramer.add(animationPanel, gbc);
+
+        gbc.gridx = 1;
+        gbc.gridy = 1;
+        panelFramer.add(queuePanel, gbc);
+
         this.setContentPane(panelFramer);
 
+        // this.pack();
         //settingsPanel.aircraftTypeList.addActionListener(boardingController.getActionListener(settingsPanel.aircraftTypeList));
 
         settingsPanel.aircraftTypeList.addActionListener(new ActionListener() {
@@ -49,11 +78,11 @@ public class BoardingView extends JFrame/* implements ChangeListener*/{
             public void actionPerformed(ActionEvent e) {
                 System.out.println("Somethings changed again");
                 settingsPanel.setSelectedAircraft();
-                testPane.setLayoutCells(aircraftType.getLayout(settingsPanel.getSelectedAircraft()));
-                testPane.repaint();
+                animationPanel.setLayoutCells(aircraftType.getLayout(settingsPanel.getSelectedAircraft()));
+                animationPanel.repaint();
             }
         });
-        //testPane.setLayoutCells();
+        //animationPanel.setLayoutCells();
     }
 
     /*Slide listen, from here: http://da2i.univ-lille1.fr/doc/tutorial-java/uiswing/components/examples/SliderDemo.java*/

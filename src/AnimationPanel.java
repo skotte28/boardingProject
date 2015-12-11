@@ -19,60 +19,54 @@ import javax.swing.JPanel;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
-public class TestPane extends JPanel {
-    private int CELL_DIMENSION = 9;
-    private int columnCount = 140;
-    private int rowCount = 16;
+public class AnimationPanel extends JPanel {
+
+    private int CELL_DIMENSION = 8; //Each square is 25cm
+    private int columnCount = 140;  //Total length 28m
+    private int rowCount = 18;      //Total width 3.5m
+
     private List<Rectangle> cells;
     private List<Point> selectedCell;
     private List<Point> layoutCells;
-    String selectedAircraft;
+    private List<Rectangle> seatCells;
+    protected List<Point> passengers;
 
     public void setLayoutCells(List<Point> layoutCells) {
         this.layoutCells = layoutCells;
     }
 
+    public AnimationPanel() {
 
+        //this.setSize(400, 400);
 
-    public TestPane() {
-        System.out.println(CELL_DIMENSION);
-        System.out.println("Calls TestPane");
         cells = new ArrayList<>(columnCount * rowCount);
         selectedCell = new ArrayList<Point>();
         layoutCells = new ArrayList<Point>();
-        //layoutCells = BoardingModel.getLayout(selectedAircraft);
+        seatCells = new ArrayList<Rectangle>();
+        passengers = new ArrayList<Point>();
 
-        /*
-        Old testing layout painter
-        for(int i = 0; i < 140; i++){
-            for(int n = 0; n<=0; n++){
-                layoutCells.add(new Point(i,n));
-            }
-        }*/
+        //Test color for testing purposes
+        this.setBackground(Color.ORANGE);
+
+        //layoutCells = BoardingModel.getLayout(selectedAircraft);
 
         MouseAdapter mouseHandler;
         mouseHandler = new MouseAdapter() {
             @Override
             public void mouseDragged(MouseEvent e) {
-                Point point = e.getPoint();
+                //Point point = e.getPoint();
 
                 int width = getWidth();
                 int height = getHeight();
 
-                int cellWidth = CELL_DIMENSION;
-                int cellHeight = CELL_DIMENSION;
-
-                int xOffset = (width - (columnCount * cellWidth)) / 2;
-                int yOffset = (height - (rowCount * cellHeight)) / 2;
-
-                int column = (e.getX() - xOffset) / cellWidth;
-                int row = (e.getY() - yOffset) / cellHeight;
+                int xOffset = (width - (columnCount * CELL_DIMENSION)) / 2;
+                int yOffset = (height - (rowCount * CELL_DIMENSION)) / 2;
 
                 //selectedCell = null;
                 if (e.getX() >= xOffset && e.getY() >= yOffset) {
 
-                    column = (e.getX() - xOffset) / cellWidth;
-                    row = (e.getY() - yOffset) / cellHeight;
+                    int column = (e.getX() - xOffset) / CELL_DIMENSION;
+                    int row = (e.getY() - yOffset) / CELL_DIMENSION;
 
                     if (column >= 0 && row >= 0 && column < columnCount && row < rowCount) {
                         System.out.println(column);
@@ -91,12 +85,12 @@ public class TestPane extends JPanel {
 
                 }
                 repaint();
+                runThrougher(cells);
 
             }
         };
         //addMouseListener(mouseHandler);
         addMouseMotionListener(mouseHandler);
-        runThrougher(cells);
     }
 
     @Override
@@ -119,20 +113,17 @@ public class TestPane extends JPanel {
         int width = getWidth();
         int height = getHeight();
 
-        int cellWidth = CELL_DIMENSION;
-        int cellHeight = CELL_DIMENSION;
-
-        int xOffset = (width - (columnCount * cellWidth)) / 2;
-        int yOffset = (height - (rowCount * cellHeight)) / 2;
+        int xOffset = (width - (columnCount * CELL_DIMENSION)) / 2;
+        int yOffset = (height - (rowCount * CELL_DIMENSION)) / 2;
 
         if (cells.isEmpty()) {
             for (int row = 0; row < rowCount; row++) {
                 for (int col = 0; col < columnCount; col++) {
                     Rectangle cell = new Rectangle(
-                            xOffset + (col * cellWidth),
-                            yOffset + (row * cellHeight),
-                            cellWidth,
-                            cellHeight);
+                            xOffset + (col * CELL_DIMENSION),
+                            yOffset + (row * CELL_DIMENSION),
+                            CELL_DIMENSION,
+                            CELL_DIMENSION);
                     cells.add(cell);
                 }
             }
@@ -168,7 +159,9 @@ public class TestPane extends JPanel {
     public void runThrougher(List<Rectangle> cells){
         System.out.println("We've started");
         int i = 0;
+        System.out.println(cells);
         for (Rectangle r : cells){
+            System.out.println("Rectangle");
             System.out.println(i++);
         }
     }

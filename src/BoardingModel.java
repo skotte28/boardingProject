@@ -4,7 +4,7 @@ public class BoardingModel {
 
     private String boardingMethod;
 
-    private String aircraftType;
+    private AircraftType aircraftType;
 
     private int capacity;
 
@@ -12,18 +12,16 @@ public class BoardingModel {
         String aircraftType;
     }
 
-
     //Testing purposes only
     public static void printAMessage(){
         System.out.println("Just a test message");
     }
 
-
-    public String getAircraftType() {
+    public AircraftType getAircraftType() {
         return aircraftType;
     }
 
-    public void setAircraftType(String string) {
+    public void setAircraftType(AircraftType aircraftType) {
         this.aircraftType = aircraftType;
     }
 

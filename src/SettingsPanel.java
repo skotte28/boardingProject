@@ -4,10 +4,6 @@ import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.BorderLayout;
-import java.util.*;
 
 
 /**
@@ -19,21 +15,20 @@ public class SettingsPanel extends JPanel {
 
     private java.util.List<Point> layoutCells;
 
-    private String[] aircraftTypeStrings = {"B737", "A320"};
-    protected JComboBox aircraftTypeList = new JComboBox(aircraftTypeStrings);
+    protected JComboBox<AircraftType> aircraftTypeList = new JComboBox<AircraftType>();
 
     private String[] boardingMethodStrings = {"Back-to-front", "Outside-in", "Random", "Even-odd"};
     private JComboBox boardingMethodList = new JComboBox(boardingMethodStrings);
 
-    private String[] capacityStrings = {"100", "75", "50", "25"};
-    private JComboBox capacityList = new JComboBox(capacityStrings);
+    private Integer[] capacityStrings = {100, 75, 50, 25};
+    private JComboBox<Integer> capacityList = new JComboBox<Integer>(capacityStrings);
 
     /*Additional options*/
     private String[] doorsUsedStrings = {"Front only", "Front & Rear"};
     private JComboBox doorsUsedList = new JComboBox(doorsUsedStrings);
 
     protected JButton startSimulation = new JButton("Run"); //Make this grey out when running
-    private JButton pauseSimulation = new JButton("Pause"); //Make this grey out when running
+    protected JButton pauseSimulation = new JButton("Pause"); //Make this grey out when running
 
     /* Simulation Rate Slider */
     static final int SIM_RATE_MIN = 1;
@@ -41,13 +36,13 @@ public class SettingsPanel extends JPanel {
     static final int SIM_RATE_INIT = 1;
     JSlider simulationRate = new JSlider(JSlider.HORIZONTAL, SIM_RATE_MIN, SIM_RATE_MAX, SIM_RATE_INIT);
 
-    private String selectedAircraft;
+    private AircraftType selectedAircraft;
 
     public void setSelectedAircraft(){
-        selectedAircraft = aircraftTypeList.getSelectedItem().toString();
+        selectedAircraft = (AircraftType) aircraftTypeList.getSelectedItem();
     }
 
-    public String getSelectedAircraft() {
+    public AircraftType getSelectedAircraft() {
         System.out.println(selectedAircraft);
         return selectedAircraft;
     }
@@ -68,6 +63,12 @@ public class SettingsPanel extends JPanel {
     }
 
     SettingsPanel() {
+
+        aircraftTypeList.addItem(new AircraftType("A320"));
+        aircraftTypeList.addItem(new AircraftType("B737"));
+
+        setBackground(Color.YELLOW);
+
         System.out.println("Calls SettingsPanel");
         simulationRate.setMajorTickSpacing(2);
         simulationRate.setMinorTickSpacing(1);
@@ -84,19 +85,59 @@ public class SettingsPanel extends JPanel {
             }
         });
 
-        this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+        //this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 
-        this.add(aircraftTypeList);
-        this.add(boardingMethodList);
-        this.add(capacityList);
+        GridBagConstraints gbc = new GridBagConstraints();
+        this.setLayout(new GridBagLayout());
+        gbc.insets = new Insets(2, 1, 2, 1);
+        gbc.gridwidth = 2;
+
+        gbc.weightx = 1.0;
+        gbc.weighty = 0;
+
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        this.add(new JLabel("Aircraft Type:"), gbc);
+
+        gbc.gridy++;
+        this.add(aircraftTypeList, gbc);
+
+        gbc.gridy++;
+        this.add(new JLabel("Boarding Method:"), gbc);
+
+        gbc.gridy++;
+        this.add(boardingMethodList, gbc);
+
+        gbc.gridy++;
+        this.add(new JLabel("Capacity:"), gbc);
+
+        gbc.gridy++;
+        this.add(capacityList, gbc);
 
         /*Additional options*/
-        this.add(doorsUsedList);
+        gbc.gridy++;
+        this.add(new JLabel("Doors used:"), gbc);
+
+        gbc.gridy++;
+        this.add(doorsUsedList, gbc);
 
         /*Simulation Control*/
-        this.add(startSimulation);
-        this.add(pauseSimulation);
-        this.add(simulationRate);
+        gbc.gridwidth = 1;
+        gbc.fill = GridBagConstraints.NONE;
+        gbc.gridy++;
+
+        this.add(startSimulation, gbc);
+        gbc.gridx = 1;
+        this.add(pauseSimulation, gbc);
+
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.gridwidth = 2;
+        gbc.gridy++;
+        gbc.gridx = 0;
+        this.add(new JLabel("Simulation rate:"), gbc);
+        gbc.gridy++;
+        this.add(simulationRate, gbc);
 
 
 /*        startSimulation.addActionListener(new ActionListener() {

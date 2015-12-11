@@ -20,15 +20,27 @@ public class AircraftType {
     private int doors;
     //private Layout layout;
 
+    private int rows;
+    private int width;
+    private int aisle;
+
+    public AircraftType(String name){
+       this.name = name;
+       width = 4;
+       aisle = 1;
+       rows = 8;
+    }
+
     public int getDoors() {
         return doors;
     }
 
     /* Remove static after tests */
 
-    static public java.util.List<Point> getLayout(String name){
+    static public java.util.List<Point> getLayout(AircraftType aircraftType){
         List<Point> fixedInterior = new ArrayList<>();
         String line = null;
+        String name = aircraftType.toString();
         try {
         /* Initialize the fixedInterior array */
 
@@ -61,4 +73,32 @@ public class AircraftType {
         return fixedInterior;
     }
 
+    public int getRows() {
+        return rows;
+    }
+
+    public void setRows(int rows) {
+        this.rows = rows;
+    }
+
+    public int getWidth() {
+        return width;
+    }
+
+    public void setWidth(int width) {
+        this.width = width;
+    }
+
+    public int getAisle() {
+        return aisle;
+    }
+
+    public void setAisle(int aisle) {
+        this.aisle = aisle;
+    }
+
+    @Override
+    public String toString(){
+        return name;
+    }
 }
