@@ -26,6 +26,10 @@ public class Passenger {
     Direction nextMove;
     int handluggage;
 
+    Position currentPosition;
+    int currentRow;
+    boolean seated;
+
     public int getSeatNumber() {
         return seatNumber;
     }
@@ -85,6 +89,30 @@ public class Passenger {
 
     public void setHandluggage(int handluggage) {
         this.handluggage = handluggage;
+    }
+
+    public Position getCurrentPosition() {
+        return currentPosition;
+    }
+
+    public void setCurrentPosition(Position currentPosition) {
+        this.currentPosition = currentPosition;
+    }
+
+    public int getCurrentRow() {
+        return currentRow;
+    }
+
+    public void setCurrentRow(int currentRow) {
+        this.currentRow = currentRow;
+    }
+
+    public boolean isSeated() {
+        return seated;
+    }
+
+    public void setSeated(boolean seated) {
+        this.seated = seated;
     }
 
     public void passengerUnwrapper(){

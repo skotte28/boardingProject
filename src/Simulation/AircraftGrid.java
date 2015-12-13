@@ -23,75 +23,67 @@ public class AircraftGrid {
     }
 
     protected void gridBoarder(Passenger[][] theGrid, List<Passenger> passengers, int width) {
-        while ((!passengers.isEmpty()) || !aisleFree(theGrid, (width + 1)/2)) {  //Do we still need to continue?
+        while ((!passengers.isEmpty()) || !aisleFree(theGrid, (width + 1) / 2)) {  //Do we still need to continue?
             System.out.println("Passengers: " + passengers.toString());
             for (int p = theGrid.length - 2; p >= 0; p--) {             //Start from back
                 for (int r = theGrid[p].length - 1; r >= 0; r--) {
 
-                    /*Section Outline:
-                        getNextMove
-                        check if possible
-                        execute
-                        set next move
-                     */
 
                     //Get the next move
                     if (theGrid[p][r] != null) {
-                        if(theGrid[p][r].getPosition().getPositionValue() != p && theGrid[p][r].getRow() != r+1){
-                        Direction nextMove = theGrid[p][r].getNextMove();
-                        Passenger currentPax = theGrid[p][r];
-                        System.out.println(currentPax);
-                        //Check if possible & execute
-                        switch (nextMove) {
-                            case FRONTWARDS:
-                                if (isFree(theGrid, p, r - 1)) {
-                                    moveTowardsFront(theGrid, p, r);
-                                }
-                                break;
-                            case REARWARDS:
-                                if (isFree(theGrid, p, r + 1)) {
-                                    moveTowardsBack(theGrid, p, r);
-                                }
-                                break;
-                            case PORT:
-                                if (isFree(theGrid, p - 1, r)) {
-                                    movePort(theGrid, p, r);
-                                }
-                                break;
-                            case STARBOARD:
-                                if (isFree(theGrid, p + 1, r)) {
-                                    moveStarboard(theGrid, p, r);
-                                }
-                                break;
-                        }
-                        //Set the next move
 
-                        //On the correct row
-                        if (currentPax.getNextMove() != Direction.SEATED) {
-                            if (!seatedCheck(currentPax, r, p)) {
-                                nextMoveSetter(currentPax, r, p);
+                        if (!theGrid[p][r].isSeated()) {
+
+                            nextMoveSetter(theGrid[p][r], r, p);
+
+                            Direction nextMove = theGrid[p][r].getNextMove();
+                            Passenger currentPax = theGrid[p][r];
+
+
+                            System.out.println(currentPax);
+                            //Check if possible & execute
+                            switch (nextMove) {
+                                case FRONTWARDS:
+                                    if (isFree(theGrid, p, r - 1)) {
+                                        moveTowardsFront(theGrid, p, r);
+                                    }
+                                    break;
+                                case REARWARDS:
+                                    if (isFree(theGrid, p, r + 1)) {
+                                        moveTowardsBack(theGrid, p, r);
+                                    }
+                                    break;
+                                case PORT:
+                                    if (isFree(theGrid, p - 1, r)) {
+                                        movePort(theGrid, p, r);
+                                    }
+                                    break;
+                                case STARBOARD:
+                                    if (isFree(theGrid, p + 1, r)) {
+                                        moveStarboard(theGrid, p, r);
+                                    }
+                                    break;
                             }
                         }
                     }
-                }
                 }
             }
             //Check if there are still passengers waiting
             if (!passengers.isEmpty()) {
 
                 //If there is space for a new passenger bring them onboard
-                if (theGrid[(width + 1)/ 2][0] == null) {
+                if (theGrid[(width + 1) / 2][0] == null) {
                     System.out.println("Free space!");
-                    theGrid[(width + 1)/ 2][0] = passengers.remove(0);
-                    nextMoveSetter(theGrid[(width + 1)/ 2][0], 0, ((width + 1)/ 2));
+                    theGrid[(width + 1) / 2][0] = passengers.remove(0);
+                    nextMoveSetter(theGrid[(width + 1) / 2][0], 0, ((width + 1) / 2));
                 } else {
                     System.out.println("No free space!");
                 }
             }
+
             System.out.println("Post-grid:" + Arrays.deepToString(theGrid));
         }
         System.out.println("Stopped looping");
-
     }
 
 
@@ -145,26 +137,31 @@ public class AircraftGrid {
     }
 
     private void nextMoveSetter(Passenger currentPax, int r, int p){
-    if(currentPax.getRow()==r+1){
-        //Too far port side
-        if (currentPax.getPosition().getPositionValue() > p) {
-            currentPax.setNextMove(Direction.STARBOARD);
+        //Correct row
+        if(currentPax.getRow()==r+1){
+            if (currentPax.getPosition().getPositionValue() == p){
+                currentPax.setSeated(true);
+                currentPax.setNextMove(Direction.SEATED);
+            }
+            //Too far port side
+            else if (currentPax.getPosition().getPositionValue() > p) {
+                currentPax.setNextMove(Direction.STARBOARD);
+            }
+            //Too far starboard side
+            else if (currentPax.getPosition().getPositionValue() < p) {
+                currentPax.setNextMove(Direction.PORT);
+            }
         }
-        //Too far starboard side
-        else if (currentPax.getPosition().getPositionValue() < p) {
-            currentPax.setNextMove(Direction.PORT);
+        //Too far forward
+        else if(currentPax.getRow()>r+1){
+            currentPax.setNextMove(Direction.REARWARDS);
         }
-    }
-    //Too far forward
-    else if(currentPax.getRow()>r+1){
-        currentPax.setNextMove(Direction.REARWARDS);
-    }
-    //Too far back
-    else if(currentPax.getRow()<r+1){
-        currentPax.setNextMove(Direction.FRONTWARDS);
-    }
+        //Too far back
+        else if(currentPax.getRow()<r+1){
+            currentPax.setNextMove(Direction.FRONTWARDS);
+        }
 
-}
+    }
 
     private void oneInfront(){
         //current position is one row in-front of the correct row
