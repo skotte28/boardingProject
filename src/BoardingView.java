@@ -30,8 +30,11 @@ public class BoardingView extends JFrame/* implements ChangeListener*/{
         setSize(STANDARD_WINDOW_WIDTH, STANDARD_WINDOW_HEIGHT);
 
         settingsPanel = new SettingsPanel();
+        settingsPanel.setToolTipText("Settings Panel");
         animationPanel = new AnimationPanel();
+        animationPanel.setToolTipText("Animation Panel");
         queuePanel = new QueuePanel();
+        queuePanel.setToolTipText("Queue Panel");
 
         /* BoxLayout
         panelFramer.setLayout(new BoxLayout(panelFramer, BoxLayout.X_AXIS));

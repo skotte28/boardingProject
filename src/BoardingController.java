@@ -51,8 +51,11 @@ public class BoardingController implements EventListener{
     }
 
     private void runSimulation(){
+
+        AircraftType aircraft = theModel.getAircraftType();
+
         //Get passengers
-        File file = new File("src/"+theModel.getAircraftType());
+        File file = new File("src/"+aircraft);
         List<Passenger> passengers = JAXBHandler.unmarshall(file);
 
 
@@ -67,17 +70,17 @@ public class BoardingController implements EventListener{
         //Order
         String method = theModel.getBoardingMethod();
         if(method.equalsIgnoreCase("Back-to-front")){
-            //TODO: Back to front method call
+            passengers = Method.backToFront(passengers, aircraft);
         }
         else if(method.equalsIgnoreCase("Outside-in")){
-            //TODO: Outside-in method call
+            passengers = Method.outsideIn(passengers);
         }
         else if(method.equalsIgnoreCase("Random")){
-            //TODO: Random method
-            //Do nothing as already ordered randomly
+            passengers = Method.random(passengers);
+            //TODO: Does this really need to be here as it is already ordered randomly
         }
         else if(method.equalsIgnoreCase("Even-odd")) {
-            //TODO: Even-odd/Innovative method call
+            passengers = Method.innovative(passengers);
         }
 
         //Make into queue

@@ -1,5 +1,8 @@
 package Passenger;
 
+import Aircraft.Position;
+import Simulation.Direction;
+
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
@@ -19,7 +22,9 @@ public class Passenger {
     String seatName;
     ArrayList route;
     int row;
-    char position;
+    Position position;
+    Direction nextMove;
+    int handluggage;
 
     public int getSeatNumber() {
         return seatNumber;
@@ -58,12 +63,28 @@ public class Passenger {
     }
 
     @XmlElement (name="position")
-    public void setPosition(char position) {
+    public void setPosition(Position position) {
         this.position = position;
     }
 
-    public char getPosition() {
+    public Position getPosition() {
         return position;
+    }
+
+    public void setNextMove(Direction nextMove){
+        this.nextMove = nextMove;
+    }
+
+    public Direction getNextMove(){
+        return nextMove;
+    }
+
+    public int getHandluggage() {
+        return handluggage;
+    }
+
+    public void setHandluggage(int handluggage) {
+        this.handluggage = handluggage;
     }
 
     public void passengerUnwrapper(){

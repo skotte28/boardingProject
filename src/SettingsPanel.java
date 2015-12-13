@@ -67,6 +67,14 @@ public class SettingsPanel extends JPanel {
         aircraftTypeList.addItem(new AircraftType("A320"));
         aircraftTypeList.addItem(new AircraftType("B737"));
 
+        //Tool tips settings
+        startSimulation.setToolTipText("Start the simulation");
+        pauseSimulation.setToolTipText("Pause the simulation");
+        aircraftTypeList.setToolTipText("Select the type of aircraft to be used in the simulation");
+        boardingMethodList.setToolTipText("Select the boarding method to be used in the simulation");
+        capacityList.setToolTipText("Occupancy rate used in the simulation");
+        doorsUsedList.setToolTipText("Select if one or two doors are to be used in the simulation");
+
         setBackground(Color.YELLOW);
 
         System.out.println("Calls SettingsPanel");
@@ -110,7 +118,7 @@ public class SettingsPanel extends JPanel {
         this.add(boardingMethodList, gbc);
 
         gbc.gridy++;
-        this.add(new JLabel("Capacity:"), gbc);
+        this.add(new JLabel("Occupancy (%):"), gbc);
 
         gbc.gridy++;
         this.add(capacityList, gbc);
