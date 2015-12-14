@@ -28,4 +28,18 @@
         <row>4</row>
         <position>D</position>
     </Passenger>
+    <Passenger>
+        <seatNumber>2</seatNumber> <!-- First seat in the aircraft -->
+        <seatName>7C</seatName> <!-- Seat ID used on ticket -->
+        <route>E2</route><!-- One step towards the "east" (right)-->
+        <row>7</row>
+        <position>C</position>
+    </Passenger>
+    <Passenger>
+        <seatNumber>2</seatNumber> <!-- First seat in the aircraft -->
+        <seatName>3A</seatName> <!-- Seat ID used on ticket -->
+        <route>E2</route><!-- One step towards the "east" (right)-->
+        <row>3</row>
+        <position>A</position>
+    </Passenger>
 </Passengers>

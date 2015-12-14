@@ -15,6 +15,9 @@ public class OutsideIn {
     String name = "OutsideIn";
 
     public List<Passenger> mixOrder(List<Passenger> list) {
+        
+
+        //TODO: Change to this adapts according to aircraft type
 
         /*
         Problem with this approach is that it's hard coding which seats are the window seats,

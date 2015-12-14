@@ -23,9 +23,9 @@ public class AircraftGrid {
     }
 
     protected void gridBoarder(Passenger[][] theGrid, List<Passenger> passengers, int width) {
-        while ((!passengers.isEmpty()) || !aisleFree(theGrid, (width + 1) / 2)) {  //Do we still need to continue?
+        while ((!passengers.isEmpty()) || !allSeated(theGrid)) {  //Do we still need to continue?
             System.out.println("Passengers: " + passengers.toString());
-            for (int p = theGrid.length - 2; p >= 0; p--) {             //Start from back
+            for (int p = theGrid.length - 1; p >= 0; p--) {             //Start from back
                 for (int r = theGrid[p].length - 1; r >= 0; r--) {
 
 
@@ -54,7 +54,7 @@ public class AircraftGrid {
                                     }
                                     break;
                                 case PORT:
-                                    if (isFree(theGrid, p - 1, r)) {
+                                   if (isFree(theGrid, p - 1, r)) {
                                         movePort(theGrid, p, r);
                                     }
                                     break;
@@ -105,6 +105,19 @@ public class AircraftGrid {
         return true;
     }
 
+    private boolean allSeated(Passenger[][] theGrid){
+        for(Passenger[] position : theGrid){
+            for(Passenger pax : position){
+                if(pax != null) {
+                    if (!pax.isSeated()) {
+                        return false;
+                    }
+                }
+            }
+        }
+        return true;
+    }
+
     private void moveTowardsBack(Passenger[][] theGrid, int p, int r) {
         theGrid[p][r + 1] = theGrid[p][r];
         theGrid[p][r] = null;
@@ -123,17 +136,6 @@ public class AircraftGrid {
     private void movePort(Passenger[][] theGrid, int p, int r) {
         theGrid[p - 1][r] = theGrid[p][r];
         theGrid[p][r] = null;
-    }
-
-    private boolean seatedCheck(Passenger currentPax, int r, int p){
-        if (currentPax.getPosition().getPositionValue() == p-1) {
-            currentPax.setNextMove(Direction.SEATED);
-            return true;
-        } else if (currentPax.getPosition().getPositionValue() == p+1){
-            currentPax.setNextMove(Direction.SEATED);
-            return true;
-        }
-        return false;
     }
 
     private void nextMoveSetter(Passenger currentPax, int r, int p){
@@ -166,7 +168,6 @@ public class AircraftGrid {
     private void oneInfront(){
         //current position is one row in-front of the correct row
         //initiate the row check protocol
-
     }
 
     private static void update(){
