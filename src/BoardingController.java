@@ -118,6 +118,7 @@ public class BoardingController implements EventListener{
             //should run method in controller
             runSimulation();
 
+
         }
 
     }

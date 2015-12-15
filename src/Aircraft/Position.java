@@ -11,11 +11,11 @@ public enum Position {
     E (5),
     F (6);*/
 
-    A (0),
-    B (1),
-    C (3),
-    D (4);
-
+    A (4),
+    B (3),
+    C (1),
+    D (0),
+    AISLE (2);
     private final int positionValue;
 
     Position(int positionValue){

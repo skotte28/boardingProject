@@ -30,6 +30,25 @@ public class Passenger {
     int currentRow;
     boolean seated;
 
+    public Position getTempPosition() {
+        return tempPosition;
+    }
+
+    public void setTempPosition(Position tempPosition) {
+        this.tempPosition = tempPosition;
+    }
+
+    public int getTempRow() {
+        return tempRow;
+    }
+
+    public void setTempRow(int tempRow) {
+        this.tempRow = tempRow;
+    }
+
+    Position tempPosition;
+    int tempRow;
+
     public int getSeatNumber() {
         return seatNumber;
     }

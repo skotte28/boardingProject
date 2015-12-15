@@ -1,4 +1,6 @@
 import Aircraft.AircraftType;
+import Passenger.Passenger;
+import Simulation.AircraftGrid;
 import com.sun.org.apache.xpath.internal.SourceTree;
 import org.w3c.dom.css.Rect;
 
@@ -44,6 +46,17 @@ public class AnimationPanel extends JPanel {
         layoutCells = new ArrayList<Point>();
         seatCells = new ArrayList<Rectangle>();
         passengers = new ArrayList<Point>();
+
+        if(AircraftGrid.theGrid != null) {
+            for (Passenger[] position : AircraftGrid.theGrid) {
+                //Had to make theGrid static... Could maybe pass the simulation as argument to AnimationPanel
+                for (Passenger pax : position) {
+                    if (pax != null) {
+                        passengers.add(new Point(pax.getPosition().getPositionValue(), pax.getRow()));
+                    }
+                }
+            }
+        }
 
         //Test color for testing purposes
         this.setBackground(Color.ORANGE);
@@ -146,6 +159,18 @@ public class AnimationPanel extends JPanel {
                 g2d.setColor(Color.BLUE);
                 g2d.fill(cell);
             }
+        }
+
+        if (!passengers.isEmpty()) {
+            System.out.println("Passenger wasn't empty");
+            for(Point px : passengers) {
+                int index = px.x + (px.y * columnCount);
+                Rectangle cell = cells.get(index);
+                g2d.setColor(Color.GREEN);
+                g2d.fill(cell);
+            }
+        } else {
+            System.out.println("Passenger was empty");
         }
 
         g2d.setColor(Color.GRAY);
