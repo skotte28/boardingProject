@@ -1,13 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Passengers>
     <Passenger>
-        <seatNumber>1</seatNumber> <!-- First seat in the aircraft -->
-        <seatName>1A</seatName> <!-- Seat ID used on ticket -->
-        <row>1</row>
-        <position>A</position>
-        <route>E1</route><!-- One step towards the "east" (right)-->
-    </Passenger>
-    <Passenger>
         <seatNumber>2</seatNumber> <!-- First seat in the aircraft -->
         <seatName>2B</seatName> <!-- Seat ID used on ticket -->
         <route>E2</route><!-- One step towards the "east" (right)-->
@@ -41,5 +34,40 @@
         <route>E2</route><!-- One step towards the "east" (right)-->
         <row>3</row>
         <position>A</position>
+    </Passenger>
+    <Passenger>
+        <seatNumber>2</seatNumber> <!-- First seat in the aircraft -->
+        <seatName>7D</seatName> <!-- Seat ID used on ticket -->
+        <route>E2</route><!-- One step towards the "east" (right)-->
+        <row>7</row>
+        <position>D</position>
+    </Passenger>
+    <Passenger>
+        <seatNumber>2</seatNumber> <!-- First seat in the aircraft -->
+        <seatName>5A</seatName> <!-- Seat ID used on ticket -->
+        <route>E2</route><!-- One step towards the "east" (right)-->
+        <row>5</row>
+        <position>A</position>
+    </Passenger>
+    <Passenger>
+        <seatNumber>2</seatNumber> <!-- First seat in the aircraft -->
+        <seatName>4C</seatName> <!-- Seat ID used on ticket -->
+        <route>E2</route><!-- One step towards the "east" (right)-->
+        <row>4</row>
+        <position>C</position>
+    </Passenger>
+    <Passenger>
+        <seatNumber>2</seatNumber> <!-- First seat in the aircraft -->
+        <seatName>7A</seatName> <!-- Seat ID used on ticket -->
+        <route>E2</route><!-- One step towards the "east" (right)-->
+        <row>7</row>
+        <position>A</position>
+    </Passenger>
+    <Passenger>
+        <seatNumber>2</seatNumber> <!-- First seat in the aircraft -->
+        <seatName>3B</seatName> <!-- Seat ID used on ticket -->
+        <route>E2</route><!-- One step towards the "east" (right)-->
+        <row>3</row>
+        <position>B</position>
     </Passenger>
 </Passengers>

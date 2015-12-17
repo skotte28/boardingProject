@@ -29,6 +29,25 @@ public class Passenger {
     Position currentPosition;
     int currentRow;
     boolean seated;
+    BlockPair blockPair;
+
+    boolean visited;
+
+    public boolean isVisited() {
+        return visited;
+    }
+
+    public void setVisited(boolean visited) {
+        this.visited = visited;
+    }
+
+    public BlockPair getBlockPair() {
+        return blockPair;
+    }
+
+    public void setBlockPair(BlockPair blockPair) {
+        this.blockPair = blockPair;
+    }
 
     public Position getTempPosition() {
         return tempPosition;
