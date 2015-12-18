@@ -18,82 +18,22 @@ import java.util.concurrent.ExecutionException;
 @XmlRootElement(name="Passenger")
 public class Passenger {
 
-    int seatNumber;
-    String seatName;
-    ArrayList route;
+    /* Attributes which don't change */
     int row;
     Position position;
-    Direction nextMove;
     int handluggage;
 
-    Position currentPosition;
-    int currentRow;
-    boolean seated;
-    BlockPair blockPair;
+    Direction nextMove;
 
-    boolean visited;
-
-    public boolean isVisited() {
-        return visited;
-    }
-
-    public void setVisited(boolean visited) {
-        this.visited = visited;
-    }
-
-    public BlockPair getBlockPair() {
-        return blockPair;
-    }
-
-    public void setBlockPair(BlockPair blockPair) {
-        this.blockPair = blockPair;
-    }
-
-    public Position getTempPosition() {
-        return tempPosition;
-    }
-
-    public void setTempPosition(Position tempPosition) {
-        this.tempPosition = tempPosition;
-    }
-
-    public int getTempRow() {
-        return tempRow;
-    }
-
-    public void setTempRow(int tempRow) {
-        this.tempRow = tempRow;
-    }
-
+    /* When moving to allow other passengers in */
     Position tempPosition;
     int tempRow;
 
-    public int getSeatNumber() {
-        return seatNumber;
-    }
+    /* When blocked by someone else */
+    BlockPair blockPair;
 
-    @XmlElement (name="seatNumber")
-    public void setSeatNumber(int seatNumber) {
-        this.seatNumber = seatNumber;
-    }
-
-    public String getSeatName() {
-        return seatName;
-    }
-
-    @XmlElement (name="seatName")
-    public void setSeatName(String seatName) {
-        this.seatName = seatName;
-    }
-
-    public ArrayList getRoute() {
-        return route;
-    }
-
-    @XmlElement (name="route")
-    public void setRoute(ArrayList route) {
-        this.route = route;
-    }
+    boolean visited;
+    boolean seated;
 
     @XmlElement (name="row")
     public void setRow(int row) {
@@ -113,14 +53,6 @@ public class Passenger {
         return position;
     }
 
-    public void setNextMove(Direction nextMove){
-        this.nextMove = nextMove;
-    }
-
-    public Direction getNextMove(){
-        return nextMove;
-    }
-
     public int getHandluggage() {
         return handluggage;
     }
@@ -129,20 +61,44 @@ public class Passenger {
         this.handluggage = handluggage;
     }
 
-    public Position getCurrentPosition() {
-        return currentPosition;
+    public void setNextMove(Direction nextMove){
+        this.nextMove = nextMove;
     }
 
-    public void setCurrentPosition(Position currentPosition) {
-        this.currentPosition = currentPosition;
+    public Direction getNextMove(){
+        return nextMove;
     }
 
-    public int getCurrentRow() {
-        return currentRow;
+    public Position getTempPosition() {
+        return tempPosition;
     }
 
-    public void setCurrentRow(int currentRow) {
-        this.currentRow = currentRow;
+    public void setTempPosition(Position tempPosition) {
+        this.tempPosition = tempPosition;
+    }
+
+    public int getTempRow() {
+        return tempRow;
+    }
+
+    public void setTempRow(int tempRow) {
+        this.tempRow = tempRow;
+    }
+
+    public BlockPair getBlockPair() {
+        return blockPair;
+    }
+
+    public void setBlockPair(BlockPair blockPair) {
+        this.blockPair = blockPair;
+    }
+
+    public boolean isVisited() {
+        return visited;
+    }
+
+    public void setVisited(boolean visited) {
+        this.visited = visited;
     }
 
     public boolean isSeated() {
@@ -153,31 +109,9 @@ public class Passenger {
         this.seated = seated;
     }
 
-    public void passengerUnwrapper(){
-
-        File file = new File("src/A320");
-        try {
-            JAXBContext jaxbContext = JAXBContext.newInstance(Passenger.class);
-            Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
-
-            Passenger passenger = (Passenger) jaxbUnmarshaller.unmarshal(file);
-
-            //for(Passenger pax : passengers.getPassengers()){
-              //  System.out.println(pax.getSeatName());
-              //  System.out.println(pax.getSeatNumber());
-            //}
-
-            System.out.println("Seatname:"+passenger.seatName);
-
-        }
-        catch (JAXBException je){
-            System.out.println(/*"There was a problem getting the passenger XML list."+*/je);
-        }
-    }
-
     @Override
     public String toString(){
-        return seatName;
+        return row+position.toString();
     }
 
 }

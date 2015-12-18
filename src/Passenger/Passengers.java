@@ -31,28 +31,9 @@ public class Passengers {
         return passengers;
     }
 
+    //TODO: Is this method still never used?
     public void setPassengers(List<Passenger> passengers){
         this.passengers = passengers;
-    }
-
-    public void passengerUnmarshaller(){
-
-        File file = new File("src/A320");
-        try {
-            JAXBContext jaxbContext = JAXBContext.newInstance(Passengers.class);
-            Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
-
-            Passengers passengers = (Passengers) jaxbUnmarshaller.unmarshal(file);
-
-            for(Passenger pax : getPassengers()){
-                System.out.println(pax.getSeatName());
-                System.out.println(pax.getSeatNumber());
-            }
-
-        }
-        catch (JAXBException je){
-            System.out.println(/*"There was a problem getting the passenger XML list."+*/je);
-        }
     }
 
 }

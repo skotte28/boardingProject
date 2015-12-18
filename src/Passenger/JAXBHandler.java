@@ -1,5 +1,7 @@
 package Passenger;
 
+import Aircraft.AircraftType;
+
 import javax.xml.bind.JAXB;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -12,10 +14,7 @@ import java.util.List;
  */
 public class JAXBHandler {
 
-    public static List<Passenger> unmarshall(File file) {
-
-        //File file = new File("src/A320");
-
+    public static List<Passenger> unmarshallPassenger(File file) {
 
         try {
             Passengers passengers = new Passengers();
@@ -30,6 +29,27 @@ public class JAXBHandler {
 
         } catch (JAXBException je) {
             System.out.println(/*"There was a problem getting the passenger XML list."+*/je);
+            return null;
+        }
+    }
+
+    public static AircraftType unmarshallLayout(File file){
+
+        //TODO: This shouldn't be in Passenger package
+
+        try{
+            AircraftType aircraftType;
+            JAXBContext jaxbContext = JAXBContext.newInstance(AircraftType.class);
+            Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
+
+            aircraftType = (AircraftType) jaxbUnmarshaller.unmarshal(file);
+
+            System.out.println(aircraftType.toString());
+
+            return aircraftType;
+
+        } catch (JAXBException je){
+            System.out.println(/*"There was a problem getting the aircraft layout from XML."+*/je);
             return null;
         }
     }

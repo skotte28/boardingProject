@@ -1,6 +1,8 @@
 package Aircraft;
 import Aircraft.Layout;
 
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 import java.awt.*;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
@@ -13,6 +15,8 @@ import java.util.List;
 /**
  * Created by Oscar on 2015-10-15.
  */
+
+@XmlRootElement(name="AircraftType")
 public class AircraftType {
     //Long id;
     //private ArrayList capacity;
@@ -23,19 +27,69 @@ public class AircraftType {
     private int rows;
     private int width;
     private int aisle;
+    private int buffer;
+
+    public AircraftType(){}
 
     public AircraftType(String name){
        this.name = name;
-       width = 4;
-       aisle = 1;
-       rows = 8;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    @XmlElement(name="name")
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public int getWidth() {
+        return width;
+    }
+
+    @XmlElement(name="width")
+    public void setWidth(int width) {
+        this.width = width;
+    }
+
+    public int getBuffer() {
+        return buffer;
+    }
+
+    @XmlElement(name="buffer")
+    public void setBuffer(int buffer) {
+        this.buffer = buffer;
     }
 
     public int getDoors() {
         return doors;
     }
 
-    /* Remove static after tests */
+    public int getRows() {
+        return rows;
+    }
+
+    @XmlElement(name="rows")
+    public void setRows(int rows) {
+        this.rows = rows;
+    }
+
+    public int getAisle() {
+        return aisle;
+    }
+
+    @XmlElement(name="aisle")
+    public void setAisle(int aisle) {
+        this.aisle = aisle;
+    }
+
+    @Override
+    public String toString(){
+        return name;
+    }
+
+        /* Remove static after tests */
 
     static public java.util.List<Point> getLayout(AircraftType aircraftType){
         List<Point> fixedInterior = new ArrayList<>();
@@ -73,32 +127,5 @@ public class AircraftType {
         return fixedInterior;
     }
 
-    public int getRows() {
-        return rows;
-    }
-
-    public void setRows(int rows) {
-        this.rows = rows;
-    }
-
-    public int getWidth() {
-        return width;
-    }
-
-    public void setWidth(int width) {
-        this.width = width;
-    }
-
-    public int getAisle() {
-        return aisle;
-    }
-
-    public void setAisle(int aisle) {
-        this.aisle = aisle;
-    }
-
-    @Override
-    public String toString(){
-        return name;
-    }
 }
+

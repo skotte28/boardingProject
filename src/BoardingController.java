@@ -55,12 +55,23 @@ public class BoardingController implements EventListener{
         AircraftType aircraft = theModel.getAircraftType();
 
         //Get passengers
-        File file = new File("src/"+aircraft);
-        List<Passenger> passengers = JAXBHandler.unmarshall(file);
-
+        File filePassengers = new File("src/"+aircraft);
+        //TODO: Should throw/catch "JAXBException"
+        List<Passenger> passengers = JAXBHandler.unmarshallPassenger(filePassengers);
 
         //Check so passengers are in the array
         System.out.println(passengers.toString());
+
+        //Get aircraft
+        //TODO: Should throw/catch "JAXBException"
+        File fileLayout = new File("src/"+aircraft+"Layout.xml");
+        AircraftType aircraftType = JAXBHandler.unmarshallLayout(fileLayout);
+
+        //Set the model to the new aircraft with all parameters... This is quite inefficient as we load it twice...
+        theModel.setAircraftType(aircraftType);
+
+        //Check so aircraft is loaded
+        System.out.println(aircraftType);
 
         //(Assign parameters)
 

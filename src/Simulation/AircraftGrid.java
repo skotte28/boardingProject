@@ -17,11 +17,12 @@ public class AircraftGrid {
 
     public AircraftGrid(AircraftType aircraftType, List<Passenger> passengers) {
 
+        int buffer = aircraftType.getBuffer();
         int width = aircraftType.getWidth();
         int aisle = aircraftType.getAisle();
 
         //Initiate the underlying aircraft grid
-        theGrid = new Passenger[width + aisle][aircraftType.getRows()];
+        theGrid = new Passenger[width + aisle][aircraftType.getRows()+buffer];
 
         gridBoarder(passengers, width, aisle);
     }
@@ -63,7 +64,7 @@ public class AircraftGrid {
                                 }
 
                                 if (proceed) {
-                                    if (theGrid[p][r].getRow() == r + 2) {
+                                    if (theGrid[p][r].getRow() == r + 1) {
                                         if (blockChecker(theGrid[p][r], p, r)) {
                                             blockSeater(p, r, aisle, width);
                                             proceed = false;
@@ -115,7 +116,7 @@ public class AircraftGrid {
                     theGrid[(width + 1) / 2][0] = passengers.remove(0);
                 }
             }
-            
+
             //TODO: Discuss with Bahar how much this affects run time - should it be done differently?
 
             //Reset visited
@@ -156,7 +157,7 @@ public class AircraftGrid {
         theGrid[pNew][rNew] = theGrid[pOld][rOld];
         theGrid[pOld][rOld] = null;
 
-        if(theGrid[pNew][rNew].getPosition().getPositionValue() == pNew && theGrid[pNew][rNew].getRow() == rNew+1){
+        if(theGrid[pNew][rNew].getPosition().getPositionValue() == pNew && theGrid[pNew][rNew].getRow() == rNew){
             theGrid[pNew][rNew].setSeated(true);
         }
 
@@ -193,7 +194,7 @@ public class AircraftGrid {
         //Correct row
         //Normal
         if(!temp) {
-            if (moveRow == r + 1) {
+            if (moveRow == r) {
                 if (movePosition.getPositionValue() == p) {
                     currentPax.setSeated(true);
                     currentPax.setNextMove(Direction.SEATED);
@@ -208,11 +209,11 @@ public class AircraftGrid {
                 }
             }
             //Too far forward
-            else if (moveRow > r + 1) {
+            else if (moveRow > r) {
                 currentPax.setNextMove(Direction.REARWARDS);
             }
             //Too far back
-            else if (moveRow < r + 1) {
+            else if (moveRow < r) {
                 currentPax.setNextMove(Direction.FRONTWARDS);
             }
         }
