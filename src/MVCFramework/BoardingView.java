@@ -1,4 +1,10 @@
+package MVCFramework;
+
 import Aircraft.AircraftType;
+import MVCFramework.BoardingModel;
+import Panels.AnimationPanel;
+import Panels.QueuePanel;
+import Panels.SettingsPanel;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -6,12 +12,12 @@ import java.awt.event.ActionListener;
 
 import javax.swing.*;
 
-public class BoardingView extends JFrame/* implements ChangeListener*/{
+public class BoardingView extends JFrame /* implements ChangeListener*/{
 /*
-    public void addBoardingController(BoardingController bc){
+    public void addBoardingController(MVCFramework.BoardingController bc){
         boardingController = bc;
     }*/
-
+    private BoardingModel theModel;
     JPanel panelFramer = new JPanel();
 
     final int STANDARD_WINDOW_WIDTH = 1500;
@@ -24,17 +30,22 @@ public class BoardingView extends JFrame/* implements ChangeListener*/{
 
     GridBagConstraints gbc = new GridBagConstraints();
 
-    public BoardingView(){
+    public BoardingView(BoardingModel theModel){
 
+        this.theModel = theModel;
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(STANDARD_WINDOW_WIDTH, STANDARD_WINDOW_HEIGHT);
 
         settingsPanel = new SettingsPanel();
         settingsPanel.setToolTipText("Settings Panel");
-        animationPanel = new AnimationPanel();
+        animationPanel = new AnimationPanel(theModel);
         animationPanel.setToolTipText("Animation Panel");
-        queuePanel = new QueuePanel();
+        queuePanel = new QueuePanel(theModel);
         queuePanel.setToolTipText("Queue Panel");
+
+        /* Having the addObservers here means the panels can be protected */
+        theModel.addObserver(animationPanel);
+        theModel.addObserver(queuePanel);
 
         /* BoxLayout
         panelFramer.setLayout(new BoxLayout(panelFramer, BoxLayout.X_AXIS));
@@ -81,7 +92,7 @@ public class BoardingView extends JFrame/* implements ChangeListener*/{
             public void actionPerformed(ActionEvent e) {
                 System.out.println("Somethings changed again");
                 settingsPanel.setSelectedAircraft();
-                animationPanel.setLayoutCells(aircraftType.getLayout(settingsPanel.getSelectedAircraft()));
+                //animationPanel.setLayoutCells(aircraftType.getLayout(settingsPanel.getSelectedAircraft()));
                 animationPanel.repaint();
             }
         });

@@ -40,4 +40,8 @@
         <row>3</row>
         <position>B</position>
     </Passenger>
+    <Passenger>
+        <row>1</row>
+        <position>C</position>
+    </Passenger>
 </Passengers>

@@ -1,13 +1,12 @@
 package Aircraft;
 import Aircraft.Layout;
+import Passenger.Passenger;
+import javafx.geometry.Pos;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import java.awt.*;
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.util.*;
 import java.util.List;
 
@@ -19,7 +18,7 @@ import java.util.List;
 @XmlRootElement(name="AircraftType")
 public class AircraftType {
     //Long id;
-    //private ArrayList capacity;
+    //private ArrayList Capacity;
     private String name;
     private int doors;
     //private Layout layout;
@@ -28,6 +27,37 @@ public class AircraftType {
     private int width;
     private int aisle;
     private int buffer;
+
+    public Position[] getWindowSeats() {
+        return windowSeats;
+    }
+
+    @XmlElement(name="windowSeats")
+    public void setWindowSeats(Position[] windowSeats) {
+
+    }
+
+    public Position[] getMiddleSeats() {
+        return middleSeats;
+    }
+
+    @XmlElement(name="middleSeats")
+    public void setMiddleSeats(Position[] middleSeats) {
+        this.middleSeats = middleSeats;
+    }
+
+    public Position[] getAisleSeats() {
+        return aisleSeats;
+    }
+
+    @XmlElement(name="aisleSeats")
+    public void setAisleSeats(Position[] aisleSeats) {
+        this.aisleSeats = aisleSeats;
+    }
+
+    private Position[] windowSeats;
+    private Position[] middleSeats;
+    private Position[] aisleSeats;
 
     public AircraftType(){}
 
@@ -127,5 +157,25 @@ public class AircraftType {
         return fixedInterior;
     }
 
+    Map seats = new HashMap();
+
+    public void populateSeats() {
+        try {
+            BufferedReader bufferedReader = new BufferedReader(new FileReader("content/" + this.name + "/" + this.name + "Seating.txt"));
+            String line = bufferedReader.readLine();
+            while(line != null){
+                String[] output = line.split(":");
+                seats.put(output[0], Integer.valueOf(output[1]));
+                line = bufferedReader.readLine();
+            }
+        } catch (Exception e){
+            //TODO: Better exception handling
+            e.printStackTrace();
+        }
+    }
+
+    public int getSeatValue(String seat){
+        return (Integer) seats.get(seat);
+    }
 }
 

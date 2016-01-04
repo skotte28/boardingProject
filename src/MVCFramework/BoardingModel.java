@@ -1,34 +1,118 @@
-package Simulation;
+package MVCFramework;
 
 import Aircraft.AircraftType;
 import Aircraft.Position;
+import Methods.Method;
 import Passenger.Passenger;
-import javafx.animation.Animation;
 import Passenger.BlockPair;
-import java.util.Arrays;
+import Simulation.AircraftGrid;
+import Simulation.Direction;
+import XMLParsing.JAXBHandlerLayout;
+import XMLParsing.JAXBHandlerPassenger;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Observable;
 
-/**
- * Created by Oscar on 2015-12-01.
- */
-public class AircraftGrid{
+public class BoardingModel extends Observable{
 
-    public static Passenger[][] theGrid;
-    List<Passenger> passengers;
+    private String boardingMethod;
+    private AircraftType aircraftType;
+    private int capacity;
+    protected Passenger[][] theGrid;
+    protected List<Passenger> passengers;
+    public BoardingModel(){}
 
-    public AircraftGrid(AircraftType aircraftType, List<Passenger> passengers) {
-        this.passengers = passengers;
-        int buffer = aircraftType.getBuffer();
-        int width = aircraftType.getWidth();
-        int aisle = aircraftType.getAisle();
-
-        //Initiate the underlying aircraft grid
-        theGrid = new Passenger[width + aisle][aircraftType.getRows()+buffer];
-
-        gridBoarder(width, aisle);
+    public AircraftType getAircraftType() {
+        return aircraftType;
+    }
+    public void setAircraftType(String aircraftString) {
+        //TODO: Should throw/catch "JAXBException"
+        AircraftType aircraftType;
+        File fileLayout = new File("content/"+aircraftString+"/"+aircraftString+"Layout.xml");
+        aircraftType = JAXBHandlerLayout.unmarshal(fileLayout);
+        this.aircraftType = aircraftType;
     }
 
-    public void gridBoarder(int width, int aisle) {
+    public String getBoardingMethod() {
+        return boardingMethod;
+    }
+    public void setBoardingMethod(String boardingMethod) {
+        this.boardingMethod = boardingMethod;
+    }
+
+    public int getCapacity() {
+        return capacity;
+    }
+    public void setCapacity(int capacity) {
+        this.capacity = capacity;
+    }
+
+    public List<Passenger> capacityLimiter(List<Passenger> allPassengers){
+
+        Collections.shuffle(allPassengers);
+        double xDouble = allPassengers.size()*(getCapacity()/100.0);
+        //TODO: Determine if it's necessary to round and cast to integer
+        int x = (int) Math.round(xDouble);
+        System.out.println("Capacity: "+x);
+
+        List<Passenger> selectedPassengers = new ArrayList<Passenger>();
+
+        for(int i=0; i<x; i++){
+            System.out.println(i);
+            selectedPassengers.add(allPassengers.get(i));
+        }
+        return selectedPassengers;
+    }
+
+    protected void runSimulation(){
+
+        aircraftType.populateSeats();
+        //Get passengers
+        File filePassengers = new File("content/"+aircraftType+"/"+aircraftType+"Passengers.xml");
+        //TODO: Should throw/catch "JAXBException"
+        List<Passenger> passengers = JAXBHandlerPassenger.unmarshal(filePassengers);
+
+        //Check so passengers are in the array
+        //System.out.println(passengers.toString());
+
+        //(Assign parameters)
+
+        //Capacity
+        passengers = capacityLimiter(passengers);
+
+        //Order
+        String method = getBoardingMethod();
+        if(method.equalsIgnoreCase("Back-to-front")){
+            passengers = Method.backToFront(passengers, aircraftType);
+        }
+        else if(method.equalsIgnoreCase("Outside-in")){
+            passengers = Method.outsideIn(passengers, aircraftType);
+        }
+        else if(method.equalsIgnoreCase("Random")){
+            passengers = Method.random(passengers);
+            //TODO: Does this really need to be here as it is already ordered randomly
+        }
+        else if(method.equalsIgnoreCase("Even-odd")) {
+            passengers = Method.innovative(passengers);
+        }
+
+        System.out.println("After mixing: "+passengers);
+
+        //Make into queue
+
+        //Animation of each passenger
+        /*Removed for testing: AircraftGrid aircraftGrid = new AircraftGrid(getAircraftType(), passengers);*/
+        gridBoarder(aircraftType.getWidth(), aircraftType.getAisle(), aircraftType.getBuffer(), passengers);
+    }
+
+    ///BELOW IS FROM GRIDBOARDER
+
+    public void gridBoarder(int width, int aisle, int buffer, List<Passenger> passengers) {
+        this.passengers = passengers;
+        theGrid = new Passenger[width + aisle][aircraftType.getRows()+buffer];
 
         //Check if all passengers are in the correct seat
         while ((!passengers.isEmpty()) || !allSeated()) {
@@ -128,9 +212,10 @@ public class AircraftGrid{
                     }
                 }
             }
-
             //TODO: Remove print statement - for testing purposes
             //System.out.println("Post-grid:" + Arrays.deepToString(theGrid));
+            setChanged();
+            notifyObservers();
         }
 
         //TODO: Remove print statement - for testing purposes
@@ -312,5 +397,11 @@ public class AircraftGrid{
         return false;
     }
 
+    public Passenger[][] getTheGrid() {
+        return theGrid;
+    }
 
+    public List<Passenger> getPassengers() {
+        return passengers;
+    }
 }

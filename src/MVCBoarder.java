@@ -1,3 +1,7 @@
+import MVCFramework.BoardingController;
+import MVCFramework.BoardingModel;
+import MVCFramework.BoardingView;
+
 /**
  * Created by Oscar on 2015-10-15.
  */
@@ -7,9 +11,9 @@ public class MVCBoarder {
 
         System.out.println("Houston we have lift-off!");
 
-        BoardingView theView = new BoardingView();
-
         BoardingModel theModel = new BoardingModel();
+
+        BoardingView theView = new BoardingView(theModel);
 
         BoardingController theController = new BoardingController(theView, theModel);
 

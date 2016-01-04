@@ -25,4 +25,8 @@ public enum Position {
     public int getPositionValue(){
         return positionValue;
     }
+
+    /*IDEA:
+    Could put two values, and also put tow methods: getTwoseat & getThreeseat for the different position values.
+     */
 }

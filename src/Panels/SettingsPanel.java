@@ -1,9 +1,10 @@
-import Aircraft.AircraftType;
+package Panels;
 
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import java.awt.*;
+import java.io.File;
 
 
 /**
@@ -15,7 +16,7 @@ public class SettingsPanel extends JPanel {
 
     private java.util.List<Point> layoutCells;
 
-    protected JComboBox<AircraftType> aircraftTypeList = new JComboBox<AircraftType>();
+    public JComboBox aircraftTypeList = new JComboBox();
 
     private String[] boardingMethodStrings = {"Back-to-front", "Outside-in", "Random", "Even-odd"};
     private JComboBox boardingMethodList = new JComboBox(boardingMethodStrings);
@@ -27,8 +28,8 @@ public class SettingsPanel extends JPanel {
     private String[] doorsUsedStrings = {"Front only", "Front & Rear"};
     private JComboBox doorsUsedList = new JComboBox(doorsUsedStrings);
 
-    protected JButton startSimulation = new JButton("Run"); //Make this grey out when running
-    protected JButton pauseSimulation = new JButton("Pause"); //Make this grey out when running
+    public JButton startSimulation = new JButton("Run"); //Make this grey out when running
+    public JButton pauseSimulation = new JButton("Pause"); //Make this grey out when running
 
     /* Simulation Rate Slider */
     static final int SIM_RATE_MIN = 1;
@@ -36,13 +37,13 @@ public class SettingsPanel extends JPanel {
     static final int SIM_RATE_INIT = 1;
     JSlider simulationRate = new JSlider(JSlider.HORIZONTAL, SIM_RATE_MIN, SIM_RATE_MAX, SIM_RATE_INIT);
 
-    private AircraftType selectedAircraft;
+    private String selectedAircraft;
 
     public void setSelectedAircraft(){
-        selectedAircraft = (AircraftType) aircraftTypeList.getSelectedItem();
+        selectedAircraft = aircraftTypeList.getSelectedItem().toString();
     }
 
-    public AircraftType getSelectedAircraft() {
+    public String getSelectedAircraft() {
         System.out.println(selectedAircraft);
         return selectedAircraft;
     }
@@ -62,10 +63,22 @@ public class SettingsPanel extends JPanel {
         return doorsUsedList.getSelectedItem().toString();
     }
 
-    SettingsPanel() {
+    public SettingsPanel() {
 
-        aircraftTypeList.addItem(new AircraftType("A320"));
-        aircraftTypeList.addItem(new AircraftType("B737"));
+        //TODO: Default selection option
+
+        //Loads the aircraft JComboBox based on the directories which are located in "content/"
+        try {
+            File file = new File("content/");
+            File[] files;
+            files = file.listFiles();
+            for(File f : files){
+                String[] name = f.toString().split("\\\\");
+                aircraftTypeList.addItem(name[1]);
+            }
+        }catch (SecurityException se){
+            se.printStackTrace();
+        }
 
         //Tool tips settings
         startSimulation.setToolTipText("Start the simulation");
@@ -77,7 +90,6 @@ public class SettingsPanel extends JPanel {
 
         setBackground(Color.YELLOW);
 
-        System.out.println("Calls SettingsPanel");
         simulationRate.setMajorTickSpacing(2);
         simulationRate.setMinorTickSpacing(1);
         simulationRate.setPaintTicks(true);
@@ -155,7 +167,7 @@ public class SettingsPanel extends JPanel {
 
                 *//* A lot of printing *//*
                 String selectedAircraft = aircraftTypeList.getSelectedItem().toString();
-                //BoardingModel.setAircraftType();
+                //MVCFramework.BoardingModel.setAircraftType();
                 String selectedBoardingMethod = boardingMethodList.getSelectedItem().toString();
                 String selectedDoorsUsed = doorsUsedList.getSelectedItem().toString();
                 System.out.println(selectedAircraft + " " + selectedBoardingMethod + " " + selectedDoorsUsed);

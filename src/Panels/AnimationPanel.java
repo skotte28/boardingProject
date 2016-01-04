@@ -1,4 +1,7 @@
+package Panels;
+
 import Aircraft.AircraftType;
+import MVCFramework.BoardingModel;
 import Passenger.Passenger;
 import Simulation.AircraftGrid;
 import com.sun.org.apache.xpath.internal.SourceTree;
@@ -14,14 +17,13 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
-public class AnimationPanel extends JPanel {
+public class AnimationPanel extends JPanel implements Observer {
 
     private int CELL_DIMENSION = 8; //Each square is 25cm
     private int columnCount = 140;  //Total length 28m
@@ -33,12 +35,18 @@ public class AnimationPanel extends JPanel {
     private List<Rectangle> seatCells;
     protected List<Point> passengers;
 
+    //TODO: Should there really need to be two instances of theGrid
+    protected Passenger[][] animationGrid;
+
     public void setLayoutCells(List<Point> layoutCells) {
         this.layoutCells = layoutCells;
     }
 
-    public AnimationPanel() {
+    private BoardingModel boardingModel;
 
+    public AnimationPanel(BoardingModel boardingModel) {
+
+        this.boardingModel = boardingModel;
         //this.setSize(400, 400);
 
         cells = new ArrayList<>(columnCount * rowCount);
@@ -49,7 +57,7 @@ public class AnimationPanel extends JPanel {
 
         if(AircraftGrid.theGrid != null) {
             for (Passenger[] position : AircraftGrid.theGrid) {
-                //Had to make theGrid static... Could maybe pass the simulation as argument to AnimationPanel
+                //Had to make theGrid static... Could maybe pass the simulation as argument to Panels.AnimationPanel
                 for (Passenger pax : position) {
                     if (pax != null) {
                         passengers.add(new Point(pax.getPosition().getPositionValue(), pax.getRow()));
@@ -58,10 +66,10 @@ public class AnimationPanel extends JPanel {
             }
         }
 
-        //Test color for testing purposes
+        //TODO: Remove; color for testing purposes
         this.setBackground(Color.ORANGE);
 
-        //layoutCells = BoardingModel.getLayout(selectedAircraft);
+        //layoutCells = MVCFramework.BoardingModel.getLayout(selectedAircraft);
 
         MouseAdapter mouseHandler;
         mouseHandler = new MouseAdapter() {
@@ -189,5 +197,12 @@ public class AnimationPanel extends JPanel {
             System.out.println("Rectangle");
             System.out.println(i++);
         }
+    }
+
+    @Override
+    public void update(Observable o, Object data){
+        repaint();
+        animationGrid = boardingModel.getTheGrid();
+        System.out.println("From the update in animation panel:"+ Arrays.deepToString(animationGrid);
     }
 }

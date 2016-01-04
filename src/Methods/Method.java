@@ -4,10 +4,7 @@ import Aircraft.AircraftType;
 import Aircraft.Position;
 import Passenger.Passenger;
 
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Queue;
+import java.util.*;
 
 /**
  * Created by Oscar on 2015-11-25.
@@ -60,7 +57,10 @@ public class Method {
         return even;
     }
 
-    public static List<Passenger> outsideIn(List<Passenger> list) {
+    public static List<Passenger> outsideIn(List<Passenger> list, AircraftType aircraftType) {
+
+
+        //TODO: Change to this adapts according to aircraft type
 
         /*
         Problem with this approach is that it's hard coding which seats are the window seats,
@@ -70,24 +70,30 @@ public class Method {
          */
 
         //Instantiate temporary list
-        List<Passenger> window = new LinkedList<Passenger>();
-        List<Passenger> middle = new LinkedList<Passenger>();
-        List<Passenger> aisle = new LinkedList<Passenger>();
+        List<Passenger> window = new LinkedList<>();
+        List<Passenger> middle = new LinkedList<>();
+        List<Passenger> aisle = new LinkedList<>();
 
         //To be used to ensure that more aircrafts can be added in the future - could be done without if switch case is used below
-        LinkedList<Position> windowSeats = new LinkedList<Position>();
-        windowSeats.add(Position.A);
-        //windowSeats.add(Position.F);
-        LinkedList<Position> middleSeats = new LinkedList<Position>();
-        windowSeats.add(Position.B);
-        //windowSeats.add(Position.E);
-        LinkedList<Position> aisleSeats = new LinkedList<Position>();
-        windowSeats.add(Position.C);
-        //windowSeats.add(Position.D);
+        LinkedList<Position> windowSeats = new LinkedList<>();
+        System.out.println(Arrays.deepToString(aircraftType.getWindowSeats()));
+        for(Position pos : aircraftType.getWindowSeats()){
+            System.out.println("Raw Position:"+pos);
+            windowSeats.add(pos);
+        }
+        LinkedList<Position> middleSeats = new LinkedList<>();
+        for(Position pos : aircraftType.getMiddleSeats()){
+            middleSeats.add(pos);
+        }
+        LinkedList<Position> aisleSeats = new LinkedList<>();
+        for(Position pos : aircraftType.getAisleSeats()){
+            aisleSeats.add(pos);
+        }
 
         //Iterate through and sort odd and even - could be done with switch case (see above)
         for(Passenger pax : list){
             Position pos = pax.getPosition();
+            System.out.println(pos);
             if(windowSeats.contains(pos)){
                 window.add(pax);
             } else if (middleSeats.contains(pos)){
@@ -98,6 +104,7 @@ public class Method {
         }
 
         //Merge the three lists
+        System.out.println(window.toString());
         window.addAll(middle);
         window.addAll(aisle);
 

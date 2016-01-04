@@ -1,5 +1,6 @@
 package Methods;
 
+import Aircraft.AircraftType;
 import Aircraft.Position;
 import Passenger.Passenger;
 
@@ -14,7 +15,7 @@ public class OutsideIn {
 
     String name = "OutsideIn";
 
-    public List<Passenger> mixOrder(List<Passenger> list) {
+    public List<Passenger> mixOrder(List<Passenger> list, AircraftType aircraftType) {
         
 
         //TODO: Change to this adapts according to aircraft type
@@ -27,20 +28,23 @@ public class OutsideIn {
          */
 
         //Instantiate temporary list
-        List<Passenger> window = new LinkedList<Passenger>();
-        List<Passenger> middle = new LinkedList<Passenger>();
-        List<Passenger> aisle = new LinkedList<Passenger>();
+        List<Passenger> window = new LinkedList<>();
+        List<Passenger> middle = new LinkedList<>();
+        List<Passenger> aisle = new LinkedList<>();
 
         //To be used to ensure that more aircrafts can be added in the future - could be done without if switch case is used below
-        LinkedList<Position> windowSeats = new LinkedList<Position>();
-        windowSeats.add(Position.A);
-        //windowSeats.add(Position.F);
-        LinkedList<Position> middleSeats = new LinkedList<Position>();
-        windowSeats.add(Position.B);
-        //windowSeats.add(Position.E);
-        LinkedList<Position> aisleSeats = new LinkedList<Position>();
-        windowSeats.add(Position.C);
-        //windowSeats.add(Position.D);
+        LinkedList<Position> windowSeats = new LinkedList<>();
+        for(Position pos : aircraftType.getWindowSeats()){
+            windowSeats.add(pos);
+        }
+        LinkedList<Position> middleSeats = new LinkedList<>();
+        for(Position pos : aircraftType.getMiddleSeats()){
+            middleSeats.add(pos);
+        }
+        LinkedList<Position> aisleSeats = new LinkedList<>();
+        for(Position pos : aircraftType.getAisleSeats()){
+            aisleSeats.add(pos);
+        }
 
         //Iterate through and sort odd and even - could be done with switch case (see above)
         for(Passenger pax : list){
@@ -55,6 +59,7 @@ public class OutsideIn {
         }
 
         //Merge the three lists
+        System.out.println(window.toString());
         window.addAll(middle);
         window.addAll(aisle);
 
