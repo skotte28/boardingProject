@@ -214,8 +214,14 @@ public class BoardingModel extends Observable{
             }
             //TODO: Remove print statement - for testing purposes
             //System.out.println("Post-grid:" + Arrays.deepToString(theGrid));
-            setChanged();
-            notifyObservers();
+            /*try{
+                Thread.sleep(1000);*/
+                setChanged();
+                notifyObservers();
+            /*}
+            catch (InterruptedException ie){
+                ie.getStackTrace();
+            }*/
         }
 
         //TODO: Remove print statement - for testing purposes

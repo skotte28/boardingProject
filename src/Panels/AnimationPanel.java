@@ -1,6 +1,7 @@
 package Panels;
 
 import Aircraft.AircraftType;
+import Aircraft.Position;
 import MVCFramework.BoardingModel;
 import Passenger.Passenger;
 import Simulation.AircraftGrid;
@@ -26,14 +27,15 @@ import javax.swing.UnsupportedLookAndFeelException;
 public class AnimationPanel extends JPanel implements Observer {
 
     private int CELL_DIMENSION = 8; //Each square is 25cm
-    private int columnCount = 140;  //Total length 28m
-    private int rowCount = 18;      //Total width 3.5m
+    private int columnCount; //= 140;  //Total length 28m
+    private int rowCount; //= 18;      //Total width 3.5m
 
     private List<Rectangle> cells;
     private List<Point> selectedCell;
     private List<Point> layoutCells;
-    private List<Rectangle> seatCells;
+    private List<Point> seatCells;
     protected List<Point> passengers;
+    protected List<Point> seatedPax;
 
     //TODO: Should there really need to be two instances of theGrid
     protected Passenger[][] animationGrid;
@@ -46,18 +48,19 @@ public class AnimationPanel extends JPanel implements Observer {
 
     public AnimationPanel(BoardingModel boardingModel) {
 
+        AircraftType aircraftType = boardingModel.getAircraftType();
+        newValues(aircraftType);
         this.boardingModel = boardingModel;
-        //this.setSize(400, 400);
 
         cells = new ArrayList<>(columnCount * rowCount);
         selectedCell = new ArrayList<Point>();
         layoutCells = new ArrayList<Point>();
-        seatCells = new ArrayList<Rectangle>();
+        seatCells = new ArrayList<Point>();
         passengers = new ArrayList<Point>();
+        seatedPax = new ArrayList<Point>();
 
         if(AircraftGrid.theGrid != null) {
             for (Passenger[] position : AircraftGrid.theGrid) {
-                //Had to make theGrid static... Could maybe pass the simulation as argument to Panels.AnimationPanel
                 for (Passenger pax : position) {
                     if (pax != null) {
                         passengers.add(new Point(pax.getPosition().getPositionValue(), pax.getRow()));
@@ -70,6 +73,7 @@ public class AnimationPanel extends JPanel implements Observer {
         this.setBackground(Color.ORANGE);
 
         //layoutCells = MVCFramework.BoardingModel.getLayout(selectedAircraft);
+
 
         MouseAdapter mouseHandler;
         mouseHandler = new MouseAdapter() {
@@ -122,6 +126,10 @@ public class AnimationPanel extends JPanel implements Observer {
     @Override
     public void invalidate() {
         cells.clear();
+        seatCells.clear();
+        passengers.clear();
+        seatedPax.clear();
+
         //selectedCell = null;
         super.invalidate();
     }
@@ -169,16 +177,35 @@ public class AnimationPanel extends JPanel implements Observer {
             }
         }
 
+        if (!seatCells.isEmpty()) {
+            for(Point sc : seatCells) {
+                int index = sc.x + (sc.y * columnCount);
+                Rectangle cell = cells.get(index);
+                g2d.setColor(Color.LIGHT_GRAY);
+                g2d.fill(cell);
+            }
+        }
+
         if (!passengers.isEmpty()) {
             System.out.println("Passenger wasn't empty");
             for(Point px : passengers) {
                 int index = px.x + (px.y * columnCount);
                 Rectangle cell = cells.get(index);
-                g2d.setColor(Color.GREEN);
+                g2d.setColor(Color.YELLOW);
                 g2d.fill(cell);
             }
         } else {
             System.out.println("Passenger was empty");
+        }
+
+        if (!seatedPax.isEmpty()) {
+            System.out.println(seatedPax);
+            for(Point sc : seatedPax) {
+                int index = sc.x + (sc.y * columnCount);
+                Rectangle cell = cells.get(index);
+                g2d.setColor(Color.GREEN);
+                g2d.fill(cell);
+            }
         }
 
         g2d.setColor(Color.GRAY);
@@ -190,19 +217,60 @@ public class AnimationPanel extends JPanel implements Observer {
     }
 
     public void runThrougher(List<Rectangle> cells){
-        System.out.println("We've started");
+        //System.out.println("We've started");
         int i = 0;
-        System.out.println(cells);
+        //System.out.println(cells);
         for (Rectangle r : cells){
-            System.out.println("Rectangle");
-            System.out.println(i++);
+            //System.out.println("Rectangle");
+            //System.out.println(i++);
+        }
+    }
+
+    public void newValues(AircraftType aircraftType) {
+        /*Author: OS */
+        if (aircraftType != null) {
+            columnCount = aircraftType.getRows() + aircraftType.getBuffer();
+            rowCount = aircraftType.getWidth() + aircraftType.getAisle();
+        } else {
+            columnCount = 0;
+            rowCount = 0;
+        }
+        System.out.println(rowCount + "and" + columnCount);
+
+        if (aircraftType != null){
+            for (int row = 1; row <= aircraftType.getRows(); row++) {
+                for (int pos = 0; pos < aircraftType.getWidth() + aircraftType.getAisle(); pos++) {
+                    if (pos != Position.AISLE.getPositionValue()) {
+                        seatCells.add(new Point(row, pos));
+                    }
+                }
+
+            }
+        }
+        System.out.println(seatCells);
+    }
+
+    public void paxUpdate(Passenger[][] animationGrid, AircraftType aircraftType){
+        for(int pos = 0; pos < aircraftType.getWidth()+aircraftType.getAisle(); pos++){
+            for(int row = 1; row <= aircraftType.getRows(); row++){
+                if(animationGrid[pos][row] != null){
+                    if(animationGrid[pos][row].isSeated()){
+                        seatedPax.add(new Point(row, pos));
+                    } else {
+                        passengers.add(new Point(row, pos));
+                    }
+                }
+            }
         }
     }
 
     @Override
     public void update(Observable o, Object data){
-        repaint();
+        invalidate();
+        newValues(boardingModel.getAircraftType());
         animationGrid = boardingModel.getTheGrid();
-        System.out.println("From the update in animation panel:"+ Arrays.deepToString(animationGrid);
+        paxUpdate(animationGrid, boardingModel.getAircraftType());
+        repaint();
+        //System.out.println("From the update in animation panel:"+ Arrays.deepToString(animationGrid));
     }
 }
