@@ -92,7 +92,7 @@ public class Method {
 
         //Iterate through and sort odd and even - could be done with switch case (see above)
         for(Passenger pax : list){
-            Position pos = pax.getPosition();
+            String pos = pax.getPosition();
             System.out.println(pos);
             if(windowSeats.contains(pos)){
                 window.add(pax);

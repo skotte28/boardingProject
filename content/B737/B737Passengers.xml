@@ -2,6 +2,26 @@
 <Passengers>
     <Passenger>
         <row>2</row>
+        <position>A</position>
+    </Passenger>
+    <Passenger>
+        <row>2</row>
+        <position>B</position>
+    </Passenger>
+    <Passenger>
+        <row>2</row>
+        <position>C</position>
+    </Passenger>
+    <Passenger>
+        <row>2</row>
+        <position>D</position>
+    </Passenger>
+    <Passenger>
+        <row>3</row>
+        <position>A</position>
+    </Passenger>
+    <Passenger>
+        <row>3</row>
         <position>B</position>
     </Passenger>
     <Passenger>
@@ -9,19 +29,23 @@
         <position>C</position>
     </Passenger>
     <Passenger>
-        <row>4</row>
+        <row>3</row>
         <position>D</position>
     </Passenger>
     <Passenger>
-        <row>7</row>
-        <position>C</position>
-    </Passenger>
-    <Passenger>
-        <row>3</row>
+        <row>4</row>
         <position>A</position>
     </Passenger>
     <Passenger>
-        <row>7</row>
+        <row>4</row>
+        <position>B</position>
+    </Passenger>
+    <Passenger>
+        <row>4</row>
+        <position>C</position>
+    </Passenger>
+    <Passenger>
+        <row>4</row>
         <position>D</position>
     </Passenger>
     <Passenger>
@@ -29,19 +53,47 @@
         <position>A</position>
     </Passenger>
     <Passenger>
-        <row>4</row>
+        <row>5</row>
+        <position>B</position>
+    </Passenger>
+    <Passenger>
+        <row>5</row>
         <position>C</position>
+    </Passenger>
+    <Passenger>
+        <row>5</row>
+        <position>D</position>
+    </Passenger>
+    <Passenger>
+        <row>6</row>
+        <position>A</position>
+    </Passenger>
+    <Passenger>
+        <row>6</row>
+        <position>B</position>
+    </Passenger>
+    <Passenger>
+        <row>6</row>
+        <position>C</position>
+    </Passenger>
+    <Passenger>
+        <row>6</row>
+        <position>D</position>
     </Passenger>
     <Passenger>
         <row>7</row>
         <position>A</position>
     </Passenger>
     <Passenger>
-        <row>3</row>
+        <row>7</row>
         <position>B</position>
     </Passenger>
     <Passenger>
-        <row>1</row>
+        <row>7</row>
         <position>C</position>
+    </Passenger>
+    <Passenger>
+        <row>7</row>
+        <position>D</position>
     </Passenger>
 </Passengers>

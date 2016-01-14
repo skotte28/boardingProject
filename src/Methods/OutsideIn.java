@@ -48,7 +48,7 @@ public class OutsideIn {
 
         //Iterate through and sort odd and even - could be done with switch case (see above)
         for(Passenger pax : list){
-            Position pos = pax.getPosition();
+            String pos = pax.getPosition();
             if(windowSeats.contains(pos)){
                 window.add(pax);
             } else if (middleSeats.contains(pos)){

@@ -20,14 +20,14 @@ public class Passenger {
 
     /* Attributes which don't change */
     int row;
-    Position position;
+    String position;
     int handluggage;
 
     Direction nextMove;
 
     /* When moving to allow other passengers in */
-    Position tempPosition;
-    int tempRow;
+    String tempPosition;
+    int tempRow = -1;       //Initialized to be inactive, as indicated by -1 value
 
     /* When blocked by someone else */
     BlockPair blockPair;
@@ -45,11 +45,11 @@ public class Passenger {
     }
 
     @XmlElement (name="position")
-    public void setPosition(Position position) {
+    public void setPosition(String position) {
         this.position = position;
     }
 
-    public Position getPosition() {
+    public String getPosition() {
         return position;
     }
 
@@ -69,11 +69,11 @@ public class Passenger {
         return nextMove;
     }
 
-    public Position getTempPosition() {
+    public String getTempPosition() {
         return tempPosition;
     }
 
-    public void setTempPosition(Position tempPosition) {
+    public void setTempPosition(String tempPosition) {
         this.tempPosition = tempPosition;
     }
 
@@ -111,7 +111,7 @@ public class Passenger {
 
     @Override
     public String toString(){
-        return row+position.toString();
+        return row+position;
     }
 
 }

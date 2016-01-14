@@ -10,11 +10,10 @@ import Simulation.Direction;
 import XMLParsing.JAXBHandlerLayout;
 import XMLParsing.JAXBHandlerPassenger;
 
+import java.io.BufferedReader;
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Observable;
+import java.io.FileReader;
+import java.util.*;
 
 public class BoardingModel extends Observable{
 
@@ -23,6 +22,7 @@ public class BoardingModel extends Observable{
     private int capacity;
     protected Passenger[][] theGrid;
     protected List<Passenger> passengers;
+    protected Map seats = new HashMap();
     public BoardingModel(){}
 
     public AircraftType getAircraftType() {
@@ -50,6 +50,25 @@ public class BoardingModel extends Observable{
         this.capacity = capacity;
     }
 
+    public void populateSeats() {
+        try {
+            BufferedReader bufferedReader = new BufferedReader(new FileReader("content/" + aircraftType + "/" + aircraftType + "Seating.txt"));
+            String line = bufferedReader.readLine();
+            while(line != null){
+                String[] output = line.split(":");
+                seats.put(output[0], Integer.valueOf(output[1]));
+                line = bufferedReader.readLine();
+            }
+        } catch (Exception e){
+            //TODO: Better exception handling
+            e.printStackTrace();
+        }
+    }
+
+    public int getSeatValue(String seat){
+        return (Integer) seats.get(seat);
+    }
+
     public List<Passenger> capacityLimiter(List<Passenger> allPassengers){
 
         Collections.shuffle(allPassengers);
@@ -69,7 +88,7 @@ public class BoardingModel extends Observable{
 
     protected void runSimulation(){
 
-        aircraftType.populateSeats();
+        populateSeats();
         //Get passengers
         File filePassengers = new File("content/"+aircraftType+"/"+aircraftType+"Passengers.xml");
         //TODO: Should throw/catch "JAXBException"
@@ -108,7 +127,7 @@ public class BoardingModel extends Observable{
         gridBoarder(aircraftType.getWidth(), aircraftType.getAisle(), aircraftType.getBuffer(), passengers);
     }
 
-    ///BELOW IS FROM GRIDBOARDER
+    //BELOW IS FROM GRIDBOARDER
 
     public void gridBoarder(int width, int aisle, int buffer, List<Passenger> passengers) {
         this.passengers = passengers;
@@ -214,16 +233,16 @@ public class BoardingModel extends Observable{
             }
             //TODO: Remove print statement - for testing purposes
             //System.out.println("Post-grid:" + Arrays.deepToString(theGrid));
-            /*try{
-                Thread.sleep(1000);*/
+            try{
                 setChanged();
                 notifyObservers();
-            /*}
+                Thread.sleep(50);
+            }
             catch (InterruptedException ie){
                 ie.getStackTrace();
-            }*/
+            }
         }
-
+        System.out.println(Arrays.deepToString(theGrid));
         //TODO: Remove print statement - for testing purposes
         System.out.println("Stopped looping");
     }
@@ -249,13 +268,13 @@ public class BoardingModel extends Observable{
         theGrid[pNew][rNew] = theGrid[pOld][rOld];
         theGrid[pOld][rOld] = null;
 
-        if(theGrid[pNew][rNew].getPosition().getPositionValue() == pNew && theGrid[pNew][rNew].getRow() == rNew){
+        if(getSeatValue(theGrid[pNew][rNew].getPosition()) == pNew && theGrid[pNew][rNew].getRow() == rNew){
             theGrid[pNew][rNew].setSeated(true);
         }
 
-        if(theGrid[pNew][rNew].getTempPosition() != null){
-            if(theGrid[pNew][rNew].getTempPosition().getPositionValue() == pNew && theGrid[pNew][rNew].getTempRow() == rNew){
-                theGrid[pNew][rNew].setTempPosition(null);
+        if(theGrid[pNew][rNew].getTempRow() != -1){
+            if(getSeatValue(theGrid[pNew][rNew].getTempPosition()) == pNew && theGrid[pNew][rNew].getTempRow() == rNew){
+                theGrid[pNew][rNew].setTempRow(-1);    //Used to be set to null
             }
         }
 
@@ -264,11 +283,11 @@ public class BoardingModel extends Observable{
 
     private void nextMoveSetter(Passenger currentPax, int r, int p){
 
-        Position movePosition;
+        String movePosition;
         int moveRow;
         boolean temp;
 
-        if(currentPax.getTempPosition() != null) {
+        if(currentPax.getTempRow() != -1) {
             movePosition = currentPax.getTempPosition();
             moveRow = currentPax.getTempRow();
             temp = true;
@@ -287,16 +306,16 @@ public class BoardingModel extends Observable{
         //Normal
         if(!temp) {
             if (moveRow == r) {
-                if (movePosition.getPositionValue() == p) {
+                if (getSeatValue(movePosition) == p) {
                     currentPax.setSeated(true);
                     currentPax.setNextMove(Direction.SEATED);
                 }
                 //Too far port side
-                else if (movePosition.getPositionValue() > p) {
+                else if (getSeatValue(movePosition) > p) {
                     currentPax.setNextMove(Direction.PORT);
                 }
                 //Too far starboard side
-                else if (movePosition.getPositionValue() < p) {
+                else if (getSeatValue(movePosition) < p) {
                     currentPax.setNextMove(Direction.STARBOARD);
                 }
             }
@@ -312,17 +331,17 @@ public class BoardingModel extends Observable{
 
         //Temporary
         else if (temp){
-            if(movePosition.getPositionValue() == p){
+            if(getSeatValue(movePosition) == p){
                 if(moveRow == r){
-                    currentPax.setTempPosition(null);
+                    currentPax.setTempRow(-1);     //Used to be set to null
                 } else if(moveRow > r){
                     currentPax.setNextMove(Direction.REARWARDS);
                 } else if(moveRow < r){
                     currentPax.setNextMove(Direction.FRONTWARDS);
                 }
-            } else if(movePosition.getPositionValue() > p){
+            } else if(getSeatValue(movePosition) > p){
                 currentPax.setNextMove(Direction.PORT);
-            } else if(movePosition.getPositionValue() < p){
+            } else if(getSeatValue(movePosition) < p){
                 currentPax.setNextMove(Direction.STARBOARD);
             }
         }
@@ -330,13 +349,13 @@ public class BoardingModel extends Observable{
 
     private boolean blockChecker(Passenger passenger, int p, int r){
 
-        if(passenger.getPosition() == Position.A){
-            if(!isFree(Position.B.getPositionValue(),r+1)){
+        if(passenger.getPosition().equals("A")){
+            if(!isFree(getSeatValue("B"),r+1)){
                 return true;
             }
         }
-        else if(passenger.getPosition() == Position.D){
-            if(!isFree(Position.C.getPositionValue(),r+1)){
+        else if(passenger.getPosition().equals("D")){
+            if(!isFree(getSeatValue("C"),r+1)){
                 return true;
             }
         }
@@ -348,42 +367,47 @@ public class BoardingModel extends Observable{
         boolean first = true;
         //New Position Assigner
 
-        if(theGrid[p][r].getPosition().getPositionValue() > Position.AISLE.getPositionValue()) {
-            for (int i = width; i > Position.AISLE.getPositionValue(); i--) {
+        if(getSeatValue(theGrid[p][r].getPosition()) > getSeatValue("AISLE")) {
+            for (int i = width; i > getSeatValue("AISLE"); i--) {
                 if (theGrid[i][r+1] != null) {
                     movedistance++;
                 }
             }
-            for (int i = width; i > Position.AISLE.getPositionValue(); i--) {
+            for (int i = width; i > getSeatValue("AISLE"); i--) {
                 if (theGrid[i][r+1] != null) {
-                    theGrid[i][r+1].setTempPosition(Position.AISLE);
+                    theGrid[i][r+1].setTempPosition("AISLE");
                     theGrid[i][r+1].setTempRow(r + movedistance);
                     theGrid[i][r+1].setSeated(false);
                     if (first) {
-                        if (theGrid[p][r - 1] != null) {
-                            theGrid[p][r - 1].setBlockPair(new BlockPair(i, r+1));
-                        }
+                        //if (r != 0) {
+                            if (theGrid[p][r - 1] != null) {
+                                theGrid[p][r - 1].setBlockPair(new BlockPair(i, r + 1));
+                            }
+                        //}
                     }
                 }
 
             }
         }
 
-        else if(theGrid[p][r].getPosition().getPositionValue() < Position.AISLE.getPositionValue()){
-            for(int i = 0; i < Position.AISLE.getPositionValue(); i++){
+        else if(getSeatValue(theGrid[p][r].getPosition()) < getSeatValue("AISLE")){
+            for(int i = 0; i < getSeatValue("AISLE"); i++){
                 if(theGrid[i][r] != null){
                     movedistance++;
                 }
             }
-            for(int i = 0; i < Position.AISLE.getPositionValue(); i++){
+            for(int i = 0; i < getSeatValue("AISLE"); i++){
                 if(theGrid[i][r+1] != null){
-                    theGrid[i][r+1].setTempPosition(Position.AISLE);
+                    theGrid[i][r+1].setTempPosition("AISLE");
                     theGrid[i][r+1].setTempRow(r+movedistance);
                     theGrid[i][r+1].setSeated(false);
                     if(first){
-                        if(theGrid[p][r-1] != null){
-                            theGrid[p][r-1].setBlockPair(new BlockPair(i,r+1));
-                        }
+                        System.out.println("R minus one:"+(r-1));
+                        //if(r != 0) {
+                            if (theGrid[p][r - 1] != null) {
+                                theGrid[p][r - 1].setBlockPair(new BlockPair(i, r + 1));
+                            }
+                        //}
                     }
                 }
             }

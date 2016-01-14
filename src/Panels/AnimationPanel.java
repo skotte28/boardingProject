@@ -63,7 +63,7 @@ public class AnimationPanel extends JPanel implements Observer {
             for (Passenger[] position : AircraftGrid.theGrid) {
                 for (Passenger pax : position) {
                     if (pax != null) {
-                        passengers.add(new Point(pax.getPosition().getPositionValue(), pax.getRow()));
+                        passengers.add(new Point(boardingModel.getSeatValue(pax.getPosition()), pax.getRow()));
                     }
                 }
             }

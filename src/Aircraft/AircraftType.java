@@ -157,25 +157,5 @@ public class AircraftType {
         return fixedInterior;
     }
 
-    Map seats = new HashMap();
-
-    public void populateSeats() {
-        try {
-            BufferedReader bufferedReader = new BufferedReader(new FileReader("content/" + this.name + "/" + this.name + "Seating.txt"));
-            String line = bufferedReader.readLine();
-            while(line != null){
-                String[] output = line.split(":");
-                seats.put(output[0], Integer.valueOf(output[1]));
-                line = bufferedReader.readLine();
-            }
-        } catch (Exception e){
-            //TODO: Better exception handling
-            e.printStackTrace();
-        }
-    }
-
-    public int getSeatValue(String seat){
-        return (Integer) seats.get(seat);
-    }
 }
 
