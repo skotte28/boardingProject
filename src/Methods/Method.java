@@ -30,9 +30,9 @@ public class Method {
         }
 
         //Merge the three lists
-        firstThird.addAll(secondThird);
-        firstThird.addAll(thirdThird);
-        return firstThird;
+        thirdThird.addAll(secondThird);
+        thirdThird.addAll(firstThird);
+        return thirdThird;
     }
 
     public static List<Passenger> innovative(List<Passenger> list) {

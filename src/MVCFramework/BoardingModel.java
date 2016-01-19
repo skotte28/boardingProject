@@ -10,12 +10,18 @@ import Simulation.Direction;
 import XMLParsing.JAXBHandlerLayout;
 import XMLParsing.JAXBHandlerPassenger;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import javax.swing.*;
+import javax.swing.Timer;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.util.*;
 
 public class BoardingModel extends Observable{
+
+    private boolean completed;
 
     private String boardingMethod;
     private AircraftType aircraftType;
@@ -88,11 +94,13 @@ public class BoardingModel extends Observable{
 
     protected void runSimulation(){
 
+        completed = false;
+
         populateSeats();
         //Get passengers
         File filePassengers = new File("content/"+aircraftType+"/"+aircraftType+"Passengers.xml");
         //TODO: Should throw/catch "JAXBException"
-        List<Passenger> passengers = JAXBHandlerPassenger.unmarshal(filePassengers);
+        passengers = JAXBHandlerPassenger.unmarshal(filePassengers);
 
         //Check so passengers are in the array
         //System.out.println(passengers.toString());
@@ -120,18 +128,37 @@ public class BoardingModel extends Observable{
 
         System.out.println("After mixing: "+passengers);
 
+        setPassengers(passengers);
+        theGrid = new Passenger[aircraftType.getWidth() + aircraftType.getAisle()][aircraftType.getRows()+aircraftType.getBuffer()];
+
         //Make into queue
 
         //Animation of each passenger
         /*Removed for testing: AircraftGrid aircraftGrid = new AircraftGrid(getAircraftType(), passengers);*/
-        gridBoarder(aircraftType.getWidth(), aircraftType.getAisle(), aircraftType.getBuffer(), passengers);
+        //gridBoarder(aircraftType.getWidth(), aircraftType.getAisle(), aircraftType.getBuffer(), passengers);
+
+        int delay = 1000; //milliseconds
+
+        ActionListener taskPerformer = new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                if(!completed){
+                    gridBoarder(aircraftType.getWidth(), aircraftType.getAisle(), aircraftType.getBuffer(), getPassengers());
+                }
+                else{
+
+                }
+            }
+        };
+
+        Timer timer = new Timer(delay, taskPerformer);
+        timer.start();
     }
+
 
     //BELOW IS FROM GRIDBOARDER
 
     public void gridBoarder(int width, int aisle, int buffer, List<Passenger> passengers) {
         this.passengers = passengers;
-        theGrid = new Passenger[width + aisle][aircraftType.getRows()+buffer];
 
         //Check if all passengers are in the correct seat
         while ((!passengers.isEmpty()) || !allSeated()) {
@@ -141,7 +168,6 @@ public class BoardingModel extends Observable{
 
             for (int p = theGrid.length - 1; p >= 0; p--) {             //Start from position 'A'
                 for (int r = theGrid[p].length - 1; r >= 0; r--) {      //Start from last row
-
 
                     //Is there a passenger in the cell?
                     if (theGrid[p][r] != null) {
@@ -233,17 +259,14 @@ public class BoardingModel extends Observable{
             }
             //TODO: Remove print statement - for testing purposes
             //System.out.println("Post-grid:" + Arrays.deepToString(theGrid));
-            try{
                 setChanged();
                 notifyObservers();
-                Thread.sleep(50);
-            }
-            catch (InterruptedException ie){
-                ie.getStackTrace();
-            }
+                System.out.println(Arrays.deepToString(theGrid));
+                return;
         }
         System.out.println(Arrays.deepToString(theGrid));
         //TODO: Remove print statement - for testing purposes
+        completed = true;
         System.out.println("Stopped looping");
     }
 
@@ -429,6 +452,10 @@ public class BoardingModel extends Observable{
 
     public Passenger[][] getTheGrid() {
         return theGrid;
+    }
+
+    public void setPassengers(List<Passenger> passengers){
+        this.passengers = passengers;
     }
 
     public List<Passenger> getPassengers() {

@@ -3,7 +3,7 @@
     <name>B737</name>
     <width>4</width>
     <aisle>1</aisle>
-    <rows>8</rows>
+    <rows>15</rows>
     <buffer>3</buffer>
     <windowSeats>[A, D]</windowSeats>
     <middleSeats></middleSeats>
