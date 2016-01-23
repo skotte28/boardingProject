@@ -1,18 +1,15 @@
 package MVCFramework;
 
 import Aircraft.AircraftType;
-import Aircraft.Position;
 import Methods.Method;
 import Passenger.Passenger;
 import Passenger.BlockPair;
-import Simulation.AircraftGrid;
 import Simulation.Direction;
 import XMLParsing.JAXBHandlerLayout;
 import XMLParsing.JAXBHandlerPassenger;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import javax.swing.*;
 import javax.swing.Timer;
 import java.io.BufferedReader;
 import java.io.File;
@@ -20,7 +17,8 @@ import java.io.FileReader;
 import java.util.*;
 
 public class BoardingModel extends Observable{
-
+    public Timer timer;
+    private int delay;
     private boolean completed;
 
     private String boardingMethod;
@@ -93,7 +91,7 @@ public class BoardingModel extends Observable{
     }
 
     protected void runSimulation(){
-
+        delay = getDelay(); //milliseconds
         completed = false;
 
         populateSeats();
@@ -137,11 +135,10 @@ public class BoardingModel extends Observable{
         /*Removed for testing: AircraftGrid aircraftGrid = new AircraftGrid(getAircraftType(), passengers);*/
         //gridBoarder(aircraftType.getWidth(), aircraftType.getAisle(), aircraftType.getBuffer(), passengers);
 
-        int delay = 1000; //milliseconds
-
         ActionListener taskPerformer = new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
                 if(!completed){
+                    System.out.println("Delay:"+delay);
                     gridBoarder(aircraftType.getWidth(), aircraftType.getAisle(), aircraftType.getBuffer(), getPassengers());
                 }
                 else{
@@ -150,10 +147,9 @@ public class BoardingModel extends Observable{
             }
         };
 
-        Timer timer = new Timer(delay, taskPerformer);
+        timer = new Timer(delay, taskPerformer);
         timer.start();
     }
-
 
     //BELOW IS FROM GRIDBOARDER
 
@@ -460,5 +456,17 @@ public class BoardingModel extends Observable{
 
     public List<Passenger> getPassengers() {
         return passengers;
+    }
+
+    // BELOW IS FOR TIMER
+
+
+    public int getDelay() {
+        return delay;
+    }
+
+    public void setDelay(int value) {
+        this.delay = (3/value)*1000;
+        System.out.println("Delay set to:"+delay);
     }
 }

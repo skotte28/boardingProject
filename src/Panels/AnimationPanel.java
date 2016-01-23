@@ -5,30 +5,18 @@ import Aircraft.Position;
 import MVCFramework.BoardingModel;
 import Passenger.Passenger;
 import Simulation.AircraftGrid;
-import com.sun.org.apache.xpath.internal.SourceTree;
-import org.w3c.dom.css.Rect;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.EventQueue;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Point;
-import java.awt.Rectangle;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.*;
 import java.util.*;
-import javax.swing.JFrame;
+import java.util.List;
 import javax.swing.JPanel;
-import javax.swing.UIManager;
-import javax.swing.UnsupportedLookAndFeelException;
 
 public class AnimationPanel extends JPanel implements Observer {
 
-    private int CELL_DIMENSION = 8; //Each square is 25cm
+    private int CELL_DIMENSION = 25; //Each square is 25cm
     private int columnCount; //= 140;  //Total length 28m
     private int rowCount; //= 18;      //Total width 3.5m
+    private int bufferCount;
 
     private List<Rectangle> cells;
     private List<Point> selectedCell;
@@ -39,10 +27,6 @@ public class AnimationPanel extends JPanel implements Observer {
 
     //TODO: Should there really need to be two instances of theGrid
     protected Passenger[][] animationGrid;
-
-    public void setLayoutCells(List<Point> layoutCells) {
-        this.layoutCells = layoutCells;
-    }
 
     private BoardingModel boardingModel;
 
@@ -71,51 +55,6 @@ public class AnimationPanel extends JPanel implements Observer {
 
         //TODO: Remove; color for testing purposes
         this.setBackground(Color.ORANGE);
-
-        //layoutCells = MVCFramework.BoardingModel.getLayout(selectedAircraft);
-
-
-        MouseAdapter mouseHandler;
-        mouseHandler = new MouseAdapter() {
-            @Override
-            public void mouseDragged(MouseEvent e) {
-                //Point point = e.getPoint();
-
-                int width = getWidth();
-                int height = getHeight();
-
-                int xOffset = (width - (columnCount * CELL_DIMENSION)) / 2;
-                int yOffset = (height - (rowCount * CELL_DIMENSION)) / 2;
-
-                //selectedCell = null;
-                if (e.getX() >= xOffset && e.getY() >= yOffset) {
-
-                    int column = (e.getX() - xOffset) / CELL_DIMENSION;
-                    int row = (e.getY() - yOffset) / CELL_DIMENSION;
-
-                    if (column >= 0 && row >= 0 && column < columnCount && row < rowCount) {
-                        System.out.println(column);
-                        System.out.println(row);
-                        Point addPoint = new Point(column, row);
-                        if(!layoutCells.contains(addPoint)) {
-                            if (selectedCell.contains(addPoint)) {
-                                selectedCell.remove(addPoint);
-                            } else {
-                                selectedCell.add(addPoint);
-                            }
-                        }
-                        System.out.println(selectedCell);
-
-                    }
-
-                }
-                repaint();
-                runThrougher(cells);
-
-            }
-        };
-        //addMouseListener(mouseHandler);
-        addMouseMotionListener(mouseHandler);
     }
 
     @Override
@@ -164,6 +103,9 @@ public class AnimationPanel extends JPanel implements Observer {
                 Rectangle cell = cells.get(index);
                 g2d.setColor(Color.BLACK);
                 g2d.fill(cell);
+                g2d.fillOval(10,10,10,10);
+                //TODO: Fix the row labelling
+
             }
 
         }
@@ -178,12 +120,22 @@ public class AnimationPanel extends JPanel implements Observer {
         }
 
         if (!seatCells.isEmpty()) {
+            int rowLabeler = 0;
             for(Point sc : seatCells) {
                 int index = sc.x + (sc.y * columnCount);
                 Rectangle cell = cells.get(index);
                 g2d.setColor(Color.LIGHT_GRAY);
                 g2d.fill(cell);
             }
+
+            /*Font font = new Font("Serif", Font.PLAIN, 96);
+            g2d.setFont(font);
+            g2d.setColor(Color.BLACK);
+            g2d.fillOval(10,10,10,10);
+            columnLabeler++;
+            if(columnLabeler <= rowCount){
+                g2d.drawString("hello",10,10);
+            }*/
         }
 
         if (!passengers.isEmpty()) {
@@ -208,22 +160,30 @@ public class AnimationPanel extends JPanel implements Observer {
             }
         }
 
-        g2d.setColor(Color.GRAY);
+        int columnLabeler = 0;
+        int rowLabeler = 0;
+        int aisleException = -1;
+        if(boardingModel.getAircraftType() != null) {
+            aisleException = boardingModel.getSeatValue("AISLE");
+        }
+        char[] alphabet = "ABCDEFGHIJKLMNOPQRSTUVWYZ".toCharArray();
         for (Rectangle cell : cells) {
+            g2d.setColor(Color.GRAY);
             g2d.draw(cell);
+            g2d.setColor(Color.BLACK);
+            if(columnLabeler > 0 && columnLabeler <= columnCount-bufferCount) {
+                g2d.drawString(Integer.toString(columnLabeler), (int) cell.getX() + (CELL_DIMENSION/4), (int) cell.getY());
+            }
+            if(rowLabeler < rowCount && (columnLabeler%columnCount==0)){
+                if(rowLabeler != aisleException) {
+                    g2d.drawString(Character.toString(alphabet[rowLabeler]), (int) cell.getX()-(CELL_DIMENSION/2), (int) cell.getY()+(CELL_DIMENSION));
+                    System.out.println("Row laballed!");
+                }
+                rowLabeler++;
+            }
+            columnLabeler++;
         }
-
         g2d.dispose();
-    }
-
-    public void runThrougher(List<Rectangle> cells){
-        //System.out.println("We've started");
-        int i = 0;
-        //System.out.println(cells);
-        for (Rectangle r : cells){
-            //System.out.println("Rectangle");
-            //System.out.println(i++);
-        }
     }
 
     public void newValues(AircraftType aircraftType) {
@@ -231,9 +191,11 @@ public class AnimationPanel extends JPanel implements Observer {
         if (aircraftType != null) {
             columnCount = aircraftType.getRows() + aircraftType.getBuffer();
             rowCount = aircraftType.getWidth() + aircraftType.getAisle();
+            bufferCount = aircraftType.getBuffer();
         } else {
             columnCount = 0;
             rowCount = 0;
+            bufferCount = 0;
         }
         System.out.println(rowCount + "and" + columnCount);
 
@@ -271,6 +233,7 @@ public class AnimationPanel extends JPanel implements Observer {
         animationGrid = boardingModel.getTheGrid();
         paxUpdate(animationGrid, boardingModel.getAircraftType());
         repaint();
+        //TODO: Print statement for testing purposes, remove once complete
         //System.out.println("From the update in animation panel:"+ Arrays.deepToString(animationGrid));
     }
 }

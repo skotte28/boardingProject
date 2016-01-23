@@ -33,9 +33,16 @@ public class SettingsPanel extends JPanel {
 
     /* Simulation Rate Slider */
     static final int SIM_RATE_MIN = 1;
-    static final int SIM_RATE_MAX = 15;
-    static final int SIM_RATE_INIT = 1;
-    JSlider simulationRate = new JSlider(JSlider.HORIZONTAL, SIM_RATE_MIN, SIM_RATE_MAX, SIM_RATE_INIT);
+    static final int SIM_RATE_MAX = 5;
+    static final int SIM_RATE_INIT = 3;
+    public JSlider simulationRate = new JSlider(JSlider.HORIZONTAL, SIM_RATE_MIN, SIM_RATE_MAX, SIM_RATE_INIT);
+
+    /* Capacity Slider */
+    static final int CAP_MIN = 0;
+    static final int CAP_MAX = 100;
+    static final int CAP_INIT = 100;
+
+    public JSlider capacitySlider = new JSlider(JSlider.HORIZONTAL, CAP_MIN, CAP_MAX, CAP_INIT);
 
     private String selectedAircraft;
 
@@ -58,14 +65,15 @@ public class SettingsPanel extends JPanel {
         return Integer.parseInt(capacityList.getSelectedItem().toString());
     }
 
+    public int getSelectedSimulationRate(){
+        return simulationRate.getValue();
+    }
     public String getDoorsUsed() {
         System.out.println(doorsUsedList.getSelectedItem().toString());
         return doorsUsedList.getSelectedItem().toString();
     }
 
     public SettingsPanel() {
-
-        //TODO: Default selection option
 
         //Loads the aircraft JComboBox based on the directories which are located in "content/"
         try {
@@ -87,16 +95,16 @@ public class SettingsPanel extends JPanel {
         boardingMethodList.setToolTipText("Select the boarding method to be used in the simulation");
         capacityList.setToolTipText("Occupancy rate used in the simulation");
         doorsUsedList.setToolTipText("Select if one or two doors are to be used in the simulation");
-
+        capacitySlider.setToolTipText(Integer.toString(capacitySlider.getValue()));
         setBackground(Color.YELLOW);
 
-        simulationRate.setMajorTickSpacing(2);
+        //simulationRate.setMajorTickSpacing(2);
         simulationRate.setMinorTickSpacing(1);
         simulationRate.setPaintTicks(true);
         simulationRate.setPaintLabels(true);
         simulationRate.setBorder(
                 BorderFactory.createEmptyBorder(5, 5, 5, 5));
-
+        simulationRate.setValue(SIM_RATE_INIT);
         simulationRate.addChangeListener(new ChangeListener() {
             @Override
             public void stateChanged(ChangeEvent e) {
@@ -105,6 +113,11 @@ public class SettingsPanel extends JPanel {
             }
         });
 
+        capacitySlider.setMajorTickSpacing(10);
+        capacitySlider.setMinorTickSpacing(2);
+        capacitySlider.setPaintTicks(true);
+        capacitySlider.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+        capacitySlider.setValue(CAP_INIT);
         //this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 
         GridBagConstraints gbc = new GridBagConstraints();
@@ -133,7 +146,7 @@ public class SettingsPanel extends JPanel {
         this.add(new JLabel("Occupancy (%):"), gbc);
 
         gbc.gridy++;
-        this.add(capacityList, gbc);
+        this.add(capacitySlider, gbc);
 
         /*Additional options*/
         gbc.gridy++;
@@ -159,7 +172,12 @@ public class SettingsPanel extends JPanel {
         gbc.gridy++;
         this.add(simulationRate, gbc);
 
-
+        //TODO: Default selection option
+/*
+        aircraftTypeList.setSelectedIndex(1);
+        boardingMethodList.setSelectedIndex(0);
+        capacityList.setSelectedIndex(0);
+*/
 /*        startSimulation.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -167,7 +185,7 @@ public class SettingsPanel extends JPanel {
 
                 *//* A lot of printing *//*
                 String selectedAircraft = aircraftTypeList.getSelectedItem().toString();
-                //MVCFramework.BoardingModel.setAircraftType();
+                    //MVCFramework.BoardingModel.setAircraftType();
                 String selectedBoardingMethod = boardingMethodList.getSelectedItem().toString();
                 String selectedDoorsUsed = doorsUsedList.getSelectedItem().toString();
                 System.out.println(selectedAircraft + " " + selectedBoardingMethod + " " + selectedDoorsUsed);

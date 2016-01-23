@@ -11,6 +11,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 public class BoardingView extends JFrame /* implements ChangeListener*/{
 /*
@@ -97,6 +99,7 @@ public class BoardingView extends JFrame /* implements ChangeListener*/{
             }
         });
         //animationPanel.setLayoutCells();
+
     }
 
     /*Slide listen, from here: http://da2i.univ-lille1.fr/doc/tutorial-java/uiswing/components/examples/SliderDemo.java*/

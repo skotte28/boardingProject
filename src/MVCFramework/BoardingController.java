@@ -27,18 +27,30 @@ public class BoardingController implements EventListener{
         theView.settingsPanel.pauseSimulation.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                //TODO: Print statement for testing purposes, remove when complete
                 System.out.println("Paused");
 
                     //Pause the simulation
                     if(theView.settingsPanel.pauseSimulation.getText().equals("Pause")){
                         theView.settingsPanel.pauseSimulation.setText("Resume");
-                        //TODO: Actually pause simulation
+                        theModel.timer.stop();
+
                     } else {
 
                     //Resume the simulations
                         theView.settingsPanel.pauseSimulation.setText("Pause");
-                        //TODO: Actually resume simulation
+                        theModel.timer.start();
                     }
+            }
+        });
+
+        theView.settingsPanel.simulationRate.addChangeListener(new ChangeListener() {
+            @Override
+            public void stateChanged(ChangeEvent e) {
+                int value = theView.settingsPanel.simulationRate.getValue();
+                System.out.println(value);
+                //TODO: Make sure this timervalue is the same as the otherone
+                theModel.timer.setDelay(3/(value)*1000);
             }
         });
     }
@@ -47,7 +59,8 @@ public class BoardingController implements EventListener{
         theModel.setAircraftType(theView.settingsPanel.getSelectedAircraft());
         theModel.setBoardingMethod(theView.settingsPanel.getSelectedBoardingMethod());
         theModel.setCapacity(theView.settingsPanel.getSelectedCapacity());
-
+        theModel.setDelay(theView.settingsPanel.simulationRate.getValue());
+        System.out.println("This is the simulation rate"+theView.settingsPanel.simulationRate.getValue());
         /* TODO: Add the doors used options*/
     }
 
@@ -59,7 +72,6 @@ public class BoardingController implements EventListener{
 
             //Should run method in controller
             theModel.runSimulation();
-
 
         }
 

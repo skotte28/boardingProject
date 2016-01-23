@@ -1,6 +1,7 @@
 package Panels;
 
 import MVCFramework.BoardingModel;
+import Passenger.Passenger;
 import Simulation.AircraftGrid;
 
 import javax.swing.*;
@@ -19,7 +20,7 @@ public class QueuePanel extends JPanel implements Observer {
 
     public QueuePanel(BoardingModel boardingModel) {
         this.boardingModel = boardingModel;
-        this.setBackground(Color.GRAY);
+        this.setBackground(Color.LIGHT_GRAY);
         repaint();
     }
 
@@ -37,10 +38,15 @@ public class QueuePanel extends JPanel implements Observer {
         System.out.println(circleWH);
 
         int count = 0;
-        for(int positionY = circleSpacing; positionY < windowH; positionY = positionY + circleWH + circleSpacing) {
-            for (int positionX = circleSpacing; positionX < windowW && count<remaining; positionX = positionX + circleWH + circleSpacing) {
-                g.fillOval(positionX, positionY, circleWH, circleWH);
-                count++;
+        if(boardingModel.getPassengers() != null) {
+            for (int positionY = circleSpacing; positionY < windowH; positionY = positionY + circleWH + circleSpacing) {
+                for (int positionX = circleSpacing; positionX < windowW && count < remaining; positionX = positionX + circleWH + circleSpacing) {
+                    g.setColor(Color.BLUE);
+                    g.fillOval(positionX, positionY, circleWH, circleWH);
+                    g.setColor(Color.WHITE);
+                    g.drawString(boardingModel.getPassengers().get(count).toString(), positionX + (circleWH / 8), positionY+(4*(circleWH/5)));
+                    count++;
+                }
             }
         }
     }
