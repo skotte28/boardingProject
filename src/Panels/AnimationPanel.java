@@ -22,8 +22,8 @@ public class AnimationPanel extends JPanel implements Observer {
     private List<Point> selectedCell;
     private List<Point> layoutCells;
     private List<Point> seatCells;
-    protected List<Point> passengers;
-    protected List<Point> seatedPax;
+    protected List<PointPair> passengers;
+    protected List<PointPair> seatedPax;
 
     //TODO: Should there really need to be two instances of theGrid
     protected Passenger[][] animationGrid;
@@ -40,10 +40,10 @@ public class AnimationPanel extends JPanel implements Observer {
         selectedCell = new ArrayList<Point>();
         layoutCells = new ArrayList<Point>();
         seatCells = new ArrayList<Point>();
-        passengers = new ArrayList<Point>();
-        seatedPax = new ArrayList<Point>();
+        passengers = new ArrayList<PointPair>();
+        seatedPax = new ArrayList<PointPair>();
 
-        if(AircraftGrid.theGrid != null) {
+        /*if(AircraftGrid.theGrid != null) {
             for (Passenger[] position : AircraftGrid.theGrid) {
                 for (Passenger pax : position) {
                     if (pax != null) {
@@ -51,7 +51,7 @@ public class AnimationPanel extends JPanel implements Observer {
                     }
                 }
             }
-        }
+        }*/
 
         //TODO: Remove; color for testing purposes
         this.setBackground(Color.ORANGE);
@@ -140,11 +140,15 @@ public class AnimationPanel extends JPanel implements Observer {
 
         if (!passengers.isEmpty()) {
             System.out.println("Passenger wasn't empty");
-            for(Point px : passengers) {
-                int index = px.x + (px.y * columnCount);
+            for(PointPair px : passengers) {
+                int index = px.getPoint().x + (px.getPoint().y * columnCount);
                 Rectangle cell = cells.get(index);
                 g2d.setColor(Color.YELLOW);
                 g2d.fill(cell);
+                g2d.setColor(Color.BLACK);
+                g2d.drawString(px.getLabel(), (int) cell.getX()+(CELL_DIMENSION/4), (int) cell.getY()+(CELL_DIMENSION/2));
+                //TODO: Remove, for testing purposes only
+                //System.out.println(px.getLabel());
             }
         } else {
             System.out.println("Passenger was empty");
@@ -152,11 +156,13 @@ public class AnimationPanel extends JPanel implements Observer {
 
         if (!seatedPax.isEmpty()) {
             System.out.println(seatedPax);
-            for(Point sc : seatedPax) {
-                int index = sc.x + (sc.y * columnCount);
+            for(PointPair sc : seatedPax) {
+                int index = sc.getPoint().x + (sc.getPoint().y * columnCount);
                 Rectangle cell = cells.get(index);
                 g2d.setColor(Color.GREEN);
                 g2d.fill(cell);
+                g2d.setColor(Color.BLACK);
+                g2d.drawString(sc.getLabel(), (int) cell.getX()+(CELL_DIMENSION/4), (int) cell.getY()+(CELL_DIMENSION/2));
             }
         }
 
@@ -217,9 +223,9 @@ public class AnimationPanel extends JPanel implements Observer {
             for(int row = 1; row <= aircraftType.getRows(); row++){
                 if(animationGrid[pos][row] != null){
                     if(animationGrid[pos][row].isSeated()){
-                        seatedPax.add(new Point(row, pos));
+                        seatedPax.add(new PointPair(new Point(row, pos), animationGrid[pos][row].toString()));
                     } else {
-                        passengers.add(new Point(row, pos));
+                        passengers.add(new PointPair(new Point(row, pos), animationGrid[pos][row].toString()));
                     }
                 }
             }
@@ -235,5 +241,23 @@ public class AnimationPanel extends JPanel implements Observer {
         repaint();
         //TODO: Print statement for testing purposes, remove once complete
         //System.out.println("From the update in animation panel:"+ Arrays.deepToString(animationGrid));
+    }
+
+    public class PointPair{
+        Point point;
+        String label;
+
+        public PointPair(Point point, String label){
+            this.point = point;
+            this.label = label;
+        }
+
+        public String getLabel(){
+            return label;
+        }
+
+        public Point getPoint(){
+            return point;
+        }
     }
 }
