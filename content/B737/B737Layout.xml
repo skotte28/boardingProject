@@ -3,9 +3,9 @@
     <name>B737</name>
     <width>4</width>
     <aisle>1</aisle>
-    <rows>15</rows>
+    <rows>8</rows>
     <buffer>3</buffer>
-    <windowSeats>[A, D]</windowSeats>
+    <windowSeats>A, D</windowSeats>
     <middleSeats></middleSeats>
-    <aisleSeats>[Position.B, Position.C]</aisleSeats>
+    <aisleSeats>["B", "C"]</aisleSeats>
 </AircraftType>

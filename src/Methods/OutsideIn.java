@@ -33,16 +33,16 @@ public class OutsideIn {
         List<Passenger> aisle = new LinkedList<>();
 
         //To be used to ensure that more aircrafts can be added in the future - could be done without if switch case is used below
-        LinkedList<Position> windowSeats = new LinkedList<>();
-        for(Position pos : aircraftType.getWindowSeats()){
+        LinkedList<String> windowSeats = new LinkedList<>();
+        for(String pos : aircraftType.getWindowSeats()){
             windowSeats.add(pos);
         }
-        LinkedList<Position> middleSeats = new LinkedList<>();
-        for(Position pos : aircraftType.getMiddleSeats()){
+        LinkedList<String> middleSeats = new LinkedList<>();
+        for(String pos : aircraftType.getMiddleSeats()){
             middleSeats.add(pos);
         }
-        LinkedList<Position> aisleSeats = new LinkedList<>();
-        for(Position pos : aircraftType.getAisleSeats()){
+        LinkedList<String> aisleSeats = new LinkedList<>();
+        for(String pos : aircraftType.getAisleSeats()){
             aisleSeats.add(pos);
         }
 

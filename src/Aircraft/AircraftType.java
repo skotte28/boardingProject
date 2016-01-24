@@ -28,36 +28,36 @@ public class AircraftType {
     private int aisle;
     private int buffer;
 
-    public Position[] getWindowSeats() {
+    private String[] windowSeats;
+    private String[] middleSeats;
+    private String[] aisleSeats;
+
+    public String[] getWindowSeats() {
         return windowSeats;
     }
 
     @XmlElement(name="windowSeats")
-    public void setWindowSeats(Position[] windowSeats) {
-
+    public void setWindowSeats(String[] windowSeats) {
+        this.windowSeats = windowSeats;
     }
 
-    public Position[] getMiddleSeats() {
+    public String[] getMiddleSeats() {
         return middleSeats;
     }
 
     @XmlElement(name="middleSeats")
-    public void setMiddleSeats(Position[] middleSeats) {
+    public void setMiddleSeats(String[] middleSeats) {
         this.middleSeats = middleSeats;
     }
 
-    public Position[] getAisleSeats() {
+    public String[] getAisleSeats() {
         return aisleSeats;
     }
 
     @XmlElement(name="aisleSeats")
-    public void setAisleSeats(Position[] aisleSeats) {
+    public void setAisleSeats(String[] aisleSeats) {
         this.aisleSeats = aisleSeats;
     }
-
-    private Position[] windowSeats;
-    private Position[] middleSeats;
-    private Position[] aisleSeats;
 
     public AircraftType(){}
 

@@ -87,6 +87,7 @@ public class SettingsPanel extends JPanel {
         }catch (SecurityException se){
             se.printStackTrace();
         }
+        System.out.println("AircraftTypeList:"+aircraftTypeList.toString());
 
         //Tool tips settings
         startSimulation.setToolTipText("Start the simulation");
@@ -146,7 +147,8 @@ public class SettingsPanel extends JPanel {
         this.add(new JLabel("Occupancy (%):"), gbc);
 
         gbc.gridy++;
-        this.add(capacitySlider, gbc);
+        //this.add(capacitySlider, gbc);
+        this.add(capacityList, gbc);
 
         /*Additional options*/
         gbc.gridy++;

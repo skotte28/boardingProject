@@ -53,8 +53,10 @@ public class QueuePanel extends JPanel implements Observer {
 
     @Override
     public void update(Observable o, Object arg) {
-        remaining = boardingModel.getPassengers().size();
-        System.out.println("Remaining passengers: "+remaining);
-        repaint();
+        if(boardingModel.getPassengers() != null) {
+            remaining = boardingModel.getPassengers().size();
+            System.out.println("Remaining passengers: " + remaining);
+            repaint();
+        }
     }
 }

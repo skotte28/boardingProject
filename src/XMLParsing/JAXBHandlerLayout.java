@@ -21,8 +21,6 @@ public class JAXBHandlerLayout {
 
             aircraftType = (AircraftType) jaxbUnmarshaller.unmarshal(file);
 
-            System.out.println(aircraftType.toString());
-
             return aircraftType;
 
         } catch (JAXBException je){

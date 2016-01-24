@@ -17,7 +17,6 @@ public class BoardingController implements EventListener{
     private BoardingModel theModel = new BoardingModel();
     private BoardingView theView = new BoardingView(theModel);
 
-
     public BoardingController(BoardingView theView, BoardingModel theModel) {
         this.theView = theView;
         this.theModel = theModel;
@@ -56,10 +55,11 @@ public class BoardingController implements EventListener{
     }
 
     private void modelLoader(){
-        theModel.setAircraftType(theView.settingsPanel.getSelectedAircraft());
+        /* Had to be disabled to allowed aircraft preview... Seems strange
+        theModel.setAircraftType(theView.settingsPanel.getSelectedAircraft()); */
         theModel.setBoardingMethod(theView.settingsPanel.getSelectedBoardingMethod());
         theModel.setCapacity(theView.settingsPanel.getSelectedCapacity());
-        theModel.setDelay(theView.settingsPanel.simulationRate.getValue());
+        //theModel.setDelay(theView.settingsPanel.simulationRate.getValue());
         System.out.println("This is the simulation rate"+theView.settingsPanel.simulationRate.getValue());
         /* TODO: Add the doors used options*/
     }

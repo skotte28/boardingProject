@@ -9,6 +9,7 @@ import Panels.SettingsPanel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Observable;
 
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
@@ -92,10 +93,11 @@ public class BoardingView extends JFrame /* implements ChangeListener*/{
         settingsPanel.aircraftTypeList.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                System.out.println(settingsPanel.aircraftTypeList.getSelectedItem().toString());
                 System.out.println("Somethings changed again");
-                settingsPanel.setSelectedAircraft();
+                theModel.setAircraftType(settingsPanel.aircraftTypeList.getSelectedItem().toString());
+                System.out.println("1: "+settingsPanel.aircraftTypeList.getSelectedItem().toString());
                 //animationPanel.setLayoutCells(aircraftType.getLayout(settingsPanel.getSelectedAircraft()));
-                animationPanel.repaint();
             }
         });
         //animationPanel.setLayoutCells();
