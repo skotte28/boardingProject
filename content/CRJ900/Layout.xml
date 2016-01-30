@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <AircraftType>
-    <name>B737</name>
+    <name>CRJ900</name>
     <width>4</width>
     <aisle>1</aisle>
-    <rows>8</rows>
+    <rows>24</rows>
     <buffer>3</buffer>
     <windowSeats>A, D</windowSeats>
     <middleSeats></middleSeats>

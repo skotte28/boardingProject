@@ -12,6 +12,7 @@ import java.awt.event.ActionListener;
 import java.util.Observable;
 
 import javax.swing.*;
+import javax.swing.border.TitledBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -45,6 +46,12 @@ public class BoardingView extends JFrame /* implements ChangeListener*/{
         animationPanel.setToolTipText("Animation Panel");
         queuePanel = new QueuePanel(theModel);
         queuePanel.setToolTipText("Queue Panel");
+
+        TitledBorder queueTitle = BorderFactory.createTitledBorder("Remaining Passengers:");
+        queuePanel.setBorder(queueTitle);
+
+        TitledBorder animationTitle = BorderFactory.createTitledBorder("Boarding Process:");
+        animationPanel.setBorder(animationTitle);
 
         /* Having the addObservers here means the panels can be protected */
         theModel.addObserver(animationPanel);
@@ -95,11 +102,20 @@ public class BoardingView extends JFrame /* implements ChangeListener*/{
             public void actionPerformed(ActionEvent e) {
                 System.out.println(settingsPanel.aircraftTypeList.getSelectedItem().toString());
                 System.out.println("Somethings changed again");
+                //animationPanel.nullPassengers();
                 theModel.setAircraftType(settingsPanel.aircraftTypeList.getSelectedItem().toString());
                 System.out.println("1: "+settingsPanel.aircraftTypeList.getSelectedItem().toString());
-                //animationPanel.setLayoutCells(aircraftType.getLayout(settingsPanel.getSelectedAircraft()));
+
             }
         });
+
+        /*settingsPanel.simulationRate.addChangeListener(new ChangeListener() {
+            @Override
+            public void stateChanged(ChangeEvent e) {
+                theModel.setDelay(settingsPanel.simulationRate.getValue());
+                //System.out.println(value);
+            }
+        });*/
         //animationPanel.setLayoutCells();
 
     }

@@ -17,6 +17,8 @@ import javax.swing.JPanel;
 
 public class AnimationPanel extends JPanel implements Observer {
 
+    int count = 0;
+
     private int CELL_DIMENSION = 25; //Each square is 25cm
     private int columnCount; //= 140;  //Total length 28m
     private int rowCount; //= 18;      //Total width 3.5m
@@ -63,7 +65,7 @@ public class AnimationPanel extends JPanel implements Observer {
         this.setBackground(Color.WHITE);
 
         try{
-            image = ImageIO.read(new File("content/images/seat25.png"));
+            image = ImageIO.read(new File("resources/images/seat25.png"));
         } catch (IOException ex){
             System.out.println("Image didn't work.");
         }
@@ -90,6 +92,9 @@ public class AnimationPanel extends JPanel implements Observer {
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         Graphics2D g2d = (Graphics2D) g.create();
+
+        Font paxFont = g2d.getFont().deriveFont( 9.0f );
+        Font labelFont = g2d.getFont().deriveFont( 12.5f );
 
         int width = getWidth();
         int height = getHeight();
@@ -143,6 +148,7 @@ public class AnimationPanel extends JPanel implements Observer {
         }
 
         if (!passengers.isEmpty()) {
+            g2d.setFont(paxFont);
             for(PointPair px : passengers) {
                 int index = px.getPoint().x + (px.getPoint().y * columnCount);
                 Rectangle cell = cells.get(index);
@@ -154,7 +160,7 @@ public class AnimationPanel extends JPanel implements Observer {
         }
 
         if (!seatedPax.isEmpty()) {
-            System.out.println(seatedPax);
+            g2d.setFont(paxFont);
             for(PointPair sc : seatedPax) {
                 int index = sc.getPoint().x + (sc.getPoint().y * columnCount);
                 Rectangle cell = cells.get(index);
@@ -174,6 +180,7 @@ public class AnimationPanel extends JPanel implements Observer {
         }
         char[] alphabet = "ABCDEFGHIJKLMNOPQRSTUVWYZ".toCharArray();
         for (Rectangle cell : cells) {
+            g2d.setFont(labelFont);
             g2d.setColor(Color.GRAY);
             g2d.draw(cell);
             g2d.setColor(Color.BLACK);
@@ -208,16 +215,14 @@ public class AnimationPanel extends JPanel implements Observer {
         if (aircraftType != null){
             for (int row = 1; row <= aircraftType.getRows(); row++) {
                 for (int pos = 0; pos < aircraftType.getWidth() + aircraftType.getAisle(); pos++) {
-                    System.out.println("Aisle is at:"+boardingModel.getSeatValue("AISLE"));
                     if (pos != boardingModel.getSeatValue("AISLE")) {
-                        System.out.println("The position"+pos);
                         seatCells.add(new Point(row, pos));
                     }
                 }
 
             }
         }
-        System.out.println(seatCells);
+        //System.out.println(seatCells);
     }
 
     public void paxUpdate(Passenger[][] animationGrid, AircraftType aircraftType) {
@@ -243,6 +248,7 @@ public class AnimationPanel extends JPanel implements Observer {
         animationGrid = boardingModel.getTheGrid();
         paxUpdate(animationGrid, boardingModel.getAircraftType());
         repaint();
+        takeSnapShot(this);
     }
 
     public class PointPair{
@@ -261,5 +267,23 @@ public class AnimationPanel extends JPanel implements Observer {
         public Point getPoint(){
             return point;
         }
+    }
+
+    public void nullPassengers(){
+        passengers = null;
+        seatedPax = null;
+    }
+
+    void takeSnapShot(JPanel panel){
+        BufferedImage bufImage = new BufferedImage(panel.getSize().width, panel.getSize().height,BufferedImage.TYPE_INT_RGB);
+        panel.paint(bufImage.createGraphics());
+        File imageFile = new File("./screenshots/screenshot"+count+".jpeg");
+        try{
+            imageFile.createNewFile();
+            ImageIO.write(bufImage, "jpeg", imageFile);
+        }catch(Exception ex){
+            System.out.println("Problem with creating image");
+        }
+        count++;
     }
 }

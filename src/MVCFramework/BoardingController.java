@@ -49,7 +49,10 @@ public class BoardingController implements EventListener{
                 int value = theView.settingsPanel.simulationRate.getValue();
                 System.out.println(value);
                 //TODO: Make sure this timervalue is the same as the otherone
-                theModel.timer.setDelay(3/(value)*1000);
+                theModel.timer.stop();
+                theModel.setDelay(value);
+                theModel.timer.setDelay(theModel.getDelay());
+                theModel.timer.start();
             }
         });
     }
@@ -59,7 +62,7 @@ public class BoardingController implements EventListener{
         theModel.setAircraftType(theView.settingsPanel.getSelectedAircraft()); */
         theModel.setBoardingMethod(theView.settingsPanel.getSelectedBoardingMethod());
         theModel.setCapacity(theView.settingsPanel.getSelectedCapacity());
-        //theModel.setDelay(theView.settingsPanel.simulationRate.getValue());
+        theModel.setDelay(theView.settingsPanel.simulationRate.getValue());
         System.out.println("This is the simulation rate"+theView.settingsPanel.simulationRate.getValue());
         /* TODO: Add the doors used options*/
     }
@@ -67,11 +70,13 @@ public class BoardingController implements EventListener{
     public class ButtonListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e){
+            theView.settingsPanel.startSimulation.setEnabled(false);
             //Set all model variables
             modelLoader();
 
             //Should run method in controller
             theModel.runSimulation();
+            //theView.settingsPanel.startSimulation.setEnabled(true);
 
         }
 

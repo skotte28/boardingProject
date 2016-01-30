@@ -20,7 +20,7 @@ public class QueuePanel extends JPanel implements Observer {
 
     public QueuePanel(BoardingModel boardingModel) {
         this.boardingModel = boardingModel;
-        this.setBackground(Color.LIGHT_GRAY);
+        this.setBackground(Color.WHITE);
         repaint();
     }
 
@@ -29,22 +29,25 @@ public class QueuePanel extends JPanel implements Observer {
         super.paintComponent(g);
         Graphics2D g2d = (Graphics2D) g;
 
+        Font paxFont = g2d.getFont().deriveFont( 9.0f );
+        g2d.setFont(paxFont);
+
         int windowW = getWidth();
         int windowH = getHeight();
 
-        System.out.println(windowW);
-        int circleWH = (int) Math.round((5/360.0)*windowW);
+        //System.out.println(windowW);
+        int circleWH = 25;//(int) Math.round((5/360.0)*windowW);
         int circleSpacing = (int) Math.round((1/360.0)*windowW);
-        System.out.println(circleWH);
+        //System.out.println(circleWH);
 
         int count = 0;
         if(boardingModel.getPassengers() != null) {
-            for (int positionY = circleSpacing; positionY < windowH; positionY = positionY + circleWH + circleSpacing) {
-                for (int positionX = circleSpacing; positionX < windowW && count < remaining; positionX = positionX + circleWH + circleSpacing) {
-                    g.setColor(Color.BLUE);
+            for (int positionY = circleSpacing*4; positionY < windowH; positionY = positionY + circleWH + circleSpacing) {  //circleSpacing is *4 to allow space for panel title
+                for (int positionX = circleSpacing*2; positionX < windowW-circleWH && count < remaining; positionX = positionX + circleWH + circleSpacing) {
+                    g.setColor(Color.ORANGE);
                     g.fillOval(positionX, positionY, circleWH, circleWH);
-                    g.setColor(Color.WHITE);
-                    g.drawString(boardingModel.getPassengers().get(count).toString(), positionX + (circleWH / 8), positionY+(4*(circleWH/5)));
+                    g.setColor(Color.BLACK);
+                    g.drawString(boardingModel.getPassengers().get(count).toString(), positionX + (circleWH / 4), positionY+(2*(circleWH/3)));
                     count++;
                 }
             }
@@ -55,7 +58,7 @@ public class QueuePanel extends JPanel implements Observer {
     public void update(Observable o, Object arg) {
         if(boardingModel.getPassengers() != null) {
             remaining = boardingModel.getPassengers().size();
-            System.out.println("Remaining passengers: " + remaining);
+            //System.out.println("Remaining passengers: " + remaining);
             repaint();
         }
     }

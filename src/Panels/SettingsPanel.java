@@ -32,9 +32,9 @@ public class SettingsPanel extends JPanel {
     public JButton pauseSimulation = new JButton("Pause"); //Make this grey out when running
 
     /* Simulation Rate Slider */
-    static final int SIM_RATE_MIN = 1;
-    static final int SIM_RATE_MAX = 5;
-    static final int SIM_RATE_INIT = 3;
+    static final int SIM_RATE_MIN = 0;
+    static final int SIM_RATE_MAX = 4;
+    static final int SIM_RATE_INIT = 2;
     public JSlider simulationRate = new JSlider(JSlider.HORIZONTAL, SIM_RATE_MIN, SIM_RATE_MAX, SIM_RATE_INIT);
 
     /* Capacity Slider */
@@ -97,7 +97,7 @@ public class SettingsPanel extends JPanel {
         capacityList.setToolTipText("Occupancy rate used in the simulation");
         doorsUsedList.setToolTipText("Select if one or two doors are to be used in the simulation");
         capacitySlider.setToolTipText(Integer.toString(capacitySlider.getValue()));
-        setBackground(Color.YELLOW);
+        //setBackground(Color.YELLOW);
 
         //simulationRate.setMajorTickSpacing(2);
         simulationRate.setMinorTickSpacing(1);
@@ -106,13 +106,6 @@ public class SettingsPanel extends JPanel {
         simulationRate.setBorder(
                 BorderFactory.createEmptyBorder(5, 5, 5, 5));
         simulationRate.setValue(SIM_RATE_INIT);
-        simulationRate.addChangeListener(new ChangeListener() {
-            @Override
-            public void stateChanged(ChangeEvent e) {
-                int value = simulationRate.getValue();
-                System.out.println(value);
-            }
-        });
 
         capacitySlider.setMajorTickSpacing(10);
         capacitySlider.setMinorTickSpacing(2);
