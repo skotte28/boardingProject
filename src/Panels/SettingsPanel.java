@@ -4,6 +4,8 @@ import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.File;
 
 
@@ -21,15 +23,23 @@ public class SettingsPanel extends JPanel {
     private String[] boardingMethodStrings = {"Back-to-front", "Outside-in", "Random", "Even-odd"};
     private JComboBox boardingMethodList = new JComboBox(boardingMethodStrings);
 
+    private JTextArea boardingMethodInfo = new JTextArea();
+
     private Integer[] capacityStrings = {100, 75, 50, 25};
     private JComboBox<Integer> capacityList = new JComboBox<Integer>(capacityStrings);
 
-    /*Additional options*/
+    /* Additional options
     private String[] doorsUsedStrings = {"Front only", "Front & Rear"};
-    private JComboBox doorsUsedList = new JComboBox(doorsUsedStrings);
+    private JComboBox doorsUsedList = new JComboBox(doorsUsedStrings); */
 
-    public JButton startSimulation = new JButton("Run"); //Make this grey out when running
-    public JButton pauseSimulation = new JButton("Pause"); //Make this grey out when running
+    /* Buttons */
+    public JButton startSimulation = new JButton("Run");
+    public JButton pauseSimulation = new JButton("Pause");
+    public JButton reset = new JButton("Reset");
+
+    /* Status */
+    public JLabel status = new JLabel();
+    public JLabel paxRemaining = new JLabel();
 
     /* Simulation Rate Slider */
     static final int SIM_RATE_MIN = 0;
@@ -68,10 +78,12 @@ public class SettingsPanel extends JPanel {
     public int getSelectedSimulationRate(){
         return simulationRate.getValue();
     }
+
+    /*
     public String getDoorsUsed() {
         System.out.println(doorsUsedList.getSelectedItem().toString());
         return doorsUsedList.getSelectedItem().toString();
-    }
+    }*/
 
     public SettingsPanel() {
 
@@ -80,14 +92,14 @@ public class SettingsPanel extends JPanel {
             File file = new File("content/");
             File[] files;
             files = file.listFiles();
-            for(File f : files){
+            for (File f : files) {
                 String[] name = f.toString().split("\\\\");
                 aircraftTypeList.addItem(name[1]);
             }
-        }catch (SecurityException se){
+        } catch (SecurityException se) {
             se.printStackTrace();
         }
-        System.out.println("AircraftTypeList:"+aircraftTypeList.toString());
+        System.out.println("AircraftTypeList:" + aircraftTypeList.toString());
 
         //Tool tips settings
         startSimulation.setToolTipText("Start the simulation");
@@ -95,11 +107,9 @@ public class SettingsPanel extends JPanel {
         aircraftTypeList.setToolTipText("Select the type of aircraft to be used in the simulation");
         boardingMethodList.setToolTipText("Select the boarding method to be used in the simulation");
         capacityList.setToolTipText("Occupancy rate used in the simulation");
-        doorsUsedList.setToolTipText("Select if one or two doors are to be used in the simulation");
+        /*doorsUsedList.setToolTipText("Select if one or two doors are to be used in the simulation");*/
         capacitySlider.setToolTipText(Integer.toString(capacitySlider.getValue()));
-        //setBackground(Color.YELLOW);
 
-        //simulationRate.setMajorTickSpacing(2);
         simulationRate.setMinorTickSpacing(1);
         simulationRate.setPaintTicks(true);
         simulationRate.setPaintLabels(true);
@@ -112,12 +122,11 @@ public class SettingsPanel extends JPanel {
         capacitySlider.setPaintTicks(true);
         capacitySlider.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
         capacitySlider.setValue(CAP_INIT);
-        //this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 
         GridBagConstraints gbc = new GridBagConstraints();
         this.setLayout(new GridBagLayout());
         gbc.insets = new Insets(2, 1, 2, 1);
-        gbc.gridwidth = 2;
+        gbc.gridwidth = 3;
 
         gbc.weightx = 1.0;
         gbc.weighty = 0;
@@ -137,6 +146,18 @@ public class SettingsPanel extends JPanel {
         this.add(boardingMethodList, gbc);
 
         gbc.gridy++;
+        this.add(new JLabel("Info:"), gbc);
+
+        gbc.gridy++;
+        this.add(boardingMethodInfo, gbc);
+        boardingMethodInfo.setPreferredSize(new Dimension(200,75));
+        boardingMethodInfo.setLineWrap(true);
+        boardingMethodInfo.setWrapStyleWord(true);
+        boardingMethodInfo.setEditable(false);
+        boardingMethodInfo.setSelectionEnd(2);
+        boardingMethodInfo.setBackground(Color.white);
+
+        gbc.gridy++;
         this.add(new JLabel("Occupancy (%):"), gbc);
 
         gbc.gridy++;
@@ -147,8 +168,8 @@ public class SettingsPanel extends JPanel {
         gbc.gridy++;
         this.add(new JLabel("Doors used:"), gbc);
 
-        gbc.gridy++;
-        this.add(doorsUsedList, gbc);
+        /*gbc.gridy++;
+        this.add(doorsUsedList, gbc);*/
 
         /*Simulation Control*/
         gbc.gridwidth = 1;
@@ -158,42 +179,67 @@ public class SettingsPanel extends JPanel {
         this.add(startSimulation, gbc);
         gbc.gridx = 1;
         this.add(pauseSimulation, gbc);
+        gbc.gridx = 2;
+        this.add(reset,gbc);
 
         gbc.fill = GridBagConstraints.HORIZONTAL;
-        gbc.gridwidth = 2;
+        gbc.gridwidth = 3;
         gbc.gridy++;
         gbc.gridx = 0;
         this.add(new JLabel("Simulation rate:"), gbc);
         gbc.gridy++;
         this.add(simulationRate, gbc);
 
+        gbc.gridy++;
+        gbc.gridwidth = 2;
+        gbc.gridx = 0;
+        this.add(new JLabel("Status:"), gbc);
+        gbc.gridx++;
+        this.add(status,gbc);
+
+        gbc.gridy++;
+        gbc.gridx = 0;
+        this.add(new JLabel("Remaining passengers:"), gbc);
+        gbc.gridx++;
+        this.add(paxRemaining, gbc);
+
+        pauseSimulation.setEnabled(false);
+        reset.setEnabled(false);
+
         //TODO: Default selection option
-/*
-        aircraftTypeList.setSelectedIndex(1);
-        boardingMethodList.setSelectedIndex(0);
-        capacityList.setSelectedIndex(0);
-*/
-/*        startSimulation.addActionListener(new ActionListener() {
+
+        boardingMethodList.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                System.out.println("Running");
-
-                *//* A lot of printing *//*
-                String selectedAircraft = aircraftTypeList.getSelectedItem().toString();
-                    //MVCFramework.BoardingModel.setAircraftType();
-                String selectedBoardingMethod = boardingMethodList.getSelectedItem().toString();
-                String selectedDoorsUsed = doorsUsedList.getSelectedItem().toString();
-                System.out.println(selectedAircraft + " " + selectedBoardingMethod + " " + selectedDoorsUsed);
-                AircraftType.getLayout(selectedAircraft);
-                //Should run something based on this...
+                //Is this good practice to have something of type "Object"?
+                Object selectedMethod = boardingMethodList.getSelectedItem();
+                if(selectedMethod.equals("Back-to-front")){
+                    boardingMethodInfo.setText("The passengers seated at the back of the aircraft are welcomed onboard first.");
+                } else if(selectedMethod.equals("Outside-in")){
+                    boardingMethodInfo.setText("The passengers seated at window seats are welcomed onboard first, followed by middle seat passengers, and finally by aisle seat passengers.");
+                } else if(selectedMethod.equals("Random")){
+                    boardingMethodInfo.setText("Passengers are welcome to board whenever they wish.");
+                } else if(selectedMethod.equals("Even-odd")){
+                    boardingMethodInfo.setText("Passengers seated in even numbered rows are welcomed first, followed by passengers seated in odd numbered rows.");
+                }
             }
-        });*/
+        });
     }
-/*
-    private class ButtonListener implements ActionListener {
-        public void actionPerformed(ActionEvent e){
-            System.out.println("I pressed this button");
-            layoutCells = AircraftType.getLayout(aircraftTypeList.getSelectedItem().toString());
-        }
-    }*/
+
+    public void runningDisable(){
+        aircraftTypeList.setEnabled(false);
+        capacityList.setEnabled(false);
+        boardingMethodList.setEnabled(false);
+        /*doorsUsedList.setEnabled(false);*/
+    }
+
+    public void renable(){
+        aircraftTypeList.setEnabled(true);
+        capacityList.setEnabled(true);
+        boardingMethodList.setEnabled(true);
+        /*doorsUsedList.setEnabled(true);*/
+    }
+
+
+    //TODO: Should this go here or somewhere else which isn't layout?
 }

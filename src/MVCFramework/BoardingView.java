@@ -57,14 +57,6 @@ public class BoardingView extends JFrame /* implements ChangeListener*/{
         theModel.addObserver(animationPanel);
         theModel.addObserver(queuePanel);
 
-        /* BoxLayout
-        panelFramer.setLayout(new BoxLayout(panelFramer, BoxLayout.X_AXIS));
-
-        panelFramer.add(settingsPanel, BorderLayout.WEST);
-        panelFramer.add(animationPanel, BorderLayout.CENTER);
-        panelFramer.add(queuePanel, BorderLayout.EAST);
-        */
-
 
         panelFramer.setLayout(new GridBagLayout());
         gbc.weighty = 1;
@@ -94,9 +86,6 @@ public class BoardingView extends JFrame /* implements ChangeListener*/{
 
         this.setContentPane(panelFramer);
 
-        // this.pack();
-        //settingsPanel.aircraftTypeList.addActionListener(boardingController.getActionListener(settingsPanel.aircraftTypeList));
-
         settingsPanel.aircraftTypeList.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -109,33 +98,5 @@ public class BoardingView extends JFrame /* implements ChangeListener*/{
             }
         });
 
-        /*settingsPanel.simulationRate.addChangeListener(new ChangeListener() {
-            @Override
-            public void stateChanged(ChangeEvent e) {
-                theModel.setDelay(settingsPanel.simulationRate.getValue());
-                //System.out.println(value);
-            }
-        });*/
-        //animationPanel.setLayoutCells();
-
     }
-
-    /*Slide listen, from here: http://da2i.univ-lille1.fr/doc/tutorial-java/uiswing/components/examples/SliderDemo.java*/
-/*    boolean frozen;
-    int delay;
-    public void stateChanged(ChangeEvent e){
-        JSlider source = (JSlider)e.getSource();
-        if (!source.getValueIsAdjusting()){
-            int simRate = (int)source.getValue();
-            if (simRate == 0) {
-                if (!frozen) stopAnimaiton();
-            } else {
-                delay = 1000 / simRate;
-                timer.setDelay(delay);
-                timer.setInitialDelay(delay * 10);
-                if (frozen) startAnimation();
-            }
-        }
-
-    }*/
 }

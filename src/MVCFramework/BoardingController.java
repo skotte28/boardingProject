@@ -1,19 +1,12 @@
 package MVCFramework;
 
-import Aircraft.AircraftType;
-import Methods.*;
-import Passenger.*;
-import Simulation.AircraftGrid;
-import XMLParsing.JAXBHandlerPassenger;
-
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
 import java.util.*;
 
-public class BoardingController implements EventListener{
+public class BoardingController implements EventListener, Observer {
     private BoardingModel theModel = new BoardingModel();
     private BoardingView theView = new BoardingView(theModel);
 
@@ -21,27 +14,13 @@ public class BoardingController implements EventListener{
         this.theView = theView;
         this.theModel = theModel;
 
-        theView.settingsPanel.startSimulation.addActionListener(new ButtonListener());
+        theModel.addObserver(this);
 
-        theView.settingsPanel.pauseSimulation.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                //TODO: Print statement for testing purposes, remove when complete
-                System.out.println("Paused");
+        theView.settingsPanel.startSimulation.addActionListener(new RunButtonListener());
 
-                    //Pause the simulation
-                    if(theView.settingsPanel.pauseSimulation.getText().equals("Pause")){
-                        theView.settingsPanel.pauseSimulation.setText("Resume");
-                        theModel.timer.stop();
+        theView.settingsPanel.pauseSimulation.addActionListener(new PauseButtonListener());
 
-                    } else {
-
-                    //Resume the simulations
-                        theView.settingsPanel.pauseSimulation.setText("Pause");
-                        theModel.timer.start();
-                    }
-            }
-        });
+        theView.settingsPanel.reset.addActionListener(new ResetButtonListener());
 
         theView.settingsPanel.simulationRate.addChangeListener(new ChangeListener() {
             @Override
@@ -57,7 +36,9 @@ public class BoardingController implements EventListener{
         });
     }
 
+
     private void modelLoader(){
+        theModel.clear();
         /* Had to be disabled to allowed aircraft preview... Seems strange
         theModel.setAircraftType(theView.settingsPanel.getSelectedAircraft()); */
         theModel.setBoardingMethod(theView.settingsPanel.getSelectedBoardingMethod());
@@ -67,19 +48,71 @@ public class BoardingController implements EventListener{
         /* TODO: Add the doors used options*/
     }
 
-    public class ButtonListener implements ActionListener {
+    public class RunButtonListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e){
-            theView.settingsPanel.startSimulation.setEnabled(false);
-            //Set all model variables
-            modelLoader();
-
-            //Should run method in controller
-            theModel.runSimulation();
-            //theView.settingsPanel.startSimulation.setEnabled(true);
-
+            if(!theModel.isInProcess()) {
+                theView.settingsPanel.startSimulation.setEnabled(false);
+                theView.settingsPanel.pauseSimulation.setEnabled(true);
+                theView.settingsPanel.runningDisable();
+                //Set all model variables
+                modelLoader();
+                //Should run method in controller
+                theModel.runSimulation();
+                theModel.timer.start();
+                ButtonRunnable buttonRunnable = new ButtonRunnable();
+                Thread thread = new Thread(buttonRunnable);
+                thread.start();
+            } else {
+                theModel.timer.start();
+                theView.settingsPanel.pauseSimulation.setEnabled(true);
+                theView.settingsPanel.reset.setEnabled(false);
+            }
         }
 
+    }
+
+    public class PauseButtonListener implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            //TODO: Print statement for testing purposes, remove when complete
+            System.out.println("Paused");
+
+            //Pause the simulation
+            if(theModel.timer.isRunning()){
+                theModel.timer.stop();
+                theView.settingsPanel.pauseSimulation.setEnabled(false);
+                theView.settingsPanel.reset.setEnabled(true);
+                theView.settingsPanel.status.setText("Paused");
+            }
+        }
+    }
+
+    public class ResetButtonListener implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            //TODO: Print statement for testing purposes, remove when complete
+            System.out.println("Reset");
+            theModel.clear();
+            theModel.setAircraftType(theView.settingsPanel.aircraftTypeList.getSelectedItem().toString());
+            theView.settingsPanel.renable();
+            theModel.timer = null;
+            theModel.setInProcess(false);
+            theView.settingsPanel.reset.setEnabled(false);
+        }
+    }
+
+    public class ButtonRunnable implements Runnable {
+
+        public void run() {
+            while (theModel.timer != null) {
+                while (theModel.timer.isRunning()) {
+                    theView.settingsPanel.startSimulation.setEnabled(false);
+                    theView.settingsPanel.status.setText("Running");
+                }
+                theView.settingsPanel.startSimulation.setEnabled(true);
+            }
+        }
     }
 
     public class BoardingListener implements ChangeListener{
@@ -89,12 +122,15 @@ public class BoardingController implements EventListener{
         }
     }
 
-    /*
-    //TODO: Remove as never used.
-    public void passengerLoader(List<Passenger> passengers){
-        for(Passenger pax : passengers){
-            //theView.animationPanel.passengers.add(pax);     //TODO: Needs to add the correct type - point instead of passenger
-            System.out.println("Passenger added");
+    @Override
+    public void update(Observable o, Object arg) {
+        if (arg != null) {
+            System.out.println("I was notified!");
+            if (arg.equals(true)) {
+                System.out.println("I'm changing the button!");
+                theView.settingsPanel.startSimulation.setEnabled(true);
+            }
         }
-    }*/
+    }
+
 }

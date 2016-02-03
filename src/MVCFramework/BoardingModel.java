@@ -22,6 +22,7 @@ public class BoardingModel extends Observable{
     public Timer timer;
     private int delay;
     private boolean completed;
+    private boolean inProcess;
 
     private String boardingMethod;
     private AircraftType aircraftType;
@@ -99,7 +100,7 @@ public class BoardingModel extends Observable{
     }
 
     protected void runSimulation(){
-        delay = getDelay(); //milliseconds
+        delay = getDelay();
         completed = false;
 
         //TODO: Seat population is done in the setAircraftType, so it might not have to be done again
@@ -109,9 +110,6 @@ public class BoardingModel extends Observable{
         File filePassengers = new File("content/"+aircraftType+"/"+"Passengers.xml");
         //TODO: Should throw/catch "JAXBException"
         passengers = JAXBHandlerPassenger.unmarshal(filePassengers);
-
-        //Check so passengers are in the array
-        //System.out.println(passengers.toString());
 
         //(Assign parameters)
 
@@ -134,55 +132,43 @@ public class BoardingModel extends Observable{
             passengers = Method.innovative(passengers);
         }
 
-        //System.out.println("After mixing: "+passengers);
-
         setPassengers(passengers);
         System.out.println("Original passengers:"+passengers);
         theGrid = new Passenger[aircraftType.getWidth() + aircraftType.getAisle()][aircraftType.getRows()+aircraftType.getBuffer()];
-
-        //Make into queue
-
-        //Animation of each passenger
-        /*Removed for testing: AircraftGrid aircraftGrid = new AircraftGrid(getAircraftType(), passengers);*/
-        //gridBoarder(aircraftType.getWidth(), aircraftType.getAisle(), aircraftType.getBuffer(), passengers);
 
         ActionListener taskPerformer = new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
                 if(!completed){
                     //System.out.println("Delay:"+delay);
-                    gridBoarder(aircraftType.getWidth(), aircraftType.getAisle(), aircraftType.getBuffer(), getPassengers());
+                    gridBoarder(aircraftType.getWidth(), aircraftType.getAisle(), getPassengers());
                 }
                 else{
                     //TODO: Should there be something here, else remove
                     /* Should probably clear model data and the animation panel information so that if aircraft is changed
                     the old passengers are not featured on there. It could also allow the run button to be enabled again.
                      */
-                    timer.stop();
                 }
             }
         };
 
+        inProcess = true;
         timer = new Timer(delay, taskPerformer);
-        timer.start();
     }
 
     //BELOW IS FROM GRIDBOARDER
 
-    public void gridBoarder(int width, int aisle, int buffer, List<Passenger> passengers) {
+    public void gridBoarder(int width, int aisle, List<Passenger> passengers) {
         this.passengers = passengers;
 
         //Check if all passengers are in the correct seat
         while ((!passengers.isEmpty()) || !allSeated()) {
-
-            //TODO: Remove print statement - for testing purposes
-            //System.out.println("Passengers: " + passengers.toString());
-
+            System.out.println("The Grid:"+theGrid);
             for (int p = theGrid.length - 1; p >= 0; p--) {             //Start from position 'A'
                 for (int r = theGrid[p].length - 1; r >= 0; r--) {      //Start from last row
 
                     //Is there a passenger in the cell?
                     if (theGrid[p][r] != null) {
-                        //System.out.println(theGrid[p][r]+" visited: "+theGrid[p][r].isVisited());
+
                         if (!theGrid[p][r].isVisited()) {
                             theGrid[p][r].setVisited(true);
 
@@ -216,9 +202,6 @@ public class BoardingModel extends Observable{
 
                                         Direction nextMove = theGrid[p][r].getNextMove();
                                         Passenger currentPax = theGrid[p][r];
-
-                                        //TODO: Remove print statement - for testing purposes
-                                        //System.out.println(currentPax);
 
                                         //Check if possible & execute
                                         if (nextMove != null) {
@@ -291,7 +274,6 @@ public class BoardingModel extends Observable{
             //System.out.println("Post-grid:" + Arrays.deepToString(theGrid));
                 setChanged();
                 notifyObservers();
-                //System.out.println(Arrays.deepToString(theGrid));
                 return;
         }
         System.out.println(Arrays.deepToString(theGrid));
@@ -301,6 +283,9 @@ public class BoardingModel extends Observable{
         //STOP EVERYTHING
         this.passengers = null;
         timer.stop();
+        boolean finished = true;
+        notifyObservers(finished);
+        inProcess = false;
     }
 
     private boolean isFree(int p, int r) {
@@ -540,8 +525,15 @@ public class BoardingModel extends Observable{
         return passengers;
     }
 
-    // BELOW IS FOR TIMER
+    public void clear(){
+        this.setBoardingMethod(null);
+        this.setCapacity(-1);
+        this.setDelay(2);
+        this.theGrid = null;
+        notifyObservers();
+    }
 
+    // BELOW IS FOR TIMER
 
     public int getDelay() {
         return delay;
@@ -550,6 +542,13 @@ public class BoardingModel extends Observable{
     public void setDelay(int value) {
         int[] delayValues = {2000, 1000, 12, 250, 12};
         this.delay = delayValues[value];
-        //System.out.println("Delay set to:"+delay);
+    }
+
+    public boolean isInProcess() {
+        return inProcess;
+    }
+
+    public void setInProcess(boolean inProcess) {
+        this.inProcess = inProcess;
     }
 }

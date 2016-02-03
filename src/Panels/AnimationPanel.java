@@ -1,10 +1,8 @@
 package Panels;
 
 import Aircraft.AircraftType;
-import Aircraft.Position;
 import MVCFramework.BoardingModel;
 import Passenger.Passenger;
-import Simulation.AircraftGrid;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -50,16 +48,6 @@ public class AnimationPanel extends JPanel implements Observer {
         seatCells = new ArrayList<Point>();
         passengers = new ArrayList<PointPair>();
         seatedPax = new ArrayList<PointPair>();
-
-        /*if(AircraftGrid.theGrid != null) {
-            for (Passenger[] position : AircraftGrid.theGrid) {
-                for (Passenger pax : position) {
-                    if (pax != null) {
-                        passengers.add(new Point(boardingModel.getSeatValue(pax.getPosition()), pax.getRow()));
-                    }
-                }
-            }
-        }*/
 
         //TODO: Remove; color for testing purposes
         this.setBackground(Color.WHITE);

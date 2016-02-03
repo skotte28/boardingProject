@@ -9,6 +9,7 @@ public enum Direction {
     REARWARDS,
     STARBOARD,
     PORT,
-    SEATED;
+    SEATED,
+    HOLD;
 
 }
