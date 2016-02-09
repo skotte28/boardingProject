@@ -1,5 +1,7 @@
 package Panels;
 
+import Exceptions.NotIntegerException;
+
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -18,10 +20,27 @@ public class SettingsPanel extends JPanel {
 
     private java.util.List<Point> layoutCells;
 
+    private DefaultComboBoxModel defaultComboBoxModel = new DefaultComboBoxModel<String>() {
+        private static final long serialVersionUID = 1L;
+        boolean selectionAllowed = true;
+
+        @Override
+        public void setSelectedItem(Object anObject) {
+            if (!NOT_SELECTABLE_OPTION.equals(anObject)) {
+                super.setSelectedItem(anObject);
+            } else if (selectionAllowed) {
+                // Allow this just once
+                selectionAllowed = false;
+                super.setSelectedItem(anObject);
+            }
+        }
+    };
+    private static final String NOT_SELECTABLE_OPTION = " - Select - ";
+
     public JComboBox aircraftTypeList = new JComboBox();
 
     private String[] boardingMethodStrings = {"Back-to-front", "Outside-in", "Random", "Even-odd"};
-    private JComboBox boardingMethodList = new JComboBox(boardingMethodStrings);
+    private JComboBox boardingMethodList = new JComboBox();
 
     private JTextArea boardingMethodInfo = new JTextArea();
 
@@ -71,6 +90,18 @@ public class SettingsPanel extends JPanel {
     }
 
     public int getSelectedCapacity() {
+        if(capacityList.getEditor().getItem() != null){
+            try{
+                if (capacityList.getEditor().getItem() instanceof Integer) {
+                    return Integer.parseInt(capacityList.getEditor().getItem().toString());
+                } else {
+                    throw new NotIntegerException("Problem");
+                }
+            } catch (NotIntegerException e){
+                //TODO: Make sure that this doesn't continue to run
+                //TODO: Make a "Just set capacity to 100%" option
+            }
+        }
         System.out.println(Integer.parseInt(capacityList.getSelectedItem().toString()));
         return Integer.parseInt(capacityList.getSelectedItem().toString());
     }
@@ -87,8 +118,13 @@ public class SettingsPanel extends JPanel {
 
     public SettingsPanel() {
 
+        aircraftTypeList.setModel(defaultComboBoxModel);
+
         //Loads the aircraft JComboBox based on the directories which are located in "content/"
         try {
+            /*From here http://stackoverflow.com/questions/16665688/display-a-non-selectable-default-value-for-jcombobox */
+            aircraftTypeList.addItem(NOT_SELECTABLE_OPTION);
+            /* */
             File file = new File("content/");
             File[] files;
             files = file.listFiles();
@@ -96,10 +132,32 @@ public class SettingsPanel extends JPanel {
                 String[] name = f.toString().split("\\\\");
                 aircraftTypeList.addItem(name[1]);
             }
+
+
         } catch (SecurityException se) {
             se.printStackTrace();
         }
         System.out.println("AircraftTypeList:" + aircraftTypeList.toString());
+
+        boardingMethodList.setModel(new DefaultComboBoxModel<String>() {
+        private static final long serialVersionUID = 2L;
+        boolean selectionAllowed = true;
+
+        @Override
+        public void setSelectedItem(Object anObject) {
+            if (!NOT_SELECTABLE_OPTION.equals(anObject)) {
+                super.setSelectedItem(anObject);
+            } else if (selectionAllowed) {
+                // Allow this just once
+                selectionAllowed = false;
+                super.setSelectedItem(anObject);
+            }
+        }
+        });
+        boardingMethodList.addItem(NOT_SELECTABLE_OPTION);
+        for(String str : boardingMethodStrings){
+            boardingMethodList.addItem(str);
+        }
 
         //Tool tips settings
         startSimulation.setToolTipText("Start the simulation");
@@ -107,8 +165,9 @@ public class SettingsPanel extends JPanel {
         aircraftTypeList.setToolTipText("Select the type of aircraft to be used in the simulation");
         boardingMethodList.setToolTipText("Select the boarding method to be used in the simulation");
         capacityList.setToolTipText("Occupancy rate used in the simulation");
+        capacityList.setEditable(true);
         /*doorsUsedList.setToolTipText("Select if one or two doors are to be used in the simulation");*/
-        capacitySlider.setToolTipText(Integer.toString(capacitySlider.getValue()));
+        /*capacitySlider.setToolTipText(Integer.toString(capacitySlider.getValue()));*/
 
         simulationRate.setMinorTickSpacing(1);
         simulationRate.setPaintTicks(true);
@@ -117,11 +176,11 @@ public class SettingsPanel extends JPanel {
                 BorderFactory.createEmptyBorder(5, 5, 5, 5));
         simulationRate.setValue(SIM_RATE_INIT);
 
-        capacitySlider.setMajorTickSpacing(10);
+        /*capacitySlider.setMajorTickSpacing(10);
         capacitySlider.setMinorTickSpacing(2);
         capacitySlider.setPaintTicks(true);
         capacitySlider.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-        capacitySlider.setValue(CAP_INIT);
+        capacitySlider.setValue(CAP_INIT);*/
 
         GridBagConstraints gbc = new GridBagConstraints();
         this.setLayout(new GridBagLayout());
@@ -164,12 +223,15 @@ public class SettingsPanel extends JPanel {
         //this.add(capacitySlider, gbc);
         this.add(capacityList, gbc);
 
-        /*Additional options*/
+        /*Additional options
         gbc.gridy++;
         this.add(new JLabel("Doors used:"), gbc);
 
-        /*gbc.gridy++;
+        gbc.gridy++;
         this.add(doorsUsedList, gbc);*/
+
+        gbc.gridy++;
+        this.add(new JSeparator(),gbc);
 
         /*Simulation Control*/
         gbc.gridwidth = 1;
@@ -189,6 +251,9 @@ public class SettingsPanel extends JPanel {
         this.add(new JLabel("Simulation rate:"), gbc);
         gbc.gridy++;
         this.add(simulationRate, gbc);
+
+        gbc.gridy++;
+        this.add(new JSeparator(), gbc);
 
         gbc.gridy++;
         gbc.gridwidth = 2;
@@ -239,7 +304,6 @@ public class SettingsPanel extends JPanel {
         boardingMethodList.setEnabled(true);
         /*doorsUsedList.setEnabled(true);*/
     }
-
 
     //TODO: Should this go here or somewhere else which isn't layout?
 }

@@ -2,6 +2,7 @@ package MVCFramework;
 
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.*;
@@ -83,6 +84,7 @@ public class BoardingController implements EventListener, Observer {
                 theModel.timer.stop();
                 theView.settingsPanel.pauseSimulation.setEnabled(false);
                 theView.settingsPanel.reset.setEnabled(true);
+                theView.settingsPanel.status.setForeground(Color.gray);
                 theView.settingsPanel.status.setText("Paused");
             }
         }
@@ -108,6 +110,7 @@ public class BoardingController implements EventListener, Observer {
             while (theModel.timer != null) {
                 while (theModel.timer.isRunning()) {
                     theView.settingsPanel.startSimulation.setEnabled(false);
+                    theView.settingsPanel.status.setForeground(Color.green);
                     theView.settingsPanel.status.setText("Running");
                 }
                 theView.settingsPanel.startSimulation.setEnabled(true);

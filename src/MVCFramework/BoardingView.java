@@ -9,6 +9,10 @@ import Panels.SettingsPanel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.Observable;
 
 import javax.swing.*;
@@ -46,6 +50,23 @@ public class BoardingView extends JFrame /* implements ChangeListener*/{
         animationPanel.setToolTipText("Animation Panel");
         queuePanel = new QueuePanel(theModel);
         queuePanel.setToolTipText("Queue Panel");
+        JMenuBar menuBar = new JMenuBar();
+        JMenu menuFile  = new JMenu("File");
+        JMenu menuHelp = new JMenu("Help");
+
+        menuFile.getAccessibleContext().setAccessibleDescription(
+                "This is the file menu");
+
+        JMenuItem menuItem = new JMenuItem("Readme");
+
+        menuHelp.add(menuItem);
+
+        /* Menu options */
+
+        menuBar.add(menuFile);
+        menuBar.add(menuHelp);
+
+        this.setJMenuBar(menuBar);
 
         TitledBorder queueTitle = BorderFactory.createTitledBorder("Remaining Passengers:");
         queuePanel.setBorder(queueTitle);
@@ -95,6 +116,20 @@ public class BoardingView extends JFrame /* implements ChangeListener*/{
                 theModel.setAircraftType(settingsPanel.aircraftTypeList.getSelectedItem().toString());
                 System.out.println("1: "+settingsPanel.aircraftTypeList.getSelectedItem().toString());
 
+            }
+        });
+
+        menuItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try{
+                    java.awt.Desktop.getDesktop().open(new File("./resources/readme.pdf"));
+                } catch (IOException ioe){
+                    //TODO: Try to get the error messages working
+                    JOptionPane.showMessageDialog(null, "There was a problem finding the readme file.","Readme Not Found",
+                            JOptionPane.ERROR_MESSAGE);
+                    System.err.println("There was a problem finding the readme file.");
+                }
             }
         });
 
