@@ -42,6 +42,7 @@ public class BoardingController implements EventListener, Observer {
         theModel.clear();
         /* Had to be disabled to allowed aircraft preview... Seems strange
         theModel.setAircraftType(theView.settingsPanel.getSelectedAircraft()); */
+        theModel.setIsSeatCount(0);
         theModel.setBoardingMethod(theView.settingsPanel.getSelectedBoardingMethod());
         theModel.setCapacity(theView.settingsPanel.getSelectedCapacity());
         theModel.setDelay(theView.settingsPanel.simulationRate.getValue());
@@ -100,7 +101,10 @@ public class BoardingController implements EventListener, Observer {
             theView.settingsPanel.renable();
             theModel.timer = null;
             theModel.setInProcess(false);
+            theView.settingsPanel.status.setText("");
             theView.settingsPanel.reset.setEnabled(false);
+            theView.settingsPanel.progressBar.setValue(0);
+            theView.settingsPanel.progressBar.setString(" ");
         }
     }
 
@@ -114,6 +118,8 @@ public class BoardingController implements EventListener, Observer {
                     theView.settingsPanel.status.setText("Running");
                 }
                 theView.settingsPanel.startSimulation.setEnabled(true);
+                theView.settingsPanel.reset.setEnabled(true);
+                theView.settingsPanel.pauseSimulation.setEnabled(false);
             }
         }
     }

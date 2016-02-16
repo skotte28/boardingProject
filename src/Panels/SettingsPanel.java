@@ -1,20 +1,25 @@
 package Panels;
 
 import Exceptions.NotIntegerException;
+import MVCFramework.BoardingModel;
 
 import javax.swing.*;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.util.Observable;
+import java.util.Observer;
 
 
 /**
  * Created by Oscar on 2015-10-19.
  */
-public class SettingsPanel extends JPanel {
+public class SettingsPanel extends JPanel implements Observer {
+
+    BoardingModel boardingModel;
+    int iterationInt;
+    private JLabel iterationLabel = new JLabel();
 
     GridLayout experimentLayout = new GridLayout(0, 2);
 
@@ -73,6 +78,8 @@ public class SettingsPanel extends JPanel {
 
     public JSlider capacitySlider = new JSlider(JSlider.HORIZONTAL, CAP_MIN, CAP_MAX, CAP_INIT);
 
+    public JProgressBar progressBar = new JProgressBar();
+
     private String selectedAircraft;
 
     public void setSelectedAircraft(){
@@ -116,7 +123,9 @@ public class SettingsPanel extends JPanel {
         return doorsUsedList.getSelectedItem().toString();
     }*/
 
-    public SettingsPanel() {
+    public SettingsPanel(BoardingModel boardingModel) {
+
+        this.boardingModel = boardingModel;
 
         aircraftTypeList.setModel(defaultComboBoxModel);
 
@@ -260,13 +269,32 @@ public class SettingsPanel extends JPanel {
         gbc.gridx = 0;
         this.add(new JLabel("Status:"), gbc);
         gbc.gridx++;
+        gbc.gridx++;
         this.add(status,gbc);
 
-        gbc.gridy++;
+        /*gbc.gridy++;
         gbc.gridx = 0;
         this.add(new JLabel("Remaining passengers:"), gbc);
         gbc.gridx++;
-        this.add(paxRemaining, gbc);
+        this.add(paxRemaining, gbc);*/
+        gbc.gridy++;
+        gbc.gridx = 0;
+        this.add(new JLabel("Iterations:"), gbc);
+        gbc.gridx++;
+        gbc.gridx++;
+        this.add(iterationLabel, gbc);
+
+        gbc.gridy++;
+        gbc.gridwidth = 3;
+        gbc.gridx = 0;
+        JLabel paxProgressLabel = new JLabel("Passengers seated");
+        this.add(paxProgressLabel, gbc);
+        paxProgressLabel.setHorizontalAlignment(SwingConstants.CENTER);
+
+        gbc.gridy++;
+        progressBar.setStringPainted(true);
+        progressBar.setString(" ");
+        this.add(progressBar, gbc);
 
         pauseSimulation.setEnabled(false);
         reset.setEnabled(false);
@@ -306,4 +334,23 @@ public class SettingsPanel extends JPanel {
     }
 
     //TODO: Should this go here or somewhere else which isn't layout?
+
+    @Override
+    public void update(Observable o, Object data){
+        invalidate();
+        iterationInt = boardingModel.getModelInteration();
+        if(iterationInt > 1){
+            iterationLabel.setText(""+iterationInt);
+        } else if(iterationInt == 0){
+            iterationLabel.setText("");
+        }
+        if(boardingModel.getTotalPax() != 0){
+            System.out.println("Total Pax: "+boardingModel.getTotalPax());
+            double progressDouble = ((double) boardingModel.getIsSeatCount() / (double) boardingModel.getTotalPax()) * 100;
+            int progress = (int) Math.round(progressDouble);
+            System.out.println(progress);
+            progressBar.setString(boardingModel.getIsSeatCount()+"/"+boardingModel.getTotalPax());
+            progressBar.setValue(progress);
+        }
+    }
 }

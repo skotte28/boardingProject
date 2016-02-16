@@ -31,9 +31,9 @@ public class Passenger {
 
     /* When blocked by someone else */
     BlockPair blockPair;
-
-    boolean visited;
+    
     boolean seated;
+    int iteration = 0;
 
     @XmlElement (name="row")
     public void setRow(int row) {
@@ -93,20 +93,20 @@ public class Passenger {
         this.blockPair = blockPair;
     }
 
-    public boolean isVisited() {
-        return visited;
-    }
-
-    public void setVisited(boolean visited) {
-        this.visited = visited;
-    }
-
     public boolean isSeated() {
         return seated;
     }
 
     public void setSeated(boolean seated) {
         this.seated = seated;
+    }
+
+    public int getIteration() {
+        return iteration;
+    }
+
+    public void setIteration(int iteration) {
+        this.iteration = iteration;
     }
 
     @Override

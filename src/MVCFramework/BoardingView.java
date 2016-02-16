@@ -44,7 +44,7 @@ public class BoardingView extends JFrame /* implements ChangeListener*/{
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(STANDARD_WINDOW_WIDTH, STANDARD_WINDOW_HEIGHT);
 
-        settingsPanel = new SettingsPanel();
+        settingsPanel = new SettingsPanel(theModel);
         settingsPanel.setToolTipText("Settings Panel");
         animationPanel = new AnimationPanel(theModel);
         animationPanel.setToolTipText("Animation Panel");
@@ -77,6 +77,7 @@ public class BoardingView extends JFrame /* implements ChangeListener*/{
         /* Having the addObservers here means the panels can be protected */
         theModel.addObserver(animationPanel);
         theModel.addObserver(queuePanel);
+        theModel.addObserver(settingsPanel);
 
 
         panelFramer.setLayout(new GridBagLayout());
