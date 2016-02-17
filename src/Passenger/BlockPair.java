@@ -1,5 +1,7 @@
 package Passenger;
 
+import jdk.nashorn.internal.ir.Block;
+
 /**
  * Created by Oscar on 2015-12-15.
  */
@@ -27,5 +29,10 @@ public class BlockPair{
 
     public void setRow(int row) {
         this.row = row;
+    }
+
+    @Override
+    public String toString(){
+        return "("+getPos()+","+getRow()+")";
     }
 }
