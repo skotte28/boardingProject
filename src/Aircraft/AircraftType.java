@@ -28,34 +28,34 @@ public class AircraftType {
     private int aisle;
     private int buffer;
 
-    private String[] windowSeats;
-    private String[] middleSeats;
-    private String[] aisleSeats;
+    private ArrayList<String> windowSeats = new ArrayList<>();
+    private ArrayList<String> middleSeats = new ArrayList<>();
+    private ArrayList<String> aisleSeats = new ArrayList<>();
 
-    public String[] getWindowSeats() {
+    public ArrayList<String> getWindowSeats() {
         return windowSeats;
     }
 
     @XmlElement(name="windowSeats")
-    public void setWindowSeats(String[] windowSeats) {
+    public void setWindowSeats(ArrayList<String> windowSeats) {
         this.windowSeats = windowSeats;
     }
 
-    public String[] getMiddleSeats() {
+    public ArrayList<String> getMiddleSeats() {
         return middleSeats;
     }
 
     @XmlElement(name="middleSeats")
-    public void setMiddleSeats(String[] middleSeats) {
+    public void setMiddleSeats(ArrayList<String> middleSeats) {
         this.middleSeats = middleSeats;
     }
 
-    public String[] getAisleSeats() {
+    public ArrayList<String> getAisleSeats() {
         return aisleSeats;
     }
 
     @XmlElement(name="aisleSeats")
-    public void setAisleSeats(String[] aisleSeats) {
+    public void setAisleSeats(ArrayList<String> aisleSeats) {
         this.aisleSeats = aisleSeats;
     }
 
@@ -155,6 +155,18 @@ public class AircraftType {
 
         /* Return the fixedInterior */
         return fixedInterior;
+    }
+
+    public void addWindowSeat(String position){
+        windowSeats.add(position);
+    }
+
+    public void addMiddleSeat(String position){
+        middleSeats.add(position);
+    }
+
+    public void addAisleSeat(String position){
+        aisleSeats.add(position);
     }
 
 }

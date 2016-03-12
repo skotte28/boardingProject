@@ -1,7 +1,6 @@
 package Methods;
 
 import Aircraft.AircraftType;
-import Aircraft.Position;
 import Passenger.Passenger;
 
 import java.util.*;
@@ -59,42 +58,21 @@ public class Method {
 
     public static List<Passenger> outsideIn(List<Passenger> list, AircraftType aircraftType) {
 
-
-        //TODO: Change to this adapts according to aircraft type
-
-        /*
-        Problem with this approach is that it's hard coding which seats are the window seats,
-        middle seats aisle seats. This means that smaller/larger aircrafts can't be added easily.
-        This information really needs to come from enum Position, which needs to load it from the
-        aircraft XML file.
-         */
-
         //Instantiate temporary list
         List<Passenger> window = new LinkedList<>();
         List<Passenger> middle = new LinkedList<>();
         List<Passenger> aisle = new LinkedList<>();
 
-        //To be used to ensure that more aircrafts can be added in the future - could be done without if switch case is used below
-        LinkedList<String> windowSeats = new LinkedList<>();
-        System.out.println(Arrays.deepToString(aircraftType.getWindowSeats()));
-        for(String pos : aircraftType.getWindowSeats()){
-            System.out.println("Raw Position:"+pos);
-            windowSeats.add(pos);
-        }
-        LinkedList<String> middleSeats = new LinkedList<>();
-        for(String pos : aircraftType.getMiddleSeats()){
-            middleSeats.add(pos);
-        }
-        LinkedList<String> aisleSeats = new LinkedList<>();
-        for(String pos : aircraftType.getAisleSeats()){
-            aisleSeats.add(pos);
-        }
+        //Get the window, middle, and aisle seats from the aircraft type
+        ArrayList<String> windowSeats = aircraftType.getWindowSeats();
+        ArrayList<String> middleSeats = aircraftType.getMiddleSeats();
+        ArrayList<String> aisleSeats = aircraftType.getAisleSeats();
 
         //Iterate through and sort odd and even - could be done with switch case (see above)
         for(Passenger pax : list){
             String pos = pax.getPosition();
             System.out.println(pos);
-            if(windowSeats.contains(pos)){
+            if (windowSeats.contains(pos)){
                 window.add(pax);
             } else if (middleSeats.contains(pos)){
                 middle.add(pax);
@@ -109,13 +87,6 @@ public class Method {
         window.addAll(aisle);
 
         return window;
-    }
-
-    public static List<Passenger> random(List<Passenger> list) {
-
-        Collections.shuffle(list);
-
-        return list;
     }
 
 }

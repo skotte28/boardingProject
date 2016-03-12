@@ -1,7 +1,6 @@
 package MVCFramework;
 
 import Aircraft.AircraftType;
-import MVCFramework.BoardingModel;
 import Panels.AnimationPanel;
 import Panels.QueuePanel;
 import Panels.SettingsPanel;
@@ -9,22 +8,14 @@ import Panels.SettingsPanel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.Observable;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
-public class BoardingView extends JFrame /* implements ChangeListener*/{
-/*
-    public void addBoardingController(MVCFramework.BoardingController bc){
-        boardingController = bc;
-    }*/
+public class BoardingView extends JFrame {
+
     private BoardingModel theModel;
     JPanel panelFramer = new JPanel();
 

@@ -11,7 +11,7 @@ import java.io.IOException;
 import java.util.*;
 import java.util.List;
 import javax.imageio.ImageIO;
-import javax.swing.JPanel;
+import javax.swing.*;
 
 public class AnimationPanel extends JPanel implements Observer {
 
@@ -53,7 +53,7 @@ public class AnimationPanel extends JPanel implements Observer {
         this.setBackground(Color.WHITE);
 
         try{
-            image = ImageIO.read(new File("resources/images/seat25.png"));
+            image = ImageIO.read(new File("resources/images/seatBigger.png"));
         } catch (IOException ex){
             System.out.println("Image didn't work.");
         }
@@ -229,9 +229,19 @@ public class AnimationPanel extends JPanel implements Observer {
         }
     }
 
+    private void deadlockPopup(){
+        JOptionPane.showMessageDialog(this,
+                "We're in an unsolvable deadlock - the boarding will have to be restarted.",
+                "Logic Error",
+                JOptionPane.ERROR_MESSAGE);
+    }
+
     @Override
     public void update(Observable o, Object data){
         invalidate();
+        if(boardingModel.isUnRecoverable()){
+            deadlockPopup();
+        }
         newValues(boardingModel.getAircraftType());
         animationGrid = boardingModel.getTheGrid();
         paxUpdate(animationGrid, boardingModel.getAircraftType());

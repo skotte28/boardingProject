@@ -37,6 +37,9 @@ public class BoardingModel extends Observable{
     protected Map seats = new HashMap();
     public BoardingModel(){}
     private int modelInteration = 0;
+    private boolean nothingChanged;
+    private int stallCount = 0;
+    private boolean unRecoverable = false;
 
     public AircraftType getAircraftType() {
         return aircraftType;
@@ -75,6 +78,15 @@ public class BoardingModel extends Observable{
             while(line != null){
                 String[] output = line.split(":");
                 seats.put(output[0], Integer.valueOf(output[1]));
+                if(!output[2].equals("N")){
+                    if(output[2].equals("W")){
+                        aircraftType.addWindowSeat(output[0]);
+                    } else if(output[2].equals("M")){
+                        aircraftType.addMiddleSeat(output[0]);
+                    } else if(output[2].equals("A")){
+                        aircraftType.addAisleSeat(output[0]);
+                    }
+                }
                 line = bufferedReader.readLine();
             }
         } catch (Exception e){
@@ -132,7 +144,8 @@ public class BoardingModel extends Observable{
             passengers = Method.outsideIn(passengers, aircraftType);
         }
         else if(method.equalsIgnoreCase("Random")){
-            passengers = Method.random(passengers);
+            //passengers = Method.random(passengers);
+            //Do nothing as passengers have been shuffled inside the capacityLimiter
             //TODO: Does this really need to be here as it is already ordered randomly
         }
         else if(method.equalsIgnoreCase("Even-odd")) {
@@ -178,25 +191,28 @@ public class BoardingModel extends Observable{
         //Check if all passengers are in the correct seat
         while ((!passengers.isEmpty()) || !allSeated()) {
             System.out.println("The Grid:"+theGrid);
+            nothingChanged = true;
             for (int p = theGrid.length - 1; p >= 0; p--) {             //Start from position 'A'
                 for (int r = theGrid[p].length - 1; r >= 0; r--) {      //Start from last row
 
                     Point pt = new Point(p,r);
                     //System.out.println(pt);
                     if(blocks.contains(pt)){
-                        boolean release = false;
+                        boolean release = true;
                         for(int i = r-1; i<r+(width/2) && i<=aircraftType.getRows(); i++){
                             if(theGrid[p][i] != null){
                                 System.out.println(theGrid[p][i].toString());
-                                if(theGrid[p][i].getRow() == r){
-                                    break;
+                                if(theGrid[p][i].getBlockPass() != null){
+                                    if(theGrid[p][i].getBlockPass().equals(pt)){
+                                        release = false;
+                                        break;
+                                    }
                                 }
                             }
-                            release = true;
                         }
                         System.out.println(release);
                         if(release){
-                            System.out.println("Removed!");
+                            System.out.println("Removed!"+p+" "+r);
                             //System.out.println(blocks.indexOf(new Point(p,r)));
                             blocks.remove(blocks.indexOf(new Point(p,r)));
                         }
@@ -232,23 +248,31 @@ public class BoardingModel extends Observable{
                                         if (nextMove != null) {
                                             switch (nextMove) {
                                                 case FRONTWARDS:
-                                                    if (isFree(p, r - 1) && squareBlockChecker(p,r-1,currentPax.getRow())) {
+                                                    if (isFree(p, r - 1) && squareBlockChecker(p,r-1,currentPax.getBlockPass())) {
                                                         move(p, r, p, r - 1);
+                                                    } else {
+                                                        System.out.println("Elsed: "+currentPax);
                                                     }
                                                     break;
                                                 case REARWARDS:
-                                                    if (isFree(p, r + 1) && squareBlockChecker(p,r+1,currentPax.getRow())) {
+                                                    if (isFree(p, r + 1) && squareBlockChecker(p,r+1,currentPax.getBlockPass())) {
                                                         move(p, r, p, r + 1);
+                                                    } else {
+                                                        System.out.println("Elsed: "+currentPax);
                                                     }
                                                     break;
                                                 case STARBOARD:
-                                                    if (isFree(p - 1, r) && squareBlockChecker(p-1,r,currentPax.getRow())) {
+                                                    if (isFree(p - 1, r) && squareBlockChecker(p-1,r,currentPax.getBlockPass())) {
                                                         move(p, r, p - 1, r);
+                                                    } else {
+                                                        System.out.println("Elsed: "+currentPax);
                                                     }
                                                     break;
                                                 case PORT:
-                                                    if (isFree(p + 1, r) && squareBlockChecker(p+1,r,currentPax.getRow())) {
+                                                    if (isFree(p + 1, r) && squareBlockChecker(p+1,r,currentPax.getBlockPass())) {
                                                         move(p, r, p + 1, r);
+                                                    } else {
+                                                        System.out.println("Elsed: "+currentPax);
                                                     }
                                                     break;
                                                 case HOLD:
@@ -264,6 +288,28 @@ public class BoardingModel extends Observable{
                     }
                 }
             }
+
+            if(nothingChanged){
+                System.out.println("Stall!");
+                stallCount++;
+                if(stallCount > 10){
+                    unRecoverable = true;
+                    setChanged();
+                    notifyObservers();
+                    break;
+                }
+                /*int reserveAisle = getSeatValue("AISLE");
+                for(int i = aircraftType.getRows(); i>=0; i--){
+                    if(theGrid[reserveAisle][i] != null){
+                        theGrid[reserveAisle][i].setTempRow(i+1);
+                        theGrid[reserveAisle][i].setTempPosition("AISLE");
+                        break;
+                    }
+                }*/
+            } else {
+                stallCount = 0;
+            }
+
             //Check if there are still passengers waiting
             if (!passengers.isEmpty()) {
                 //If there is space for a new passenger bring them onboard
@@ -286,9 +332,9 @@ public class BoardingModel extends Observable{
             }
             //TODO: Remove print statement - for testing purposes
             //System.out.println("Post-grid:" + Arrays.deepToString(theGrid));
-                setChanged();
-                notifyObservers();
-                return;
+            setChanged();
+            notifyObservers();
+            return;
         }
         System.out.println(Arrays.deepToString(theGrid));
         //TODO: Remove print statement - for testing purposes
@@ -320,11 +366,19 @@ public class BoardingModel extends Observable{
     }
 
     private void move(int pOld, int rOld, int pNew, int rNew){
+        if(nothingChanged){
+            nothingChanged = false;
+        }
         theGrid[pNew][rNew] = theGrid[pOld][rOld];
         theGrid[pOld][rOld] = null;
 
         if(getSeatValue(theGrid[pNew][rNew].getPosition()) == pNew && theGrid[pNew][rNew].getRow() == rNew){
             theGrid[pNew][rNew].setSeated(true);
+            if(theGrid[pNew][rNew].getBlockPass() != null){
+                System.out.println(theGrid[pNew][rNew]+" lost blockPass for "+theGrid[pNew][rNew].getBlockPass().toString());
+            }
+            theGrid[pNew][rNew].setBlockPass(null);
+
             isSeatCount++;
         }
 
@@ -395,7 +449,8 @@ public class BoardingModel extends Observable{
                 if(moveRow == r){
                     if(theGrid[p][r-1] != null) {
                         currentPax.setTempRow(-1);     //Used to be set to null
-                    }else{
+                        System.out.println(currentPax+" Problem 3a");
+                    }/*else{
                         boolean override = true;
                         for(int i = currentPax.getTempRow()-1; i>=currentPax.getRow(); i--){
                             if(!isFree(getSeatValue(currentPax.getTempPosition()), i)){
@@ -404,9 +459,10 @@ public class BoardingModel extends Observable{
                         }
                         if(override){
                             currentPax.setTempRow(-1);
+                            System.out.println(currentPax+" Problem 3b");
                         }
                         System.out.println("The spot which blocked -1 for "+currentPax+" contained "+theGrid[p][r-1]);
-                    }
+                    }*/
                 } else if(moveRow > r){
                     currentPax.setNextMove(Direction.REARWARDS);
                 } else if(moveRow < r){
@@ -420,14 +476,13 @@ public class BoardingModel extends Observable{
         }
     }
 
-    private boolean squareBlockChecker(int p, int r, int paxRow){
-        if(r == paxRow){
-            System.out.println("Row: "+paxRow);
-            return true;
-        }
+    private boolean squareBlockChecker(int p, int r, Point passPoint){
         Point pt = new Point(p,r);
         if (blocks.size() > 0) {
             if (blocks.contains(pt)) {
+                if(pt.equals(passPoint)){
+                    return true;
+                }
                 return false;
             }
             for(int i = r; i<r+(aircraftType.getWidth()/2) && i<=aircraftType.getRows(); i++){
@@ -446,8 +501,9 @@ public class BoardingModel extends Observable{
     }
 
     private boolean blockChecker(Passenger passenger, int p, int r, int width){
+
         if(getSeatValue(passenger.getPosition()) < getSeatValue("AISLE")-1){
-            for(int i= getSeatValue("AISLE")-1; i>=0; i--){
+            for(int i = getSeatValue("AISLE")-1; i>=0; i--){
                 if(theGrid[i][r+1]!= null){
                     if(getSeatValue(theGrid[i][r+1].getPosition()) > getSeatValue(passenger.getPosition())){
                         return true;
@@ -456,11 +512,19 @@ public class BoardingModel extends Observable{
             }
         }
         else if(getSeatValue(passenger.getPosition()) > getSeatValue("AISLE")+1){
-            for(int i= getSeatValue("AISLE")+1; i<width; i++){
+            for(int i = getSeatValue("AISLE")+1; i<width; i++){
                 if(theGrid[i][r+1]!= null){
                     if(getSeatValue(theGrid[i][r+1].getPosition()) < getSeatValue(passenger.getPosition())){
                         return true;
                     }
+                }
+            }
+        }
+
+        for(int i = r+1; i<r+2; i++){
+            if(theGrid[getSeatValue("AISLE")][i]!= null) {
+                if(theGrid[getSeatValue("AISLE")][i].getRow() == passenger.getRow()) {
+                    return true;
                 }
             }
         }
@@ -472,80 +536,98 @@ public class BoardingModel extends Observable{
         boolean first = true;
         //New Position Assigner
         //if(isFree(p,r+1)) {
-            if (getSeatValue(theGrid[p][r].getPosition()) > getSeatValue("AISLE")) {
-                for (int i = getSeatValue(theGrid[p][r].getPosition()); i > getSeatValue("AISLE"); i--) {
-                    if (theGrid[i][r + 1] != null) {
-                        movedistance++;
-                    }
+        if (getSeatValue(theGrid[p][r].getPosition()) > getSeatValue("AISLE")) {
+            for (int i = getSeatValue(theGrid[p][r].getPosition()); i > getSeatValue("AISLE"); i--) {
+                if (theGrid[i][r + 1] != null) {
+                    movedistance++;
                 }
-                for (int i = getSeatValue(theGrid[p][r].getPosition()); i > getSeatValue("AISLE"); i--) {
-                    if (theGrid[i][r + 1] != null) {
-                        System.out.println("R:" + r);
-                        if (theGrid[i][r + 1].getTempRow() == -1) {
-                            theGrid[i][r + 1].setTempPosition("AISLE");
-                            theGrid[i][r + 1].setTempRow(r + (movedistance - (i - getSeatValue("AISLE"))));
-                            theGrid[i][r + 1].setSeated(false);
-                            isSeatCount--;
-                            System.out.println("TempPostion for " + theGrid[i][r + 1] + " is " + theGrid[i][r + 1].getTempRow() + theGrid[i][r + 1].getTempPosition());
-                            if (first) {
-                                if (r > 0) {
-                                    Point newpt = new Point(getSeatValue("AISLE"), r+1);
-                                    if(!blocks.contains(newpt)) {
-                                        blocks.add(newpt);
-                                        System.out.println("New block: " + getSeatValue("AISLE") + " " + (r + 1));
-                                        System.out.println("The block pair for " + theGrid[p][r - 1] + " is [" + i + "," + (r + 1) + "] " + "(" + theGrid[i][r + 1] + ")");
-                                        break;
-                                    } else {
-                                        System.out.println("Other");
-                                        //TODO:Same row block
-                                    }
-                                }
-                            } else {
-                                haltFront = true;
-                            }
-                        }
-                    }
-                }
-            } else if (getSeatValue(theGrid[p][r].getPosition()) < getSeatValue("AISLE")) {
-                for (int i = getSeatValue(theGrid[p][r].getPosition()); i < getSeatValue("AISLE"); i++) {
-                    if (theGrid[i][r + 1] != null) {
-                        movedistance++;
-                    }
-                }
-                for (int i = getSeatValue(theGrid[p][r].getPosition()); i < getSeatValue("AISLE"); i++) {
-                    if (theGrid[i][r + 1] != null) {
-                        System.out.println("R:"+r);
-                        if (theGrid[i][r + 1].getTempRow() == -1) {
-                            theGrid[i][r + 1].setTempPosition("AISLE");
-                            theGrid[i][r + 1].setTempRow(r + (movedistance - (getSeatValue("AISLE") - i)));
-                            theGrid[i][r + 1].setSeated(false);
-                            isSeatCount--;
-                            System.out.println("TempPostion for " + theGrid[i][r + 1] + " is " + theGrid[i][r + 1].getTempRow() + theGrid[i][r + 1].getTempPosition());
-                            if (first) {
-                                if (r > 0) {
-                                    Point newpt = new Point(getSeatValue("AISLE"), r+1);
-                                    if(!blocks.contains(newpt)) {
-                                        blocks.add(newpt);
-                                        System.out.println("New block: " + getSeatValue("AISLE") + " " + (r + 1));
-                                        System.out.println("The block pair for " + theGrid[p][r - 1] + " is [" + i + "," + (r + 1) + "] " + "(" + theGrid[i][r + 1] + ")");
-                                        break;
-                                    } else {
-                                        System.out.println("Other");
-                                        //TODO:Same row block
-                                    }
-                                }
-                            } else {
-                                haltFront = true;
-                            }
+            }
+            Point newpt = null;
+            for (int i = getSeatValue(theGrid[p][r].getPosition()); i > getSeatValue("AISLE"); i--) {
+                if (theGrid[i][r + 1] != null) {
+                    System.out.println("R:" + r);
+                    if (theGrid[i][r + 1].getTempRow() == -1) {
+                        theGrid[i][r + 1].setTempPosition("AISLE");
+                        theGrid[i][r + 1].setTempRow(r + (movedistance - (i - getSeatValue("AISLE"))));
+                        theGrid[i][r + 1].setSeated(false);
+                        isSeatCount--;
+                        System.out.println("TempPostion for " + theGrid[i][r + 1] + " is " + theGrid[i][r + 1].getTempRow() + theGrid[i][r + 1].getTempPosition());
+                        if (first) {
+                            if (r > 0) {
+                                newpt = new Point(getSeatValue("AISLE"), r + 1);
+                                if (!blocks.contains(newpt)) {
+                                    blocks.add(newpt);
+                                    theGrid[p][r].setBlockPass(newpt);
+                                    System.out.println(theGrid[p][r]+" has blockPass1a for "+newpt.toString());
+                                    //System.out.println("New block: " + getSeatValue("AISLE") + " " + (r + 1));
+                                    //System.out.println("The block pair for " + theGrid[p][r - 1] + " is [" + i + "," + (r + 1) + "] " + "(" + theGrid[i][r + 1] + ")");
+                                    first = false;
                                 } else {
-                                    haltFront = true;
+                                    System.out.println("Other");
+                                    newpt = null;
+                                    //TODO:Same row block
                                 }
+                            } else {
+                                haltFront = true;
                             }
                         }
+                        if (newpt != null) {
+                            theGrid[i][r + 1].setBlockPass(newpt);
+                            System.out.println(theGrid[p][r+1]+" has blockPass1b for "+newpt.toString());
+                        } else {
+                            System.out.println("Bypassed 1b");
+                        }
                     }
-            //move each piece
-            //invalid temps
-            //continue as usual?
+                }
+            }
+        } else if (getSeatValue(theGrid[p][r].getPosition()) < getSeatValue("AISLE")) {
+            for (int i = getSeatValue(theGrid[p][r].getPosition()); i < getSeatValue("AISLE"); i++) {
+                if (theGrid[i][r + 1] != null) {
+                    movedistance++;
+                }
+            }
+            Point newpt = null;
+            for (int i = getSeatValue(theGrid[p][r].getPosition()); i < getSeatValue("AISLE"); i++) {
+                if (theGrid[i][r + 1] != null) {
+                    System.out.println("R:"+r);
+                    if (theGrid[i][r + 1].getTempRow() == -1) {
+                        theGrid[i][r + 1].setTempPosition("AISLE");
+                        theGrid[i][r + 1].setTempRow(r + (movedistance - (getSeatValue("AISLE") - i)));
+                        theGrid[i][r + 1].setSeated(false);
+                        isSeatCount--;
+                        System.out.println("TempPostion for " + theGrid[i][r + 1] + " is " + theGrid[i][r + 1].getTempRow() + theGrid[i][r + 1].getTempPosition());
+                        if (first) {
+                            if (r > 0) {
+                                newpt = new Point(getSeatValue("AISLE"), r + 1);
+                                if (!blocks.contains(newpt)) {
+                                    blocks.add(newpt);
+                                    theGrid[p][r].setBlockPass(newpt);
+                                    System.out.println(theGrid[p][r]+" has blockPass2a for "+newpt.toString());
+                                    //System.out.println("New block: " + getSeatValue("AISLE") + " " + (r + 1));
+                                    //System.out.println("The block pair for " + theGrid[p][r - 1] + " is [" + i + "," + (r + 1) + "] " + "(" + theGrid[i][r + 1] + ")");
+                                } else {
+                                    System.out.println("Other");
+                                    newpt = null;
+                                    //TODO:Same row block
+                                }
+                            } else {
+                                haltFront = true;
+                            }
+                            first = false;
+                        }
+                        if (newpt != null) {
+                            theGrid[i][r + 1].setBlockPass(newpt);
+                            System.out.println(theGrid[p][r+1]+" has blockPass2b for "+newpt.toString());
+                        } else {
+                            System.out.println("Bypassed 1b");
+                        }
+                    }
+                }
+            }
+        }
+        //move each piece
+        //invalid temps
+        //continue as usual?
         //}
     }
 
@@ -613,5 +695,9 @@ public class BoardingModel extends Observable{
 
     public int getTotalPax() {
         return totalPax;
+    }
+
+    public boolean isUnRecoverable() {
+        return unRecoverable;
     }
 }

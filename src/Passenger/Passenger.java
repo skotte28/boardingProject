@@ -8,6 +8,7 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import java.awt.*;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
@@ -17,6 +18,8 @@ import java.util.concurrent.ExecutionException;
  */
 @XmlRootElement(name="Passenger")
 public class Passenger {
+
+    Point blockPass;
 
     /* Attributes which don't change */
     int row;
@@ -107,6 +110,14 @@ public class Passenger {
 
     public void setIteration(int iteration) {
         this.iteration = iteration;
+    }
+
+    public Point getBlockPass() {
+        return blockPass;
+    }
+
+    public void setBlockPass(Point blockPass) {
+        this.blockPass = blockPass;
     }
 
     @Override
