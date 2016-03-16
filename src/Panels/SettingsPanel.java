@@ -1,5 +1,6 @@
 package Panels;
 
+import Exceptions.MissingAircraftException;
 import Exceptions.NotIntegerException;
 import MVCFramework.BoardingModel;
 
@@ -17,40 +18,24 @@ import java.util.Observer;
  */
 public class SettingsPanel extends JPanel implements Observer {
 
-    BoardingModel boardingModel;
-    int iterationInt;
+    private BoardingModel boardingModel;
+    private int iterationInt;
     private JLabel iterationLabel = new JLabel();
 
     GridLayout experimentLayout = new GridLayout(0, 2);
 
     private java.util.List<Point> layoutCells;
 
-    private DefaultComboBoxModel defaultComboBoxModel = new DefaultComboBoxModel<String>() {
-        private static final long serialVersionUID = 1L;
-        boolean selectionAllowed = true;
-
-        @Override
-        public void setSelectedItem(Object anObject) {
-            if (!NOT_SELECTABLE_OPTION.equals(anObject)) {
-                super.setSelectedItem(anObject);
-            } else if (selectionAllowed) {
-                // Allow this just once
-                selectionAllowed = false;
-                super.setSelectedItem(anObject);
-            }
-        }
-    };
     private static final String NOT_SELECTABLE_OPTION = " - Select - ";
 
     public JComboBox aircraftTypeList = new JComboBox();
 
-    private String[] boardingMethodStrings = {"Back-to-front", "Outside-in", "Random", "Even-odd"};
     private JComboBox boardingMethodList = new JComboBox();
 
     private JTextArea boardingMethodInfo = new JTextArea();
 
     private Integer[] capacityStrings = {100, 75, 50, 25};
-    private JComboBox<Integer> capacityList = new JComboBox<Integer>(capacityStrings);
+    private JComboBox<Integer> capacityList = new JComboBox<>(capacityStrings);
 
     /* Additional options
     private String[] doorsUsedStrings = {"Front only", "Front & Rear"};
@@ -66,15 +51,15 @@ public class SettingsPanel extends JPanel implements Observer {
     public JLabel paxRemaining = new JLabel();
 
     /* Simulation Rate Slider */
-    static final int SIM_RATE_MIN = 0;
-    static final int SIM_RATE_MAX = 4;
-    static final int SIM_RATE_INIT = 2;
+    private static final int SIM_RATE_MIN = 0;
+    private static final int SIM_RATE_MAX = 4;
+    private static final int SIM_RATE_INIT = 2;
     public JSlider simulationRate = new JSlider(JSlider.HORIZONTAL, SIM_RATE_MIN, SIM_RATE_MAX, SIM_RATE_INIT);
 
     /* Capacity Slider */
-    static final int CAP_MIN = 0;
-    static final int CAP_MAX = 100;
-    static final int CAP_INIT = 100;
+    private static final int CAP_MIN = 0;
+    private static final int CAP_MAX = 100;
+    private static final int CAP_INIT = 100;
 
     public JSlider capacitySlider = new JSlider(JSlider.HORIZONTAL, CAP_MIN, CAP_MAX, CAP_INIT);
 
@@ -82,7 +67,7 @@ public class SettingsPanel extends JPanel implements Observer {
 
     private String selectedAircraft;
 
-    public void setSelectedAircraft(){
+    public void setSelectedAircraft() {
         selectedAircraft = aircraftTypeList.getSelectedItem().toString();
     }
 
@@ -97,14 +82,16 @@ public class SettingsPanel extends JPanel implements Observer {
     }
 
     public int getSelectedCapacity() {
-        if(capacityList.getEditor().getItem() != null){
-            try{
+        if (capacityList.getEditor().getItem() != null) {
+            try {
                 if (capacityList.getEditor().getItem() instanceof Integer) {
                     return Integer.parseInt(capacityList.getEditor().getItem().toString());
                 } else {
                     throw new NotIntegerException("Problem");
                 }
-            } catch (NotIntegerException e){
+            } catch (NotIntegerException e) {
+                capacityList.setSelectedItem(100);
+                return 100;
                 //TODO: Make sure that this doesn't continue to run
                 //TODO: Make a "Just set capacity to 100%" option
             }
@@ -113,7 +100,7 @@ public class SettingsPanel extends JPanel implements Observer {
         return Integer.parseInt(capacityList.getSelectedItem().toString());
     }
 
-    public int getSelectedSimulationRate(){
+    public int getSelectedSimulationRate() {
         return simulationRate.getValue();
     }
 
@@ -127,19 +114,39 @@ public class SettingsPanel extends JPanel implements Observer {
 
         this.boardingModel = boardingModel;
 
+        DefaultComboBoxModel defaultComboBoxModel = new DefaultComboBoxModel<String>() {
+            private static final long serialVersionUID = 1L;
+            boolean selectionAllowed = true;
+
+            @Override
+            public void setSelectedItem(Object anObject) {
+                if (!NOT_SELECTABLE_OPTION.equals(anObject)) {
+                    super.setSelectedItem(anObject);
+                } else if (selectionAllowed) {
+                    // Allow this just once
+                    selectionAllowed = false;
+                    super.setSelectedItem(anObject);
+                }
+            }
+        };
         aircraftTypeList.setModel(defaultComboBoxModel);
 
         //Loads the aircraft JComboBox based on the directories which are located in "content/"
         try {
+            //TODO: Cite this
             /*From here http://stackoverflow.com/questions/16665688/display-a-non-selectable-default-value-for-jcombobox */
             aircraftTypeList.addItem(NOT_SELECTABLE_OPTION);
             /* */
             File file = new File("content/");
             File[] files;
             files = file.listFiles();
-            for (File f : files) {
-                String[] name = f.toString().split("\\\\");
-                aircraftTypeList.addItem(name[1]);
+            if (files.length > 0) {
+                for (File f : files) {
+                    String[] name = f.toString().split("\\\\");
+                    aircraftTypeList.addItem(name[1]);
+                }
+            } else {
+                new MissingAircraftException();
             }
 
 
@@ -149,22 +156,23 @@ public class SettingsPanel extends JPanel implements Observer {
         System.out.println("AircraftTypeList:" + aircraftTypeList.toString());
 
         boardingMethodList.setModel(new DefaultComboBoxModel<String>() {
-        private static final long serialVersionUID = 2L;
-        boolean selectionAllowed = true;
+            private static final long serialVersionUID = 2L;
+            boolean selectionAllowed = true;
 
-        @Override
-        public void setSelectedItem(Object anObject) {
-            if (!NOT_SELECTABLE_OPTION.equals(anObject)) {
-                super.setSelectedItem(anObject);
-            } else if (selectionAllowed) {
-                // Allow this just once
-                selectionAllowed = false;
-                super.setSelectedItem(anObject);
+            @Override
+            public void setSelectedItem(Object anObject) {
+                if (!NOT_SELECTABLE_OPTION.equals(anObject)) {
+                    super.setSelectedItem(anObject);
+                } else if (selectionAllowed) {
+                    // Allow this just once
+                    selectionAllowed = false;
+                    super.setSelectedItem(anObject);
+                }
             }
-        }
         });
         boardingMethodList.addItem(NOT_SELECTABLE_OPTION);
-        for(String str : boardingMethodStrings){
+        String[] boardingMethodStrings = {"Back-to-front", "Outside-in", "Random", "Even-odd"};
+        for (String str : boardingMethodStrings) {
             boardingMethodList.addItem(str);
         }
 
@@ -218,7 +226,7 @@ public class SettingsPanel extends JPanel implements Observer {
 
         gbc.gridy++;
         this.add(boardingMethodInfo, gbc);
-        boardingMethodInfo.setPreferredSize(new Dimension(200,75));
+        boardingMethodInfo.setPreferredSize(new Dimension(200, 75));
         boardingMethodInfo.setLineWrap(true);
         boardingMethodInfo.setWrapStyleWord(true);
         boardingMethodInfo.setEditable(false);
@@ -240,7 +248,7 @@ public class SettingsPanel extends JPanel implements Observer {
         this.add(doorsUsedList, gbc);*/
 
         gbc.gridy++;
-        this.add(new JSeparator(),gbc);
+        this.add(new JSeparator(), gbc);
 
         /*Simulation Control*/
         gbc.gridwidth = 1;
@@ -251,7 +259,7 @@ public class SettingsPanel extends JPanel implements Observer {
         gbc.gridx = 1;
         this.add(pauseSimulation, gbc);
         gbc.gridx = 2;
-        this.add(reset,gbc);
+        this.add(reset, gbc);
 
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.gridwidth = 3;
@@ -270,7 +278,7 @@ public class SettingsPanel extends JPanel implements Observer {
         this.add(new JLabel("Status:"), gbc);
         gbc.gridx++;
         gbc.gridx++;
-        this.add(status,gbc);
+        this.add(status, gbc);
 
         /*gbc.gridy++;
         gbc.gridx = 0;
@@ -306,27 +314,27 @@ public class SettingsPanel extends JPanel implements Observer {
             public void actionPerformed(ActionEvent e) {
                 //Is this good practice to have something of type "Object"?
                 Object selectedMethod = boardingMethodList.getSelectedItem();
-                if(selectedMethod.equals("Back-to-front")){
+                if (selectedMethod.equals("Back-to-front")) {
                     boardingMethodInfo.setText("The passengers seated at the back of the aircraft are welcomed onboard first.");
-                } else if(selectedMethod.equals("Outside-in")){
-                    boardingMethodInfo.setText("The passengers seated at window seats are welcomed onboard first, followed by middle seat passengers, and finally by aisle seat passengers.");
-                } else if(selectedMethod.equals("Random")){
+                } else if (selectedMethod.equals("Outside-in")) {
+                    boardingMethodInfo.setText("The window seat passengers are welcomed onboard first, followed by middle seat passengers, and finally by aisle seat passengers.");
+                } else if (selectedMethod.equals("Random")) {
                     boardingMethodInfo.setText("Passengers are welcome to board whenever they wish.");
-                } else if(selectedMethod.equals("Even-odd")){
+                } else if (selectedMethod.equals("Even-odd")) {
                     boardingMethodInfo.setText("Passengers seated in even numbered rows are welcomed first, followed by passengers seated in odd numbered rows.");
                 }
             }
         });
     }
 
-    public void runningDisable(){
+    public void runningDisable() {
         aircraftTypeList.setEnabled(false);
         capacityList.setEnabled(false);
         boardingMethodList.setEnabled(false);
         /*doorsUsedList.setEnabled(false);*/
     }
 
-    public void renable(){
+    public void renable() {
         aircraftTypeList.setEnabled(true);
         capacityList.setEnabled(true);
         boardingMethodList.setEnabled(true);
@@ -336,21 +344,26 @@ public class SettingsPanel extends JPanel implements Observer {
     //TODO: Should this go here or somewhere else which isn't layout?
 
     @Override
-    public void update(Observable o, Object data){
+    public void update(Observable o, Object data) {
+        System.out.println("The updated information was:" + data);
         invalidate();
-        iterationInt = boardingModel.getModelInteration();
-        if(iterationInt > 1){
-            iterationLabel.setText(""+iterationInt);
-        } else if(iterationInt == 0){
+        iterationInt = boardingModel.getModelIteration();
+        if (iterationInt > 1) {
+            iterationLabel.setText("" + iterationInt);
+        } else if (iterationInt == 0) {
             iterationLabel.setText("");
         }
-        if(boardingModel.getTotalPax() != 0){
-            System.out.println("Total Pax: "+boardingModel.getTotalPax());
+        if (boardingModel.getTotalPax() != 0) {
+            System.out.println("Total Pax: " + boardingModel.getTotalPax());
             double progressDouble = ((double) boardingModel.getIsSeatCount() / (double) boardingModel.getTotalPax()) * 100;
             int progress = (int) Math.round(progressDouble);
             System.out.println(progress);
-            progressBar.setString(boardingModel.getIsSeatCount()+"/"+boardingModel.getTotalPax());
+            progressBar.setString(boardingModel.getIsSeatCount() + "/" + boardingModel.getTotalPax());
             progressBar.setValue(progress);
+        }
+        if (boardingModel.isCompleted() && iterationInt!=-1) {
+            JOptionPane.showMessageDialog(this,
+                    "The boarding of " + boardingModel.getAircraftType().toString() + " using " + boardingModel.getAircraftType().toString() + " boarding, completed in " + iterationInt + " iterations.", "Boarding Complete", JOptionPane.INFORMATION_MESSAGE);
         }
     }
 }

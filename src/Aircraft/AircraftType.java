@@ -1,7 +1,4 @@
 package Aircraft;
-import Aircraft.Layout;
-import Passenger.Passenger;
-import javafx.geometry.Pos;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -17,11 +14,10 @@ import java.util.List;
 
 @XmlRootElement(name="AircraftType")
 public class AircraftType {
-    //Long id;
-    //private ArrayList Capacity;
+
     private String name;
+
     private int doors;
-    //private Layout layout;
 
     private int rows;
     private int width;

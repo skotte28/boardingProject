@@ -15,9 +15,9 @@ public class Method {
         int aircraftLength = aircraftType.getRows();
 
         //Instantiate temporary list
-        LinkedList<Passenger> firstThird = new LinkedList<Passenger>();
-        LinkedList<Passenger> secondThird = new LinkedList<Passenger>();
-        LinkedList<Passenger> thirdThird = new LinkedList<Passenger>();
+        LinkedList<Passenger> firstThird = new LinkedList<>();
+        LinkedList<Passenger> secondThird = new LinkedList<>();
+        LinkedList<Passenger> thirdThird = new LinkedList<>();
 
         //Iterate through and sort odd and even
         for(Passenger pax : list){
@@ -37,8 +37,8 @@ public class Method {
     public static List<Passenger> innovative(List<Passenger> list) {
 
         //Instantiate temporary list
-        List<Passenger> even = new LinkedList<Passenger>();
-        List<Passenger> odd = new LinkedList<Passenger>();
+        List<Passenger> even = new LinkedList<>();
+        List<Passenger> odd = new LinkedList<>();
 
         //Iterate through and sort odd and even
         for(Passenger pax : list){          //TODO: Look into the collect call for a list or change it a queue

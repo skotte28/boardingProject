@@ -1,5 +1,7 @@
 package MVCFramework;
 
+import Exceptions.NoSelectedException;
+
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import java.awt.*;
@@ -28,7 +30,7 @@ public class BoardingController implements EventListener, Observer {
             public void stateChanged(ChangeEvent e) {
                 int value = theView.settingsPanel.simulationRate.getValue();
                 System.out.println(value);
-                //TODO: Make sure this timervalue is the same as the otherone
+                //TODO: Make sure this timer value is the same as the other one
                 theModel.timer.stop();
                 theModel.setDelay(value);
                 theModel.timer.setDelay(theModel.getDelay());
@@ -50,21 +52,29 @@ public class BoardingController implements EventListener, Observer {
         /* TODO: Add the doors used options*/
     }
 
-    public class RunButtonListener implements ActionListener {
+    private class RunButtonListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e){
             if(!theModel.isInProcess()) {
-                theView.settingsPanel.startSimulation.setEnabled(false);
-                theView.settingsPanel.pauseSimulation.setEnabled(true);
-                theView.settingsPanel.runningDisable();
-                //Set all model variables
-                modelLoader();
-                //Should run method in controller
-                theModel.runSimulation();
-                theModel.timer.start();
-                ButtonRunnable buttonRunnable = new ButtonRunnable();
-                Thread thread = new Thread(buttonRunnable);
-                thread.start();
+                if(theModel.getAircraftType() != null) {
+                    if(theView.settingsPanel.getSelectedBoardingMethod() != null){
+                        theView.settingsPanel.startSimulation.setEnabled(false);
+                        theView.settingsPanel.pauseSimulation.setEnabled(true);
+                        theView.settingsPanel.runningDisable();
+                        //Set all model variables
+                        modelLoader();
+                        //Should run method in controller
+                        theModel.runSimulation();
+                        theModel.timer.start();
+                        ButtonRunnable buttonRunnable = new ButtonRunnable();
+                        Thread thread = new Thread(buttonRunnable);
+                        thread.start();
+                    } else {
+                        new NoSelectedException("boarding method");
+                    }
+                } else {
+                    new NoSelectedException("aircraft");
+                }
             } else {
                 theModel.timer.start();
                 theView.settingsPanel.pauseSimulation.setEnabled(true);
@@ -74,7 +84,7 @@ public class BoardingController implements EventListener, Observer {
 
     }
 
-    public class PauseButtonListener implements ActionListener {
+    private class PauseButtonListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
             //TODO: Print statement for testing purposes, remove when complete
@@ -91,7 +101,7 @@ public class BoardingController implements EventListener, Observer {
         }
     }
 
-    public class ResetButtonListener implements ActionListener {
+    private class ResetButtonListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
             //TODO: Print statement for testing purposes, remove when complete
@@ -101,6 +111,7 @@ public class BoardingController implements EventListener, Observer {
             theView.settingsPanel.renable();
             theModel.timer = null;
             theModel.setInProcess(false);
+            theModel.setCompleted(false);
             theView.settingsPanel.status.setText("");
             theView.settingsPanel.reset.setEnabled(false);
             theView.settingsPanel.progressBar.setValue(0);
@@ -108,26 +119,24 @@ public class BoardingController implements EventListener, Observer {
         }
     }
 
-    public class ButtonRunnable implements Runnable {
+    private class ButtonRunnable implements Runnable {
 
         public void run() {
             while (theModel.timer != null) {
                 while (theModel.timer.isRunning()) {
+                    if(theModel.isCompleted()){
+                        theView.settingsPanel.status.setText("Completed");
+                    } else {
+                        theView.settingsPanel.status.setText("Running");
+                    }
                     theView.settingsPanel.startSimulation.setEnabled(false);
                     theView.settingsPanel.status.setForeground(Color.green);
-                    theView.settingsPanel.status.setText("Running");
+                    //theView.settingsPanel.status.setText("Running");
                 }
                 theView.settingsPanel.startSimulation.setEnabled(true);
                 theView.settingsPanel.reset.setEnabled(true);
                 theView.settingsPanel.pauseSimulation.setEnabled(false);
             }
-        }
-    }
-
-    public class BoardingListener implements ChangeListener{
-        @Override
-        public void stateChanged(ChangeEvent e){
-            theView.queuePanel.repaint();
         }
     }
 

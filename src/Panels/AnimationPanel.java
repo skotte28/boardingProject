@@ -15,9 +15,8 @@ import javax.swing.*;
 
 public class AnimationPanel extends JPanel implements Observer {
 
-    int count = 0;
+    private int count = 0;
 
-    private int CELL_DIMENSION = 25; //Each square is 25cm
     private int columnCount; //= 140;  //Total length 28m
     private int rowCount; //= 18;      //Total width 3.5m
     private int bufferCount;
@@ -26,11 +25,11 @@ public class AnimationPanel extends JPanel implements Observer {
     private List<Point> selectedCell;
     private List<Point> layoutCells;
     private List<Point> seatCells;
-    protected List<PointPair> passengers;
-    protected List<PointPair> seatedPax;
+    private List<PointPair> passengers;
+    private List<PointPair> seatedPax;
 
     //TODO: Should there really need to be two instances of theGrid
-    protected Passenger[][] animationGrid;
+    private Passenger[][] animationGrid;
 
     private BoardingModel boardingModel;
 
@@ -43,11 +42,11 @@ public class AnimationPanel extends JPanel implements Observer {
         this.boardingModel = boardingModel;
 
         cells = new ArrayList<>(columnCount * rowCount);
-        selectedCell = new ArrayList<Point>();
-        layoutCells = new ArrayList<Point>();
-        seatCells = new ArrayList<Point>();
-        passengers = new ArrayList<PointPair>();
-        seatedPax = new ArrayList<PointPair>();
+        selectedCell = new ArrayList<>();
+        layoutCells = new ArrayList<>();
+        seatCells = new ArrayList<>();
+        passengers = new ArrayList<>();
+        seatedPax = new ArrayList<>();
 
         //TODO: Remove; color for testing purposes
         this.setBackground(Color.WHITE);
@@ -87,6 +86,7 @@ public class AnimationPanel extends JPanel implements Observer {
         int width = getWidth();
         int height = getHeight();
 
+        int CELL_DIMENSION = 25;
         int xOffset = (width - (columnCount * CELL_DIMENSION)) / 2;
         int yOffset = (height - (rowCount * CELL_DIMENSION)) / 2;
 
@@ -143,7 +143,7 @@ public class AnimationPanel extends JPanel implements Observer {
                 g2d.setColor(Color.YELLOW);
                 g2d.fillOval((int) cell.getX(), (int) cell.getY(), CELL_DIMENSION, CELL_DIMENSION);
                 g2d.setColor(Color.BLACK);
-                g2d.drawString(px.getLabel(), (int) cell.getX()+(CELL_DIMENSION/4), (int) cell.getY()+(2*(CELL_DIMENSION/3)));
+                g2d.drawString(px.getLabel(), (int) cell.getX()+(CELL_DIMENSION /4), (int) cell.getY()+(2*(CELL_DIMENSION /3)));
             }
         }
 
@@ -155,7 +155,7 @@ public class AnimationPanel extends JPanel implements Observer {
                 g2d.setColor(Color.GREEN);
                 g2d.fillOval((int) cell.getX(), (int) cell.getY(), CELL_DIMENSION, CELL_DIMENSION);
                 g2d.setColor(Color.BLACK);
-                g2d.drawString(sc.getLabel(), (int) cell.getX()+(CELL_DIMENSION/4), (int) cell.getY()+(2*(CELL_DIMENSION/3)));
+                g2d.drawString(sc.getLabel(), (int) cell.getX()+(CELL_DIMENSION /4), (int) cell.getY()+(2*(CELL_DIMENSION /3)));
             }
         }
 
@@ -173,11 +173,11 @@ public class AnimationPanel extends JPanel implements Observer {
             g2d.draw(cell);
             g2d.setColor(Color.BLACK);
             if(columnLabeler > 0 && columnLabeler <= columnCount-bufferCount) {
-                g2d.drawString(Integer.toString(columnLabeler), (int) cell.getX() + (CELL_DIMENSION/4), (int) cell.getY());
+                g2d.drawString(Integer.toString(columnLabeler), (int) cell.getX() + (CELL_DIMENSION /4), (int) cell.getY());
             }
             if(rowLabeler < rowCount && (columnLabeler%columnCount==0)){
                 if(rowLabeler != aisleException) {
-                    g2d.drawString(Character.toString(alphabet[rowLabeler-aisleCount]), (int) cell.getX()-(CELL_DIMENSION/2), (int) cell.getY()+(2*(CELL_DIMENSION/3)));
+                    g2d.drawString(Character.toString(alphabet[(rowCount-2)-rowLabeler+aisleCount]), (int) cell.getX()-(CELL_DIMENSION /2), (int) cell.getY()+(2*(CELL_DIMENSION /3)));
                 } else {
                     aisleCount++;
                 }
@@ -188,7 +188,7 @@ public class AnimationPanel extends JPanel implements Observer {
         g2d.dispose();
     }
 
-    public void newValues(AircraftType aircraftType) {
+    private void newValues(AircraftType aircraftType) {
         /*Author: OS */
         if (aircraftType != null) {
             columnCount = aircraftType.getRows() + aircraftType.getBuffer();
@@ -213,7 +213,7 @@ public class AnimationPanel extends JPanel implements Observer {
         //System.out.println(seatCells);
     }
 
-    public void paxUpdate(Passenger[][] animationGrid, AircraftType aircraftType) {
+    private void paxUpdate(Passenger[][] animationGrid, AircraftType aircraftType) {
         if (animationGrid != null) {
             for (int pos = 0; pos < aircraftType.getWidth() + aircraftType.getAisle(); pos++) {
                 for (int row = 0; row < aircraftType.getRows()+aircraftType.getBuffer(); row++) {
@@ -229,19 +229,9 @@ public class AnimationPanel extends JPanel implements Observer {
         }
     }
 
-    private void deadlockPopup(){
-        JOptionPane.showMessageDialog(this,
-                "We're in an unsolvable deadlock - the boarding will have to be restarted.",
-                "Logic Error",
-                JOptionPane.ERROR_MESSAGE);
-    }
-
     @Override
     public void update(Observable o, Object data){
         invalidate();
-        if(boardingModel.isUnRecoverable()){
-            deadlockPopup();
-        }
         newValues(boardingModel.getAircraftType());
         animationGrid = boardingModel.getTheGrid();
         paxUpdate(animationGrid, boardingModel.getAircraftType());
@@ -267,12 +257,7 @@ public class AnimationPanel extends JPanel implements Observer {
         }
     }
 
-    public void nullPassengers(){
-        passengers = null;
-        seatedPax = null;
-    }
-
-    void takeSnapShot(JPanel panel){
+    private void takeSnapShot(JPanel panel){
         BufferedImage bufImage = new BufferedImage(panel.getSize().width, panel.getSize().height,BufferedImage.TYPE_INT_RGB);
         panel.paint(bufImage.createGraphics());
         File imageFile = new File("./screenshots/screenshot"+count+".jpeg");

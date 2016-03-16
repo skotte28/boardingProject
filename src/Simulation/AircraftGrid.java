@@ -1,11 +1,8 @@
 package Simulation;
 
 import Aircraft.AircraftType;
-import Aircraft.Position;
 import Passenger.Passenger;
-import javafx.animation.Animation;
-import Passenger.BlockPair;
-import java.util.Arrays;
+
 import java.util.List;
 
 /**

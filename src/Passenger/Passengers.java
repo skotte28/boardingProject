@@ -19,9 +19,9 @@ import java.util.List;
 public class Passengers {
 
     @XmlElement(name="Passenger", type=Passenger.class)
-    private List<Passenger> passengers = new ArrayList<Passenger>();
+    private List<Passenger> passengers = new ArrayList<>();
 
-    public Passengers(){};
+    public Passengers(){}
 
     public Passengers(List<Passenger> passengers){
         this.passengers = passengers;

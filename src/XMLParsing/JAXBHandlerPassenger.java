@@ -1,10 +1,7 @@
 package XMLParsing;
 
-import Aircraft.AircraftType;
-import Aircraft.Position;
 import Passenger.*;
 
-import javax.xml.bind.JAXB;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;

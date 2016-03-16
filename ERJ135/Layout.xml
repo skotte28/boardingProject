@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <AircraftType>
-    <name>B757</name>
-    <width>6</width>
+    <name>ERJ135</name>
+    <width>3</width>
     <aisle>1</aisle>
-    <rows>32</rows>
+    <rows>13</rows>
     <buffer>3</buffer>
     <windowSeats>A, F</windowSeats>
     <middleSeats>B, E</middleSeats>

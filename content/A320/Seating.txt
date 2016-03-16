@@ -1,0 +1,7 @@
+A:6:W
+B:5:M
+C:4:A
+AISLE:3:N
+D:2:A
+E:1:M
+F:0:W

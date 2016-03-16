@@ -1,17 +1,10 @@
 package Passenger;
 
-import Aircraft.Position;
 import Simulation.Direction;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import java.awt.*;
-import java.io.File;
-import java.util.ArrayList;
-import java.util.concurrent.ExecutionException;
 
 /**
  * Created by Oscar on 2015-11-25.
@@ -19,24 +12,24 @@ import java.util.concurrent.ExecutionException;
 @XmlRootElement(name="Passenger")
 public class Passenger {
 
-    Point blockPass;
+    private Point blockPass;
 
     /* Attributes which don't change */
-    int row;
-    String position;
-    int handluggage;
+    private int row;
+    private String position;
+    private int handLuggage;
 
-    Direction nextMove;
+    private Direction nextMove;
 
     /* When moving to allow other passengers in */
-    String tempPosition;
-    int tempRow = -1;       //Initialized to be inactive, as indicated by -1 value
+    private String tempPosition;
+    private int tempRow = -1;       //Initialized to be inactive, as indicated by -1 value
 
     /* When blocked by someone else */
-    BlockPair blockPair;
+    private BlockPair blockPair;
     
-    boolean seated;
-    int iteration = 0;
+    private boolean seated;
+    private int iteration = 0;
 
     @XmlElement (name="row")
     public void setRow(int row) {
@@ -56,12 +49,12 @@ public class Passenger {
         return position;
     }
 
-    public int getHandluggage() {
-        return handluggage;
+    public int getHandLuggage() {
+        return handLuggage;
     }
 
-    public void setHandluggage(int handluggage) {
-        this.handluggage = handluggage;
+    public void setHandLuggage(int handLuggage) {
+        this.handLuggage = handLuggage;
     }
 
     public void setNextMove(Direction nextMove){

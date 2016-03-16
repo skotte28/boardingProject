@@ -12,7 +12,7 @@ import java.util.Observer;
  */
 public class QueuePanel extends JPanel implements Observer {
 
-    BoardingModel boardingModel;
+    private BoardingModel boardingModel;
     private int remaining;
 
     public QueuePanel(BoardingModel boardingModel) {

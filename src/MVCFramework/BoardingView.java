@@ -8,6 +8,7 @@ import Panels.SettingsPanel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.IOException;
 
@@ -16,45 +17,28 @@ import javax.swing.border.TitledBorder;
 
 public class BoardingView extends JFrame {
 
-    private BoardingModel theModel;
-    JPanel panelFramer = new JPanel();
-
-    final int STANDARD_WINDOW_WIDTH = 1500;
-    final int STANDARD_WINDOW_HEIGHT = 800;
-
     protected SettingsPanel settingsPanel;
-    protected AnimationPanel animationPanel;
-    protected AircraftType aircraftType;
-    protected QueuePanel queuePanel;
-
-    GridBagConstraints gbc = new GridBagConstraints();
 
     public BoardingView(BoardingModel theModel){
 
-        this.theModel = theModel;
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        int STANDARD_WINDOW_WIDTH = 1500;
+        int STANDARD_WINDOW_HEIGHT = 800;
         setSize(STANDARD_WINDOW_WIDTH, STANDARD_WINDOW_HEIGHT);
 
         settingsPanel = new SettingsPanel(theModel);
         settingsPanel.setToolTipText("Settings Panel");
-        animationPanel = new AnimationPanel(theModel);
+        AnimationPanel animationPanel = new AnimationPanel(theModel);
         animationPanel.setToolTipText("Animation Panel");
-        queuePanel = new QueuePanel(theModel);
+        QueuePanel queuePanel = new QueuePanel(theModel);
         queuePanel.setToolTipText("Queue Panel");
         JMenuBar menuBar = new JMenuBar();
-        JMenu menuFile  = new JMenu("File");
         JMenu menuHelp = new JMenu("Help");
 
-        menuFile.getAccessibleContext().setAccessibleDescription(
-                "This is the file menu");
-
-        JMenuItem menuItem = new JMenuItem("Readme");
-
-        menuHelp.add(menuItem);
-
+        JMenuItem readmeItem = new JMenuItem("Readme");
+        menuHelp.add(readmeItem);
         /* Menu options */
 
-        menuBar.add(menuFile);
         menuBar.add(menuHelp);
 
         this.setJMenuBar(menuBar);
@@ -70,8 +54,9 @@ public class BoardingView extends JFrame {
         theModel.addObserver(queuePanel);
         theModel.addObserver(settingsPanel);
 
-
+        JPanel panelFramer = new JPanel();
         panelFramer.setLayout(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
         gbc.weighty = 1;
         gbc.insets = new Insets(5,5,5,5);
 
@@ -82,7 +67,7 @@ public class BoardingView extends JFrame {
         gbc.gridheight = 2;
 
         gbc.fill = GridBagConstraints.VERTICAL;
-        panelFramer.add(settingsPanel,gbc);
+        panelFramer.add(settingsPanel, gbc);
 
         gbc.gridx = 1;
         gbc.gridy = 0;
@@ -111,7 +96,7 @@ public class BoardingView extends JFrame {
             }
         });
 
-        menuItem.addActionListener(new ActionListener() {
+        readmeItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 try{
@@ -124,6 +109,6 @@ public class BoardingView extends JFrame {
                 }
             }
         });
-
     }
+
 }

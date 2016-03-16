@@ -8,7 +8,7 @@ import javax.swing.*;
 public class NotIntegerException extends Exception {
     public NotIntegerException(String message) {
         super(message);
-        JOptionPane.showMessageDialog(null, "Please make sure that the capacity is an integer between 0 and 100","Capacity Problem",
+        JOptionPane.showMessageDialog(null, "Please make sure that the capacity is an integer between 0 and 100. Capacity will be set 100 for this visualization.","Capacity Problem",
                 JOptionPane.WARNING_MESSAGE);
     }
 }
