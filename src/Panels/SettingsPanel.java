@@ -357,7 +357,7 @@ public class SettingsPanel extends JPanel implements Observer {
             System.out.println("Total Pax: " + boardingModel.getTotalPax());
             double progressDouble = ((double) boardingModel.getIsSeatCount() / (double) boardingModel.getTotalPax()) * 100;
             int progress = (int) Math.round(progressDouble);
-            System.out.println(progress);
+            System.out.println("Progress: "+progress);
             progressBar.setString(boardingModel.getIsSeatCount() + "/" + boardingModel.getTotalPax());
             progressBar.setValue(progress);
         }
