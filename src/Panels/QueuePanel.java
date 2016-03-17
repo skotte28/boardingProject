@@ -50,6 +50,11 @@ public class QueuePanel extends JPanel implements Observer {
         }
     }
 
+    public void clear(){
+        remaining = 0;
+        repaint();
+    }
+
     @Override
     public void update(Observable o, Object arg) {
         if(boardingModel.getPassengers() != null) {

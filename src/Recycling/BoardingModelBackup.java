@@ -637,11 +637,18 @@ public class BoardingModelBackup extends Observable{
     }
 
     public void clear(){
+        this.setCompleted(false);
         this.setBoardingMethod(null);
         this.setCapacity(-1);
         this.setDelay(2);
         this.theGrid = null;
+        this.timer = null;
+        this.isSeatCount = 0;
+        this.setCompleted(false);
+        this.totalPax = 0;
         modelIteration = 0;
+        stallCount = 0;
+        this.setInProcess(false);
         setChanged();
         notifyObservers();
     }

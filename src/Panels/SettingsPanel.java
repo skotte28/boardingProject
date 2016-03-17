@@ -79,12 +79,10 @@ public class SettingsPanel extends JPanel implements Observer {
     }
 
     public String getSelectedAircraft() {
-        System.out.println(selectedAircraft);
         return selectedAircraft;
     }
 
     public String getSelectedBoardingMethod() {
-        System.out.println(boardingMethodList.getSelectedItem().toString());
         return boardingMethodList.getSelectedItem().toString();
     }
 
@@ -145,7 +143,6 @@ public class SettingsPanel extends JPanel implements Observer {
         } catch (SecurityException se) {
             se.printStackTrace();
         }
-        System.out.println("AircraftTypeList:" + aircraftTypeList.toString());
 
         boardingMethodList.setModel(new DefaultComboBoxModel<String>() {
             private static final long serialVersionUID = 2L;
@@ -303,8 +300,6 @@ public class SettingsPanel extends JPanel implements Observer {
         pauseSimulation.setEnabled(false);
         reset.setEnabled(false);
 
-        //TODO: Default selection option
-
         boardingMethodList.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -339,23 +334,24 @@ public class SettingsPanel extends JPanel implements Observer {
         /*doorsUsedList.setEnabled(true);*/
     }
 
-    //TODO: Should this go here or somewhere else which isn't layout?
-
     @Override
     public void update(Observable o, Object data) {
-        System.out.println("The updated information was:" + data);
         invalidate();
-        iterationInt = boardingModel.getModelIteration();
-        if (iterationInt > 1) {
-            iterationLabel.setText("" + iterationInt);
-        } else if (iterationInt == 0) {
-            iterationLabel.setText("");
+        iterationLabelUpdate();
+        progressBarUpdate();
+        if (boardingModel.isCompleted() && iterationInt != -1) {
+            completedNotification();
         }
+    }
+
+    public JComboBox<Integer> getCapacityList() {
+        return capacityList;
+    }
+
+    private void progressBarUpdate(){
         if (boardingModel.getTotalPax() != 0) {
-            System.out.println("Total Pax: " + boardingModel.getTotalPax());
             double progressDouble = ((double) boardingModel.getIsSeatCount() / (double) boardingModel.getTotalPax()) * 100;
             int progress = (int) Math.round(progressDouble);
-            System.out.println("Progress: "+progress);
             progressBar.setString(boardingModel.getIsSeatCount() + "/" + boardingModel.getTotalPax());
             progressBar.setValue(progress);
             //TODO: This is a bit of hack
@@ -364,13 +360,20 @@ public class SettingsPanel extends JPanel implements Observer {
                 progressBar.setValue(100);
             }
         }
-        if (boardingModel.isCompleted() && iterationInt != -1) {
-            JOptionPane.showMessageDialog(null,
-                    "The boarding of " + boardingModel.getAircraftType().toString() + " using " + boardingModel.getBoardingMethod().toString() + " boarding, completed in " + iterationInt + " iterations.", "Boarding Complete", JOptionPane.INFORMATION_MESSAGE);
+    }
+
+    private void iterationLabelUpdate(){
+        iterationInt = boardingModel.getModelIteration();
+        if (iterationInt > 1) {
+            iterationLabel.setText("" + iterationInt);
+        } else if (iterationInt == 0) {
+            iterationLabel.setText("");
         }
     }
 
-    public JComboBox<Integer> getCapacityList() {
-        return capacityList;
+    private void completedNotification(){
+        JOptionPane.showMessageDialog(null,
+                "The boarding of " + boardingModel.getAircraftType().toString() + " using " + boardingModel.getBoardingMethod().toString() + " boarding, completed in " + iterationInt + " iterations.",
+                "Boarding Complete", JOptionPane.INFORMATION_MESSAGE);
     }
 }

@@ -5,6 +5,7 @@ import MVCFramework.BoardingModel;
 import Passenger.Passenger;
 
 import java.awt.*;
+import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -28,9 +29,6 @@ public class AnimationPanel extends JPanel implements Observer {
     private List<PointPair> passengers;
     private List<PointPair> seatedPax;
 
-    //TODO: Should there really need to be two instances of theGrid
-    private Passenger[][] animationGrid;
-
     private BoardingModel boardingModel;
 
     private BufferedImage image;
@@ -41,6 +39,8 @@ public class AnimationPanel extends JPanel implements Observer {
         newValues(aircraftType);
         this.boardingModel = boardingModel;
 
+        this.setBackground(Color.WHITE);
+
         cells = new ArrayList<>(columnCount * rowCount);
         selectedCell = new ArrayList<>();
         layoutCells = new ArrayList<>();
@@ -48,13 +48,11 @@ public class AnimationPanel extends JPanel implements Observer {
         passengers = new ArrayList<>();
         seatedPax = new ArrayList<>();
 
-        //TODO: Remove; color for testing purposes
-        this.setBackground(Color.WHITE);
 
         try{
             image = ImageIO.read(new File("resources/images/seatBigger.png"));
         } catch (IOException ex){
-            System.out.println("Image didn't work.");
+            System.err.println("Could not find seat image.");
         }
 
     }
@@ -110,8 +108,6 @@ public class AnimationPanel extends JPanel implements Observer {
                 g2d.setColor(Color.BLACK);
                 g2d.fill(cell);
                 g2d.fillOval(10,10,10,10);
-                //TODO: Fix the row labelling
-
             }
 
         }
@@ -159,6 +155,8 @@ public class AnimationPanel extends JPanel implements Observer {
             }
         }
 
+        //TODO: Center labels using font metrics
+
         int columnLabeler = 0;
         int rowLabeler = 0;
         int aisleException = -1;
@@ -173,7 +171,7 @@ public class AnimationPanel extends JPanel implements Observer {
             g2d.draw(cell);
             g2d.setColor(Color.BLACK);
             if(columnLabeler > 0 && columnLabeler <= columnCount-bufferCount) {
-                g2d.drawString(Integer.toString(columnLabeler), (int) cell.getX() + (CELL_DIMENSION /4), (int) cell.getY());
+                g2d.drawString(Integer.toString(columnLabeler), (int) cell.getX() + (CELL_DIMENSION /4), (int) cell.getY()-(CELL_DIMENSION/8));
             }
             if(rowLabeler < rowCount && (columnLabeler%columnCount==0)){
                 if(rowLabeler != aisleException) {
@@ -210,7 +208,6 @@ public class AnimationPanel extends JPanel implements Observer {
 
             }
         }
-        //System.out.println(seatCells);
     }
 
     private void paxUpdate(Passenger[][] animationGrid, AircraftType aircraftType) {
@@ -233,10 +230,9 @@ public class AnimationPanel extends JPanel implements Observer {
     public void update(Observable o, Object data){
         invalidate();
         newValues(boardingModel.getAircraftType());
-        animationGrid = boardingModel.getTheGrid();
-        paxUpdate(animationGrid, boardingModel.getAircraftType());
+        paxUpdate(boardingModel.getTheGrid(), boardingModel.getAircraftType());
         repaint();
-        takeSnapShot(this);
+        //takeSnapShot(this); - Enable for testing
     }
 
     public class PointPair{
@@ -257,6 +253,7 @@ public class AnimationPanel extends JPanel implements Observer {
         }
     }
 
+    /* Enable for testing purposes
     private void takeSnapShot(JPanel panel){
         BufferedImage bufImage = new BufferedImage(panel.getSize().width, panel.getSize().height,BufferedImage.TYPE_INT_RGB);
         panel.paint(bufImage.createGraphics());
@@ -268,5 +265,5 @@ public class AnimationPanel extends JPanel implements Observer {
             System.out.println("Problem with creating image");
         }
         count++;
-    }
+    } */
 }

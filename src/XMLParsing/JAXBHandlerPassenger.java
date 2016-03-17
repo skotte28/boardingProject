@@ -2,6 +2,7 @@ package XMLParsing;
 
 import Passenger.*;
 
+import javax.swing.*;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
@@ -27,7 +28,8 @@ public class JAXBHandlerPassenger {
             return passengers.getPassengers();
 
         } catch (JAXBException je) {
-            System.out.println(/*"There was a problem getting the passenger XML list."+*/je);
+            JOptionPane.showMessageDialog(null, "There was a problem getting the passenger XML list, please make sure it is correct and restart the application.","JAXB Passenger Error",
+                    JOptionPane.ERROR_MESSAGE);
             return null;
         }
     }

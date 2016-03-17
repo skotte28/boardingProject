@@ -31,7 +31,6 @@ public class Passengers {
         return passengers;
     }
 
-    //TODO: Is this method still never used?
     public void setPassengers(List<Passenger> passengers){
         this.passengers = passengers;
     }

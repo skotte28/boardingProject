@@ -42,15 +42,10 @@ public class BoardingController implements EventListener, Observer {
 
     private void modelLoader(){
         theModel.clear();
-        /* Had to be disabled to allowed aircraft preview... Seems strange
-        theModel.setAircraftType(theView.settingsPanel.getSelectedAircraft()); */
-        theModel.setIsSeatCount(0);
         theModel.setBoardingMethod(theView.settingsPanel.getSelectedBoardingMethod());
         theModel.setCapacity(theView.settingsPanel.getSelectedCapacity());
         theModel.setDelay(theView.settingsPanel.simulationRate.getValue());
         theModel.setTextOutput(theView.settingsPanel.outputChk.isSelected());
-        System.out.println("This is the simulation rate"+theView.settingsPanel.simulationRate.getValue());
-        /* TODO: Add the doors used options*/
     }
 
     private class RunButtonListener implements ActionListener {
@@ -94,9 +89,6 @@ public class BoardingController implements EventListener, Observer {
     private class PauseButtonListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
-            //TODO: Print statement for testing purposes, remove when complete
-            System.out.println("Paused");
-
             //Pause the simulation
             if(theModel.timer.isRunning()){
                 theModel.timer.stop();
@@ -111,8 +103,6 @@ public class BoardingController implements EventListener, Observer {
     private class ResetButtonListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
-            //TODO: Print statement for testing purposes, remove when complete
-            System.out.println("Reset");
             theModel.clear();
             theModel.setAircraftType(theView.settingsPanel.aircraftTypeList.getSelectedItem().toString());
             theView.settingsPanel.status.setText("");
@@ -120,6 +110,7 @@ public class BoardingController implements EventListener, Observer {
             theView.settingsPanel.progressBar.setValue(0);
             theView.settingsPanel.progressBar.setString(" ");
             theView.settingsPanel.renable();
+            theView.queuePanel.clear();
         }
     }
 
@@ -147,9 +138,7 @@ public class BoardingController implements EventListener, Observer {
     @Override
     public void update(Observable o, Object arg) {
         if (arg != null) {
-            System.out.println("I was notified!");
             if (arg.equals(true)) {
-                System.out.println("I'm changing the button!");
                 theView.settingsPanel.startSimulation.setEnabled(true);
             }
         }
