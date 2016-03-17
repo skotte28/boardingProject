@@ -9,6 +9,8 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -21,6 +23,9 @@ public class SettingsPanel extends JPanel implements Observer {
     private BoardingModel boardingModel;
     private int iterationInt;
     private JLabel iterationLabel = new JLabel();
+
+    //TODO: Not an ideal solution to validate that a boarding method has been selected
+    public ArrayList<String> validationStrings = new ArrayList<>();
 
     GridLayout experimentLayout = new GridLayout(0, 2);
 
@@ -36,6 +41,8 @@ public class SettingsPanel extends JPanel implements Observer {
 
     private Integer[] capacityStrings = {100, 75, 50, 25};
     private JComboBox<Integer> capacityList = new JComboBox<>(capacityStrings);
+
+    public JCheckBox outputChk = new JCheckBox("Results to text file");
 
     /* Additional options
     private String[] doorsUsedStrings = {"Front only", "Front & Rear"};
@@ -82,21 +89,6 @@ public class SettingsPanel extends JPanel implements Observer {
     }
 
     public int getSelectedCapacity() {
-        if (capacityList.getEditor().getItem() != null) {
-            try {
-                if (capacityList.getEditor().getItem() instanceof Integer) {
-                    return Integer.parseInt(capacityList.getEditor().getItem().toString());
-                } else {
-                    throw new NotIntegerException("Problem");
-                }
-            } catch (NotIntegerException e) {
-                capacityList.setSelectedItem(100);
-                return 100;
-                //TODO: Make sure that this doesn't continue to run
-                //TODO: Make a "Just set capacity to 100%" option
-            }
-        }
-        System.out.println(Integer.parseInt(capacityList.getSelectedItem().toString()));
         return Integer.parseInt(capacityList.getSelectedItem().toString());
     }
 
@@ -172,6 +164,7 @@ public class SettingsPanel extends JPanel implements Observer {
         });
         boardingMethodList.addItem(NOT_SELECTABLE_OPTION);
         String[] boardingMethodStrings = {"Back-to-front", "Outside-in", "Random", "Even-odd"};
+        validationStrings = new ArrayList<>(Arrays.asList(boardingMethodStrings));
         for (String str : boardingMethodStrings) {
             boardingMethodList.addItem(str);
         }
@@ -239,6 +232,9 @@ public class SettingsPanel extends JPanel implements Observer {
         gbc.gridy++;
         //this.add(capacitySlider, gbc);
         this.add(capacityList, gbc);
+
+        gbc.gridy++;
+        this.add(outputChk, gbc);
 
         /*Additional options
         gbc.gridy++;
@@ -331,6 +327,7 @@ public class SettingsPanel extends JPanel implements Observer {
         aircraftTypeList.setEnabled(false);
         capacityList.setEnabled(false);
         boardingMethodList.setEnabled(false);
+        outputChk.setEnabled(false);
         /*doorsUsedList.setEnabled(false);*/
     }
 
@@ -338,6 +335,7 @@ public class SettingsPanel extends JPanel implements Observer {
         aircraftTypeList.setEnabled(true);
         capacityList.setEnabled(true);
         boardingMethodList.setEnabled(true);
+        outputChk.setEnabled(true);
         /*doorsUsedList.setEnabled(true);*/
     }
 
@@ -360,10 +358,19 @@ public class SettingsPanel extends JPanel implements Observer {
             System.out.println("Progress: "+progress);
             progressBar.setString(boardingModel.getIsSeatCount() + "/" + boardingModel.getTotalPax());
             progressBar.setValue(progress);
+            //TODO: This is a bit of hack
+            if(boardingModel.isCompleted() && iterationInt != -1){
+                progressBar.setString(boardingModel.getTotalPax() + "/" + boardingModel.getTotalPax());
+                progressBar.setValue(100);
+            }
         }
-        if (boardingModel.isCompleted() && iterationInt!=-1) {
-            JOptionPane.showMessageDialog(this,
-                    "The boarding of " + boardingModel.getAircraftType().toString() + " using " + boardingModel.getAircraftType().toString() + " boarding, completed in " + iterationInt + " iterations.", "Boarding Complete", JOptionPane.INFORMATION_MESSAGE);
+        if (boardingModel.isCompleted() && iterationInt != -1) {
+            JOptionPane.showMessageDialog(null,
+                    "The boarding of " + boardingModel.getAircraftType().toString() + " using " + boardingModel.getBoardingMethod().toString() + " boarding, completed in " + iterationInt + " iterations.", "Boarding Complete", JOptionPane.INFORMATION_MESSAGE);
         }
+    }
+
+    public JComboBox<Integer> getCapacityList() {
+        return capacityList;
     }
 }

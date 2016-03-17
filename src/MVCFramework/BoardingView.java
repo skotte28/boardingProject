@@ -21,6 +21,8 @@ public class BoardingView extends JFrame {
 
     public BoardingView(BoardingModel theModel){
 
+        this.setTitle("Aircraft Boarding Visualizer");
+
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         int STANDARD_WINDOW_WIDTH = 1500;
         int STANDARD_WINDOW_HEIGHT = 800;

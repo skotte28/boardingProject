@@ -1,6 +1,7 @@
 package MVCFramework;
 
 import Exceptions.NoSelectedException;
+import Exceptions.NotIntegerException;
 
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -28,13 +29,12 @@ public class BoardingController implements EventListener, Observer {
         theView.settingsPanel.simulationRate.addChangeListener(new ChangeListener() {
             @Override
             public void stateChanged(ChangeEvent e) {
-                int value = theView.settingsPanel.simulationRate.getValue();
-                System.out.println(value);
-                //TODO: Make sure this timer value is the same as the other one
-                theModel.timer.stop();
-                theModel.setDelay(value);
-                theModel.timer.setDelay(theModel.getDelay());
-                theModel.timer.start();
+                if(theModel.timer != null) {
+                    int value = theView.settingsPanel.simulationRate.getValue();
+                    //TODO: Make sure this timer value is the same as the other one
+                    theModel.setDelay(value);
+                    theModel.timer.setDelay(theModel.getDelay());
+                }
             }
         });
     }
@@ -48,6 +48,7 @@ public class BoardingController implements EventListener, Observer {
         theModel.setBoardingMethod(theView.settingsPanel.getSelectedBoardingMethod());
         theModel.setCapacity(theView.settingsPanel.getSelectedCapacity());
         theModel.setDelay(theView.settingsPanel.simulationRate.getValue());
+        theModel.setTextOutput(theView.settingsPanel.outputChk.isSelected());
         System.out.println("This is the simulation rate"+theView.settingsPanel.simulationRate.getValue());
         /* TODO: Add the doors used options*/
     }
@@ -57,18 +58,24 @@ public class BoardingController implements EventListener, Observer {
         public void actionPerformed(ActionEvent e){
             if(!theModel.isInProcess()) {
                 if(theModel.getAircraftType() != null) {
-                    if(theView.settingsPanel.getSelectedBoardingMethod() != null){
-                        theView.settingsPanel.startSimulation.setEnabled(false);
-                        theView.settingsPanel.pauseSimulation.setEnabled(true);
-                        theView.settingsPanel.runningDisable();
-                        //Set all model variables
-                        modelLoader();
-                        //Should run method in controller
-                        theModel.runSimulation();
-                        theModel.timer.start();
-                        ButtonRunnable buttonRunnable = new ButtonRunnable();
-                        Thread thread = new Thread(buttonRunnable);
-                        thread.start();
+                    if(theView.settingsPanel.validationStrings.contains(theView.settingsPanel.getSelectedBoardingMethod())){
+                        if (theView.settingsPanel.getCapacityList().getEditor().getItem() != null) {
+                            if (theView.settingsPanel.getCapacityList().getEditor().getItem() instanceof Integer && (theView.settingsPanel.getSelectedCapacity() <= 100 && theView.settingsPanel.getSelectedCapacity()>0)){
+                                theView.settingsPanel.startSimulation.setEnabled(false);
+                                theView.settingsPanel.pauseSimulation.setEnabled(true);
+                                theView.settingsPanel.runningDisable();
+                                //Set all model variables
+                                modelLoader();
+                                //Should run method in controller
+                                theModel.runSimulation();
+                                theModel.timer.start();
+                                ButtonRunnable buttonRunnable = new ButtonRunnable();
+                                Thread thread = new Thread(buttonRunnable);
+                                thread.start();
+                            } else {
+                                new NotIntegerException("Problem");
+                            }
+                        }
                     } else {
                         new NoSelectedException("boarding method");
                     }
@@ -108,14 +115,11 @@ public class BoardingController implements EventListener, Observer {
             System.out.println("Reset");
             theModel.clear();
             theModel.setAircraftType(theView.settingsPanel.aircraftTypeList.getSelectedItem().toString());
-            theView.settingsPanel.renable();
-            theModel.timer = null;
-            theModel.setInProcess(false);
-            theModel.setCompleted(false);
             theView.settingsPanel.status.setText("");
             theView.settingsPanel.reset.setEnabled(false);
             theView.settingsPanel.progressBar.setValue(0);
             theView.settingsPanel.progressBar.setString(" ");
+            theView.settingsPanel.renable();
         }
     }
 

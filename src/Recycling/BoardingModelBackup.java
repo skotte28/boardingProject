@@ -1,4 +1,4 @@
-package MVCFramework;
+package Recycling;
 
 import Aircraft.AircraftType;
 import Exceptions.DeadlockException;

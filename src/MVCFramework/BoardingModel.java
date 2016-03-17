@@ -2,6 +2,7 @@ package MVCFramework;
 
 import Aircraft.AircraftType;
 import Exceptions.DeadlockException;
+import Exceptions.NoSelectedException;
 import Methods.Method;
 import Passenger.Passenger;
 import Passenger.BlockPair;
@@ -23,6 +24,7 @@ public class BoardingModel extends Observable{
     private int delay;
     private boolean completed;
     private boolean inProcess;
+    private boolean textOutput;
 
     private int isSeatCount;
     private int totalPax;
@@ -37,7 +39,6 @@ public class BoardingModel extends Observable{
     private int modelIteration = 0;
     private boolean nothingChanged;
     private int stallCount = 0;
-    private boolean unRecoverable = false;
 
     public AircraftType getAircraftType() {
         return aircraftType;
@@ -138,6 +139,7 @@ public class BoardingModel extends Observable{
 
         //Order - if Random do nothing as passengers have been shuffled inside the capacityLimiter
         String method = getBoardingMethod();
+        System.out.println("Method: "+method);
         if(method.equalsIgnoreCase("Back-to-front")){
             passengers = Method.backToFront(passengers, aircraftType);
         }
@@ -272,7 +274,7 @@ public class BoardingModel extends Observable{
                 if(stallCount > 10){
                     modelIteration = -1;
                     timer.stop();
-                    //new DeadlockException();
+                    new DeadlockException();
                     break;
                 }
                 /*int reserveAisle = getSeatValue("AISLE");
@@ -321,10 +323,12 @@ public class BoardingModel extends Observable{
         //STOP EVERYTHING
         this.passengers = null;
         timer.stop();
-        //resultsOutput();
+        if(textOutput){
+            resultsOutput();
+        }
+        inProcess = false;
         setChanged();
         notifyObservers(completed);
-        inProcess = false;
     }
 
     private boolean isFree(int p, int r) {
@@ -574,11 +578,17 @@ public class BoardingModel extends Observable{
     }
 
     public void clear(){
+        this.setCompleted(false);
         this.setBoardingMethod(null);
         this.setCapacity(-1);
         this.setDelay(2);
         this.theGrid = null;
+        this.timer = null;
+        this.isSeatCount = 0;
+        this.setCompleted(false);
+        this.totalPax = 0;
         modelIteration = 0;
+        stallCount = 0;
         setChanged();
         notifyObservers();
     }
@@ -590,7 +600,7 @@ public class BoardingModel extends Observable{
     }
 
     public void setDelay(int value) {
-        int[] delayValues = {2000, 1000, 500, 250, 12};
+        int[] delayValues = {1000, 500, 250, 50, 12};
         this.delay = delayValues[value];
     }
 
@@ -651,5 +661,9 @@ public class BoardingModel extends Observable{
         } catch (IOException e){
             e.printStackTrace();
         }
+    }
+
+    public void setTextOutput(boolean textOutput) {
+        this.textOutput = textOutput;
     }
 }
