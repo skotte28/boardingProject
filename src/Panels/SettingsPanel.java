@@ -132,6 +132,7 @@ public class SettingsPanel extends JPanel implements Observer {
             files = file.listFiles();
             if (files.length > 0) {
                 for (File f : files) {
+                    System.out.println(f);
                     String[] name = f.toString().split("\\\\");
                     aircraftTypeList.addItem(name[1]);
                 }
@@ -173,6 +174,7 @@ public class SettingsPanel extends JPanel implements Observer {
         boardingMethodList.setToolTipText("Select the boarding method to be used in the simulation");
         capacityList.setToolTipText("Occupancy rate used in the simulation");
         capacityList.setEditable(true);
+        outputChk.setToolTipText("Text file will be found in the \"results\" folder");
         /*doorsUsedList.setToolTipText("Select if one or two doors are to be used in the simulation");*/
         /*capacitySlider.setToolTipText(Integer.toString(capacitySlider.getValue()));*/
 

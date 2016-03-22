@@ -631,11 +631,11 @@ public class BoardingModel extends Observable{
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
             File file = new File("results/result"+dateFormat.format(date)+".txt");
             FileWriter fileWriter = new FileWriter(file);
-            fileWriter.write("Boarding of "+getAircraftType().toString()+(completed ? " did" : " did not")+" complete successfully.\n");
+            fileWriter.write(String.format("Boarding of %s"+(completed ? " did" : " did not")+" complete successfully.%n",getAircraftType().toString()));
             if(completed){
-                fileWriter.write("The boarding method was: "+getBoardingMethod().toString()+"\n");
-                fileWriter.write("Capacity was: "+capacity+ "% ("+getTotalPax()+" pax)\n");
-                fileWriter.write("Itertions to complete: "+ getModelIteration());
+                fileWriter.write(String.format("The boarding method was: %s%n",getBoardingMethod().toString()));
+                fileWriter.write(String.format("Capacity was: %d%% (%d pax)%n", capacity, getTotalPax()));
+                fileWriter.write(String.format("Iterations to complete: %d%n",getModelIteration()));
             }
             fileWriter.flush();
             fileWriter.close();

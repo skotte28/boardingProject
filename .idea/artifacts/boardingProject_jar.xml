@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" build-on-make="true" name="boardingProject:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/boardingProject_jar</output-path>
+    <root id="archive" name="boardingProject.jar">
+      <element id="module-output" name="boardingProject" />
+    </root>
+  </artifact>
+</component>

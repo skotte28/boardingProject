@@ -32,27 +32,12 @@ public class AircraftType {
         return windowSeats;
     }
 
-    @XmlElement(name="windowSeats")
-    public void setWindowSeats(ArrayList<String> windowSeats) {
-        this.windowSeats = windowSeats;
-    }
-
     public ArrayList<String> getMiddleSeats() {
         return middleSeats;
     }
 
-    @XmlElement(name="middleSeats")
-    public void setMiddleSeats(ArrayList<String> middleSeats) {
-        this.middleSeats = middleSeats;
-    }
-
     public ArrayList<String> getAisleSeats() {
         return aisleSeats;
-    }
-
-    @XmlElement(name="aisleSeats")
-    public void setAisleSeats(ArrayList<String> aisleSeats) {
-        this.aisleSeats = aisleSeats;
     }
 
     public AircraftType(){}

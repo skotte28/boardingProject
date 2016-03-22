@@ -5,7 +5,4 @@
     <aisle>1</aisle>
     <rows>24</rows>
     <buffer>3</buffer>
-    <windowSeats>A, D</windowSeats>
-    <middleSeats></middleSeats>
-    <aisleSeats>["B", "C"]</aisleSeats>
 </AircraftType>
