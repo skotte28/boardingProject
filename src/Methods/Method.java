@@ -105,7 +105,7 @@ public class Method {
         //Iterate through and sort odd and even
         for(Passenger pax : list){
             String pos = pax.getPosition();
-            System.out.println(pos);
+            //System.out.println(pos); - enable for testing purposes
             if (windowSeats.contains(pos)){
                 window.add(pax);
             } else if (middleSeats.contains(pos)){
@@ -116,7 +116,7 @@ public class Method {
         }
 
         //Merge the three lists
-        System.out.println(window.toString());
+        //System.out.println(window.toString()); - enable for testing purposes
         window.addAll(middle);
         window.addAll(aisle);
 

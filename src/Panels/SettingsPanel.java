@@ -21,7 +21,7 @@ import java.util.Observer;
  * ongoing simulation. The SettingsPanel class is a subclass of JPanel, and
  * implements the interface Observer.
  *
- * The NOT_SELECTABLE_OPTION has been derived from http://stackoverflow.com/users/474189/duncan
+ * The NOT_SELECTABLE_OPTION has been derived from the work of http://stackoverflow.com/users/474189/duncan
  *
  * @see JPanel
  * @see Observer

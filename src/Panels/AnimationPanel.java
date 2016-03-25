@@ -17,6 +17,8 @@ import javax.swing.*;
  * This class holds the objects relating the to the drawn animation of the boarding process,
  * and is a subclass of JPanel, as well as implementing the Observer interface.
  *
+ * The drawing mechanism has been derived by the work of http://stackoverflow.com/users/992484/madprogrammer
+ *
  * @see JPanel
  * @see Observer
  *
@@ -95,6 +97,7 @@ public class AnimationPanel extends JPanel implements Observer {
         int xOffset = (width - (columnCount * CELL_DIMENSION)) / 2;
         int yOffset = (height - (rowCount * CELL_DIMENSION)) / 2;
 
+        /* Create the cells */
         if (cells.isEmpty()) {
             for (int row = 0; row < rowCount; row++) {
                 for (int col = 0; col < columnCount; col++) {
@@ -108,6 +111,8 @@ public class AnimationPanel extends JPanel implements Observer {
             }
         }
 
+
+        /* Draw the layouts of the cells */
         if (!layoutCells.isEmpty()) {
             for(Point lc : layoutCells) {
                 int index = lc.x + (lc.y * columnCount);
@@ -119,6 +124,7 @@ public class AnimationPanel extends JPanel implements Observer {
 
         }
 
+        /* Draw grey under the seat image, in case it can't be found, and insert image on top*/
         if (!seatCells.isEmpty()) {
             for(Point sc : seatCells) {
                 int index = sc.x + (sc.y * columnCount);
@@ -129,6 +135,7 @@ public class AnimationPanel extends JPanel implements Observer {
             }
         }
 
+        /* Draw the not seated passengers */
         if (!passengers.isEmpty()) {
             g2d.setFont(paxFont);
             for(PointPair px : passengers) {
@@ -141,6 +148,7 @@ public class AnimationPanel extends JPanel implements Observer {
             }
         }
 
+        /* Draw the seated passengers */
         if (!seatedPax.isEmpty()) {
             g2d.setFont(paxFont);
             for(PointPair sc : seatedPax) {
@@ -153,6 +161,7 @@ public class AnimationPanel extends JPanel implements Observer {
             }
         }
 
+        /* Labeler for rows and seat positions */
         int columnLabeler = 0;
         int rowLabeler = 0;
         int aisleException = -1;
@@ -241,7 +250,7 @@ public class AnimationPanel extends JPanel implements Observer {
         newValues(boardingModel.getAircraftType());
         paxUpdate(boardingModel.getTheGrid(), boardingModel.getAircraftType());
         repaint();
-        //takeSnapShot(this); - Enable for testing
+        //takeSnapShot(this); - Enable for testing / debugging purposes
     }
 
     public class PointPair{
@@ -263,6 +272,9 @@ public class AnimationPanel extends JPanel implements Observer {
     }
 
     /* Enable for testing purposes
+    *
+    * Produces a screenshot of each iteration, create a folder named screenshots in the top directory to use
+    *
     private void takeSnapShot(JPanel panel){
         BufferedImage bufImage = new BufferedImage(panel.getSize().width, panel.getSize().height,BufferedImage.TYPE_INT_RGB);
         panel.paint(bufImage.createGraphics());

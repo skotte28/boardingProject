@@ -23,7 +23,7 @@ public class JAXBHandlerPassenger {
 
             passengers = (Passengers) jaxbUnmarshaller.unmarshal(file);
 
-            System.out.println(passengers.toString());
+            //System.out.println(passengers.toString()); - enable for testing purposes
 
             return passengers.getPassengers();
 

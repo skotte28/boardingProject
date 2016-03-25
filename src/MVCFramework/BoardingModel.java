@@ -197,6 +197,7 @@ public class BoardingModel extends Observable{
                     //Is there a passenger in the cell?
                     if (theGrid[p][r] != null) {
 
+                        //Has the passenger already been visited this iteration?
                         if(theGrid[p][r].getIteration() < modelIteration){
                             theGrid[p][r].setIteration(modelIteration);
 
@@ -205,12 +206,14 @@ public class BoardingModel extends Observable{
 
                                 boolean proceed = false;
 
+                                //Is the passenger being blocked?
                                 if (theGrid[p][r].getBlockPair() == null) {
 
                                     proceed = true;
 
                                 } else {
 
+                                    //Can the block be removed?
                                     if (returnedToSeat(theGrid[p][r].getBlockPair().getPos(), theGrid[p][r].getBlockPair().getRow())) {
                                         theGrid[p][r].setBlockPair(null);
                                         proceed = true;
@@ -220,6 +223,7 @@ public class BoardingModel extends Observable{
 
                                 if (proceed) {
                                     if (theGrid[p][r].getRow() == r + 1) {
+                                        //The passenger is one row in front of the seat, check if there is a seat blockage
                                         if (blockChecker(theGrid[p][r], p, r, width)) {
                                             blockSeater(p, r, aisle, width);
                                             proceed = false;
@@ -231,7 +235,7 @@ public class BoardingModel extends Observable{
                                         Direction nextMove = theGrid[p][r].getNextMove();
                                         Passenger currentPax = theGrid[p][r];
 
-                                        //Check if possible & execute
+                                        //Check if the nextMove is possible and if so execute it
                                         if (nextMove != null) {
                                             switch (nextMove) {
                                                 case FRONTWARDS:
@@ -266,6 +270,7 @@ public class BoardingModel extends Observable{
                 }
             }
 
+            //Deadlock checker
             if(nothingChanged){
                 //System.out.println("Stall!"); - Enable for testing
                 stallCount++;
@@ -361,11 +366,13 @@ public class BoardingModel extends Observable{
         theGrid[pNew][rNew] = theGrid[pOld][rOld];
         theGrid[pOld][rOld] = null;
 
+        // If the destination is the passengers seat, mark them as seated
         if(getSeatValue(theGrid[pNew][rNew].getPosition()) == pNew && theGrid[pNew][rNew].getRow() == rNew){
             theGrid[pNew][rNew].setSeated(true);
             isSeatCount++;
         }
 
+        // If the destination is the passengers temporary location, remove the temp variable
         if(theGrid[pNew][rNew].getTempRow() != -1){
             if(getSeatValue(theGrid[pNew][rNew].getTempPosition()) == pNew && theGrid[pNew][rNew].getTempRow() == rNew) {
                 if(theGrid[pNew][rNew-1] != null) {
@@ -404,25 +411,22 @@ public class BoardingModel extends Observable{
             temp = false;
         }
 
-
-
-
         /* Needs to check if there is are temporary position/row, and if met, then these need to be discarded */
 
-        //Correct row
-        //Normal
+        //Normal, no temporary location
         if(!temp) {
+            //Correct row
             if (moveRow == r) {
                 if (getSeatValue(movePosition) == p) {
                     currentPax.setSeated(true);
                     isSeatCount++;
                     currentPax.setNextMove(Direction.SEATED);
                 }
-                //Too far port side
+                //Too far starboard side
                 else if (getSeatValue(movePosition) > p) {
                     currentPax.setNextMove(Direction.PORT);
                 }
-                //Too far starboard side
+                //Too far port side
                 else if (getSeatValue(movePosition) < p) {
                     currentPax.setNextMove(Direction.STARBOARD);
                 }
@@ -455,14 +459,22 @@ public class BoardingModel extends Observable{
                         }
                         //System.out.println("The spot which blocked -1 for "+currentPax+" contained "+theGrid[p][r-1]); - Enable for testing
                     }
-                } else if(moveRow > r){
+                }
+                //Too far forward
+                else if(moveRow > r){
                     currentPax.setNextMove(Direction.REARWARDS);
-                } else if(moveRow < r){
+                }
+                //Too far back
+                else if(moveRow < r){
                     currentPax.setNextMove(Direction.FRONTWARDS);
                 }
-            } else if(getSeatValue(movePosition) > p){
+            }
+            //Too far starboard side
+            else if(getSeatValue(movePosition) > p){
                 currentPax.setNextMove(Direction.PORT);
-            } else if(getSeatValue(movePosition) < p){
+            }
+            //Too far port side
+            else if(getSeatValue(movePosition) < p){
                 currentPax.setNextMove(Direction.STARBOARD);
             }
         }
@@ -480,7 +492,10 @@ public class BoardingModel extends Observable{
      * @return false if there is block
      */
     private boolean blockChecker(Passenger passenger, int p, int r, int width){
+
+        /* If the passenger is seated on the starboard side */
         if(getSeatValue(passenger.getPosition()) < getSeatValue("AISLE")-1){
+            //Check all the seats between the aisle and window
             for(int i= getSeatValue("AISLE")-1; i>=0; i--){
                 if(theGrid[i][r+1]!= null){
                     if(getSeatValue(theGrid[i][r+1].getPosition()) > getSeatValue(passenger.getPosition())){
@@ -489,7 +504,10 @@ public class BoardingModel extends Observable{
                 }
             }
         }
+
+        /* If the passenger is seated on the port side */
         else if(getSeatValue(passenger.getPosition()) > getSeatValue("AISLE")+1){
+            //Check all the seats between the aisle and window
             for(int i= getSeatValue("AISLE")+1; i<width; i++){
                 if(theGrid[i][r+1]!= null){
                     if(getSeatValue(theGrid[i][r+1].getPosition()) < getSeatValue(passenger.getPosition())){
@@ -515,25 +533,34 @@ public class BoardingModel extends Observable{
      * @see BlockPair
      */
     private void blockSeater(int p, int r, int aisle, int width){
-        int movedistance = 2;
+        int moveDistance = 2;   //Default at two as a passenger minimum needs to move into the aisle (1) and one row back (1)
         boolean first = true;
+
+        /* If the passenger is seated on the port side */
         if (getSeatValue(theGrid[p][r].getPosition()) > getSeatValue("AISLE")) {
             for (int i = getSeatValue(theGrid[p][r].getPosition()); i > getSeatValue("AISLE"); i--) {
                 if (theGrid[i][r + 1] != null) {
-                    movedistance++;
+                    moveDistance++;
                 }
             }
             for (int i = getSeatValue(theGrid[p][r].getPosition()); i > getSeatValue("AISLE"); i--) {
                 if (theGrid[i][r + 1] != null) {
+                    //Set the temporary location
                     if (theGrid[i][r + 1].getTempRow() == -1) {
                         theGrid[i][r + 1].setTempPosition("AISLE");
-                        theGrid[i][r + 1].setTempRow(r + (movedistance - (i - getSeatValue("AISLE"))));
+                        theGrid[i][r + 1].setTempRow(r + (moveDistance - (i - getSeatValue("AISLE"))));
                         theGrid[i][r + 1].setSeated(false);
                         isSeatCount--;
                         //System.out.println("TempPostion for " + theGrid[i][r + 1] + " is " + theGrid[i][r + 1].getTempRow() + theGrid[i][r + 1].getTempPosition()); - Enable for testing
+
+                        //If this is the passenger closest to the aisle, assign a blockPair connected to this passenger
                         if (first) {
+                            //System.out.println("R minus one:" + (r - 1)); - Enable for testing
+
+                            //Find the next passenger in the aisle
                             if (r > 0) {
-                                for (int j = 0; j < movedistance; j++) {
+
+                                for (int j = 0; j < moveDistance; j++) {
                                     //System.out.println("The problem is: " + (r - 1 - j)); - Enable for testing
                                     if (r - 1 - j >= 0) {
                                         if (theGrid[p][r - 1 - j] != null) {
@@ -543,31 +570,42 @@ public class BoardingModel extends Observable{
                                         }
                                     }
                                 }
-                            } else {
+                            }
+
+                            //Prevent further passengers from boarding
+                            else {
                                 haltFront = true;
                             }
                         }
                     }
                 }
             }
-        } else if (getSeatValue(theGrid[p][r].getPosition()) < getSeatValue("AISLE")) {
+        }
+
+        /* If the passenger is seated on the starboard side */
+        else if (getSeatValue(theGrid[p][r].getPosition()) < getSeatValue("AISLE")) {
             for (int i = getSeatValue(theGrid[p][r].getPosition()); i < getSeatValue("AISLE"); i++) {
                 if (theGrid[i][r + 1] != null) {
-                    movedistance++;
+                    moveDistance++;
                 }
             }
             for (int i = getSeatValue(theGrid[p][r].getPosition()); i < getSeatValue("AISLE"); i++) {
                 if (theGrid[i][r + 1] != null) {
+                    //Set the temporary location
                     if (theGrid[i][r + 1].getTempRow() == -1) {
                         theGrid[i][r + 1].setTempPosition("AISLE");
-                        theGrid[i][r + 1].setTempRow(r + (movedistance - (getSeatValue("AISLE") - i)));
+                        theGrid[i][r + 1].setTempRow(r + (moveDistance - (getSeatValue("AISLE") - i)));
                         theGrid[i][r + 1].setSeated(false);
                         isSeatCount--;
                         //System.out.println("TempPostion for " + theGrid[i][r + 1] + " is " + theGrid[i][r + 1].getTempRow() + theGrid[i][r + 1].getTempPosition()); - Enable for testing
+
+                        //If this is the passenger closest to the aisle, assign a blockPair connected to this passenger
                         if (first) {
                             //System.out.println("R minus one:" + (r - 1)); - Enable for testing
+
+                            //Find the next passenger in the aisle
                             if (r > 0) {
-                                for (int j = 0; j < movedistance; j++) {
+                                for (int j = 0; j < moveDistance; j++) {
                                     //System.out.println("The problem is: " + (r - 1 - j)); - Enable for testing
                                     if (r - 1 - j >= 0) {
                                         if (theGrid[p][r - 1 - j] != null) {
@@ -577,7 +615,10 @@ public class BoardingModel extends Observable{
                                         }
                                     }
                                 }
-                            } else {
+                            }
+
+                            //Prevent further passengers from boarding
+                            else {
                                 haltFront = true;
                             }
                         }
