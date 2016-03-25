@@ -8,7 +8,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 /**
- * Created by Oscar on 2016-03-15.
+ * This class has been created to test the different blocking mechanisms.
+ *
  */
 public class BoardingStatistics {
 
@@ -49,6 +50,4 @@ public class BoardingStatistics {
             }
         }
     }
-
-
 }

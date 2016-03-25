@@ -10,7 +10,7 @@ import java.io.File;
 import java.util.List;
 
 /**
- * Created by Oscar on 2015-11-25.
+ * This class unmarshalls the XML passenger list file.
  */
 public class JAXBHandlerPassenger {
 

@@ -3,7 +3,13 @@ package Exceptions;
 import javax.swing.*;
 
 /**
- * Created by Oscar on 2016-02-04.
+ *
+ * This exception is thrown when the naming of a folder containing aircraft specification files is incorrect, or inconsistent with the contents of the files.
+ *
+ * @author Oscar Schafer
+ *
+ * @see Aircraft.AircraftType
+ *
  */
 public class IncorrectAircraftException extends Exception {
     public IncorrectAircraftException(String errorObject) {

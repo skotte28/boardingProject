@@ -3,7 +3,11 @@ package Exceptions;
 import javax.swing.*;
 
 /**
- * Created by Oscar on 2016-02-04.
+ *
+ * This exception is thrown when the user has entered an invalid input as occupancy.
+ *
+ * @author Oscar Schafer
+ *
  */
 public class NotIntegerException extends Exception {
     public NotIntegerException(String message) {

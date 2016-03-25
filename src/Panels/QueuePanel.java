@@ -8,7 +8,11 @@ import java.util.Observable;
 import java.util.Observer;
 
 /**
- * Created by Oscar on 2015-11-26.
+ * The queue panel is used to indicate how many remaining passengers are left to board the aircraft.
+ * It is a subclass of JPanel, and implemented the interface Observer.
+ *
+ * @see JPanel
+ * @see Observer
  */
 public class QueuePanel extends JPanel implements Observer {
 

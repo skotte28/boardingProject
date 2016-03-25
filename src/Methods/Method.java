@@ -6,10 +6,27 @@ import Passenger.Passenger;
 import java.util.*;
 
 /**
- * Created by Oscar on 2015-11-25.
+ *
+ * This class holds the static sorting methods used to order the Passenger list.
+ *
+ * @author Oscar Schafer
+ *
+ * @see Passenger
+ *
  */
 public class Method {
 
+    /**
+     *
+     * Orders the passengers according to the back-to-front boarding method.
+     * The aircraft is divided into three parts, which within the passenger
+     * order is random.
+     *
+     * @param list the list of passengers which is to be sorted
+     * @param aircraftType the aircraft type which the simulation is being run on
+     * @return the passenger list ordered back-to-front
+     * @see AircraftType
+     */
     public static List<Passenger> backToFront(List<Passenger> list, AircraftType aircraftType) {
 
         int aircraftLength = aircraftType.getRows();
@@ -34,6 +51,14 @@ public class Method {
         return thirdThird;
     }
 
+    /**
+     * Orders the passengers according to the even-odd boarding method.
+     * The passengers seated in even rows are put into one list,
+     * while passengers seated in odd rows are put into another list.
+     *
+     * @param list the list of passengers which is to be sorted
+     * @return the passenger list ordered even-odd
+     */
     public static List<Passenger> innovative(List<Passenger> list) {
 
         //Instantiate temporary list
@@ -41,7 +66,7 @@ public class Method {
         List<Passenger> odd = new LinkedList<>();
 
         //Iterate through and sort odd and even
-        for(Passenger pax : list){          //TODO: Look into the collect call for a list or change it a queue
+        for(Passenger pax : list){
             if(pax.getRow() % 2 == 0){
                 even.add(pax);
             } else {
@@ -56,6 +81,15 @@ public class Method {
         return even;
     }
 
+    /**
+     * Orders the passengers according to the outside in boarding method.
+     * The passengers seated in window seats are put first, then passengers
+     * seated in middle seats, and finally passengers in aisle seats.
+     *
+     * @param list the list of passengers which is to be sorted
+     * @param aircraftType the aircraft type which the simulation is being run on
+     * @return the passenger list ordered outside-in
+     */
     public static List<Passenger> outsideIn(List<Passenger> list, AircraftType aircraftType) {
 
         //Instantiate temporary list
@@ -68,7 +102,7 @@ public class Method {
         ArrayList<String> middleSeats = aircraftType.getMiddleSeats();
         ArrayList<String> aisleSeats = aircraftType.getAisleSeats();
 
-        //Iterate through and sort odd and even - could be done with switch case (see above)
+        //Iterate through and sort odd and even
         for(Passenger pax : list){
             String pos = pax.getPosition();
             System.out.println(pos);

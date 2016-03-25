@@ -17,7 +17,14 @@ import java.util.Observer;
 
 
 /**
- * Created by Oscar on 2015-10-19.
+ * The settings panel provides user input, and displays information about the
+ * ongoing simulation. The SettingsPanel class is a subclass of JPanel, and
+ * implements the interface Observer.
+ *
+ * The NOT_SELECTABLE_OPTION has been derived from http://stackoverflow.com/users/474189/duncan
+ *
+ * @see JPanel
+ * @see Observer
  */
 public class SettingsPanel extends JPanel implements Observer {
 
@@ -25,12 +32,7 @@ public class SettingsPanel extends JPanel implements Observer {
     private int iterationInt;
     private JLabel iterationLabel = new JLabel();
 
-    //TODO: Not an ideal solution to validate that a boarding method has been selected
     public ArrayList<String> validationStrings = new ArrayList<>();
-
-    GridLayout experimentLayout = new GridLayout(0, 2);
-
-    private java.util.List<Point> layoutCells;
 
     private static final String NOT_SELECTABLE_OPTION = " - Select - ";
 
@@ -64,13 +66,6 @@ public class SettingsPanel extends JPanel implements Observer {
     private static final int SIM_RATE_INIT = 2;
     public JSlider simulationRate = new JSlider(JSlider.HORIZONTAL, SIM_RATE_MIN, SIM_RATE_MAX, SIM_RATE_INIT);
 
-    /* Capacity Slider */
-    private static final int CAP_MIN = 0;
-    private static final int CAP_MAX = 100;
-    private static final int CAP_INIT = 100;
-
-    public JSlider capacitySlider = new JSlider(JSlider.HORIZONTAL, CAP_MIN, CAP_MAX, CAP_INIT);
-
     public JProgressBar progressBar = new JProgressBar();
 
     private String selectedAircraft;
@@ -101,6 +96,11 @@ public class SettingsPanel extends JPanel implements Observer {
         return doorsUsedList.getSelectedItem().toString();
     }*/
 
+    /**
+     * Class constructor
+     * @param boardingModel the instance of BoardingModel used for the simulation
+     * @see BoardingModel
+     */
     public SettingsPanel(BoardingModel boardingModel) {
 
         this.boardingModel = boardingModel;
@@ -124,10 +124,7 @@ public class SettingsPanel extends JPanel implements Observer {
 
         //Loads the aircraft JComboBox based on the directories which are located in "content/"
         try {
-            //TODO: Cite this
-            /*From here http://stackoverflow.com/questions/16665688/display-a-non-selectable-default-value-for-jcombobox */
             aircraftTypeList.addItem(NOT_SELECTABLE_OPTION);
-            /* */
             File file = new File("content/");
             File[] files;
             files = file.listFiles();
@@ -174,7 +171,7 @@ public class SettingsPanel extends JPanel implements Observer {
             boardingMethodList.addItem(str);
         }
 
-        //Tool tips settings
+        /* Tool tips settings */
         startSimulation.setToolTipText("Start the simulation");
         pauseSimulation.setToolTipText("Pause the simulation");
         aircraftTypeList.setToolTipText("Select the type of aircraft to be used in the simulation");
@@ -191,12 +188,6 @@ public class SettingsPanel extends JPanel implements Observer {
         simulationRate.setBorder(
                 BorderFactory.createEmptyBorder(5, 5, 5, 5));
         simulationRate.setValue(SIM_RATE_INIT);
-
-        /*capacitySlider.setMajorTickSpacing(10);
-        capacitySlider.setMinorTickSpacing(2);
-        capacitySlider.setPaintTicks(true);
-        capacitySlider.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-        capacitySlider.setValue(CAP_INIT);*/
 
         GridBagConstraints gbc = new GridBagConstraints();
         this.setLayout(new GridBagLayout());
@@ -236,7 +227,6 @@ public class SettingsPanel extends JPanel implements Observer {
         this.add(new JLabel("Occupancy (%):"), gbc);
 
         gbc.gridy++;
-        //this.add(capacitySlider, gbc);
         this.add(capacityList, gbc);
 
         gbc.gridy++;
@@ -282,11 +272,6 @@ public class SettingsPanel extends JPanel implements Observer {
         gbc.gridx++;
         this.add(status, gbc);
 
-        /*gbc.gridy++;
-        gbc.gridx = 0;
-        this.add(new JLabel("Remaining passengers:"), gbc);
-        gbc.gridx++;
-        this.add(paxRemaining, gbc);*/
         gbc.gridy++;
         gbc.gridx = 0;
         this.add(new JLabel("Iterations:"), gbc);
@@ -327,6 +312,9 @@ public class SettingsPanel extends JPanel implements Observer {
         });
     }
 
+    /**
+     * This method disables the settings options while the simulation is running.
+     */
     public void runningDisable() {
         aircraftTypeList.setEnabled(false);
         capacityList.setEnabled(false);
@@ -335,6 +323,9 @@ public class SettingsPanel extends JPanel implements Observer {
         /*doorsUsedList.setEnabled(false);*/
     }
 
+    /**
+     * This method re-enables the settings options when the simulation is reset.
+     */
     public void renable() {
         aircraftTypeList.setEnabled(true);
         capacityList.setEnabled(true);
@@ -357,13 +348,15 @@ public class SettingsPanel extends JPanel implements Observer {
         return capacityList;
     }
 
+    /**
+     * This method updates the progress bar
+     */
     private void progressBarUpdate(){
         if (boardingModel.getTotalPax() != 0) {
             double progressDouble = ((double) boardingModel.getIsSeatCount() / (double) boardingModel.getTotalPax()) * 100;
             int progress = (int) Math.round(progressDouble);
             progressBar.setString(boardingModel.getIsSeatCount() + "/" + boardingModel.getTotalPax());
             progressBar.setValue(progress);
-            //TODO: This is a bit of hack
             if(boardingModel.isCompleted() && iterationInt != -1){
                 progressBar.setString(boardingModel.getTotalPax() + "/" + boardingModel.getTotalPax());
                 progressBar.setValue(100);
@@ -371,6 +364,9 @@ public class SettingsPanel extends JPanel implements Observer {
         }
     }
 
+    /**
+     * This method updates the iteration label
+     */
     private void iterationLabelUpdate(){
         iterationInt = boardingModel.getModelIteration();
         if (iterationInt > 1) {
@@ -380,6 +376,10 @@ public class SettingsPanel extends JPanel implements Observer {
         }
     }
 
+    /**
+     * This method generates a notification to the user when the
+     * simulation has completed successfully.
+     */
     private void completedNotification(){
         JOptionPane.showMessageDialog(null,
                 "The boarding of " + boardingModel.getAircraftType().toString() + " using " + boardingModel.getBoardingMethod().toString() + " boarding, completed in " + iterationInt + " iterations.",

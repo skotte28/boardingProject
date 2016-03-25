@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by Oscar on 2015-11-26.
+ * The class containing the list of passengers as it is imported from the XML file
  */
 @XmlRootElement(name="Passengers")
 @XmlAccessorType(XmlAccessType.FIELD)

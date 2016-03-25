@@ -9,7 +9,7 @@ import javax.xml.bind.Unmarshaller;
 import java.io.File;
 
 /**
- * Created by Oscar on 2015-12-19.
+ * This class unmarshalls the XML aircraft layout file.
  */
 public class JAXBHandlerLayout {
 

@@ -1,6 +1,5 @@
 package MVCFramework;
 
-import Aircraft.AircraftType;
 import Panels.AnimationPanel;
 import Panels.QueuePanel;
 import Panels.SettingsPanel;
@@ -8,17 +7,29 @@ import Panels.SettingsPanel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.IOException;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
 
+/**
+ * This class holds the JPanels which make up the user interface.
+ * The class is a subclass of JFrame.
+ *
+ * @see JFrame
+ *
+ */
 public class BoardingView extends JFrame {
 
     protected SettingsPanel settingsPanel;
     protected QueuePanel queuePanel;
+
+    /**
+     * Class constructor
+     * @param theModel instance of BoardingModel which is to be used for the BoardingView
+     * @see BoardingModel
+     */
     public BoardingView(BoardingModel theModel){
 
         this.setTitle("Aircraft Boarding Visualizer");
@@ -39,8 +50,8 @@ public class BoardingView extends JFrame {
 
         JMenuItem readmeItem = new JMenuItem("Readme");
         menuHelp.add(readmeItem);
-        /* Menu options */
 
+        /* Menu options */
         menuBar.add(menuHelp);
 
         this.setJMenuBar(menuBar);
@@ -56,6 +67,7 @@ public class BoardingView extends JFrame {
         theModel.addObserver(queuePanel);
         theModel.addObserver(settingsPanel);
 
+        /* The layout of the JPanels in JFrame */
         JPanel panelFramer = new JPanel();
         panelFramer.setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
@@ -86,6 +98,7 @@ public class BoardingView extends JFrame {
 
         this.setContentPane(panelFramer);
 
+        /* Action to set the aircraft type */
         settingsPanel.aircraftTypeList.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -94,6 +107,7 @@ public class BoardingView extends JFrame {
             }
         });
 
+        /* Action to open readme file */
         readmeItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {

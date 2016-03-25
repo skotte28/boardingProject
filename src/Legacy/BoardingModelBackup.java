@@ -1,4 +1,4 @@
-package Recycling;
+package Legacy;
 
 import Aircraft.AircraftType;
 import Exceptions.DeadlockException;
@@ -16,6 +16,10 @@ import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.List;
+
+/**
+ * This is the version of the BoardingModel which uses the square blocking mechanism instead of the passenger blocking.
+ */
 
 public class BoardingModelBackup extends Observable{
 

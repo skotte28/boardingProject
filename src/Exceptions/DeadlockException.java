@@ -3,7 +3,11 @@ package Exceptions;
 import javax.swing.*;
 
 /**
- * Created by Oscar on 2016-02-04.
+ *
+ * This exception is thrown when the simulation engine has identified a deadlock.
+ *
+ * @author Oscar Schafer
+ *
  */
 public class DeadlockException extends Exception {
     public DeadlockException() {

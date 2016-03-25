@@ -7,7 +7,10 @@ import javax.xml.bind.annotation.XmlRootElement;
 import java.awt.*;
 
 /**
- * Created by Oscar on 2015-11-25.
+ * This class contains the passenger related information, including information such
+ * as seat and a potential BlockPair.
+ *
+ * @see BlockPair
  */
 @XmlRootElement(name="Passenger")
 public class Passenger {

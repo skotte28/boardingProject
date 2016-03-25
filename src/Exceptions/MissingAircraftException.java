@@ -3,7 +3,11 @@ package Exceptions;
 import javax.swing.*;
 
 /**
- * Created by Oscar on 2016-02-04.
+ *
+ * This exception is thrown if there are no aircraft in the contents directory.
+ *
+ * @author Oscar Schafer
+ *
  */
 public class MissingAircraftException extends Exception {
     public MissingAircraftException() {

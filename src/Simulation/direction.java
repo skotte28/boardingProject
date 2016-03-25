@@ -1,7 +1,8 @@
 package Simulation;
 
 /**
- * Created by Oscar on 2015-12-11.
+ * The enum type provides the possible directions which a passenger can move, as well as the stationary
+ * options of seated and hold.
  */
 public enum Direction {
 

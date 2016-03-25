@@ -10,10 +10,28 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.*;
 
+/**
+ * The class controls the flow of information between the view and the model.
+ * It implements the interfaces EventListener and Observer
+ *
+ * @see EventListener
+ * @see Observer
+ * @see BoardingModel
+ * @see BoardingView
+ */
+
 public class BoardingController implements EventListener, Observer {
     private BoardingModel theModel = new BoardingModel();
     private BoardingView theView = new BoardingView(theModel);
 
+    /**
+     * Class constructor
+     * @param theView the instance of BoardingView used
+     * @param theModel the instance of BoardingModel used
+     *
+     * @see BoardingView
+     * @see BoardingModel
+     */
     public BoardingController(BoardingView theView, BoardingModel theModel) {
         this.theView = theView;
         this.theModel = theModel;
@@ -39,7 +57,10 @@ public class BoardingController implements EventListener, Observer {
         });
     }
 
-
+    /**
+     * This method loads the information inputted by the user in the view
+     * into the model.
+     */
     private void modelLoader(){
         theModel.clear();
         theModel.setBoardingMethod(theView.settingsPanel.getSelectedBoardingMethod());
@@ -48,6 +69,11 @@ public class BoardingController implements EventListener, Observer {
         theModel.setTextOutput(theView.settingsPanel.outputChk.isSelected());
     }
 
+    /**
+     * A class which holds the Run button and associated action. Implements the interface ActionListener
+     *
+     * @see ActionListener
+     */
     private class RunButtonListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e){
@@ -86,6 +112,11 @@ public class BoardingController implements EventListener, Observer {
 
     }
 
+    /**
+     * A class which holds the Pause button and associated action. Implements the interface ActionListener
+     *
+     * @see ActionListener
+     */
     private class PauseButtonListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -100,6 +131,11 @@ public class BoardingController implements EventListener, Observer {
         }
     }
 
+    /**
+     * A class which holds the Reset button and associated action. Implements the interface ActionListener
+     *
+     * @see ActionListener
+     */
     private class ResetButtonListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -114,6 +150,12 @@ public class BoardingController implements EventListener, Observer {
         }
     }
 
+    /**
+     * A class used for the separate thread determining if the simulation is running.
+     * Implements the interface Runnable
+     *
+     * @see Runnable
+     */
     private class ButtonRunnable implements Runnable {
 
         public void run() {

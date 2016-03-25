@@ -5,7 +5,6 @@ import MVCFramework.BoardingModel;
 import Passenger.Passenger;
 
 import java.awt.*;
-import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -14,6 +13,14 @@ import java.util.List;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 
+/**
+ * This class holds the objects relating the to the drawn animation of the boarding process,
+ * and is a subclass of JPanel, as well as implementing the Observer interface.
+ *
+ * @see JPanel
+ * @see Observer
+ *
+ */
 public class AnimationPanel extends JPanel implements Observer {
 
     private int columnCount; //= 140;  //Total length 28m
@@ -30,6 +37,12 @@ public class AnimationPanel extends JPanel implements Observer {
 
     private BufferedImage image;
 
+    /**
+     * Class constructor
+     *
+     * @param boardingModel the instance of BoardingModel associated with the animation panel
+     * @see BoardingModel
+     */
     public AnimationPanel(BoardingModel boardingModel) {
 
         AircraftType aircraftType = boardingModel.getAircraftType();
@@ -64,7 +77,6 @@ public class AnimationPanel extends JPanel implements Observer {
         seatCells.clear();
         passengers.clear();
         seatedPax.clear();
-
         super.invalidate();
     }
 
@@ -141,8 +153,6 @@ public class AnimationPanel extends JPanel implements Observer {
             }
         }
 
-        //TODO: Center labels using font metrics
-
         int columnLabeler = 0;
         int rowLabeler = 0;
         int aisleException = -1;
@@ -172,8 +182,13 @@ public class AnimationPanel extends JPanel implements Observer {
         g2d.dispose();
     }
 
+    /**
+     * This method updates the aircraft associated variables needed to draw, when a
+     * new aircraft type is selected be the user
+     *
+     * @param aircraftType the aircraft type used for the simulation
+     */
     private void newValues(AircraftType aircraftType) {
-        /*Author: OS */
         if (aircraftType != null) {
             columnCount = aircraftType.getRows() + aircraftType.getBuffer();
             rowCount = aircraftType.getWidth() + aircraftType.getAisle();
@@ -196,6 +211,14 @@ public class AnimationPanel extends JPanel implements Observer {
         }
     }
 
+    /**
+     *
+     * This method updates the lists on who is seated in the aircraft and who is standing.
+     * These lists are used when the passengers are drawn.
+     *
+     * @param animationGrid the local version of theGrid
+     * @param aircraftType the aircraft type used for the simulation
+     */
     private void paxUpdate(Passenger[][] animationGrid, AircraftType aircraftType) {
         if (animationGrid != null) {
             for (int pos = 0; pos < aircraftType.getWidth() + aircraftType.getAisle(); pos++) {

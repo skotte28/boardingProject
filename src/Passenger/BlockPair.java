@@ -1,15 +1,18 @@
 package Passenger;
 
-import jdk.nashorn.internal.ir.Block;
-
 /**
- * Created by Oscar on 2015-12-15.
+ * This class is used to set blocks to prevent deadlocks
  */
 public class BlockPair{
 
     int pos;
     int row;
 
+    /**
+     * Class constructor
+     * @param pos the index of the letter component of the seat
+     * @param row the numerical component of the seat
+     */
     public BlockPair(int pos, int row){
         this.pos = pos;
         this.row = row;
