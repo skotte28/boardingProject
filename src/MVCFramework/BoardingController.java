@@ -49,7 +49,6 @@ public class BoardingController implements EventListener, Observer {
             public void stateChanged(ChangeEvent e) {
                 if(theModel.timer != null) {
                     int value = theView.settingsPanel.simulationRate.getValue();
-                    //TODO: Make sure this timer value is the same as the other one
                     theModel.setDelay(value);
                     theModel.timer.setDelay(theModel.getDelay());
                 }

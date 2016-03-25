@@ -257,8 +257,6 @@ public class BoardingModel extends Observable{
                                                 case HOLD:
                                                     break;
                                             }
-                                        } else {
-                                            //System.out.println(currentPax + " did not have move instructions"); - Enable for testing
                                         }
                                     }
                                 }
@@ -277,14 +275,6 @@ public class BoardingModel extends Observable{
                     new DeadlockException();
                     break;
                 }
-                /*int reserveAisle = getSeatValue("AISLE");
-                for(int i = aircraftType.getRows(); i>=0; i--){
-                    if(theGrid[reserveAisle][i] != null){
-                        theGrid[reserveAisle][i].setTempRow(i+1);
-                        theGrid[reserveAisle][i].setTempPosition("AISLE");
-                        break;
-                    }
-                }*/
             } else {
                 stallCount = 0;
             }
@@ -296,7 +286,6 @@ public class BoardingModel extends Observable{
                     if(!haltFront) {
                         theGrid[(width + 1) / 2][0] = passengers.remove(0);
                     } else{
-                        //TODO: Tidy this up
                         boolean allFree = true;
                         for(int i = 1; i <= width/2; i++){
                             if(!isFree((width + 1) / 2,i)){
@@ -601,9 +590,11 @@ public class BoardingModel extends Observable{
 
     /**
      *
+     * This method is used to determine if a block can be removed.
+     *
      * @param pos the index of the seat
      * @param row the row of the seat
-     * @return
+     * @return true if the passenger is in their seat
      */
     private boolean returnedToSeat(int pos, int row) {
 
