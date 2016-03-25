@@ -1,5 +1,6 @@
 package Panels;
 
+import Exceptions.IncorrectAircraftException;
 import Exceptions.MissingAircraftException;
 import Exceptions.NotIntegerException;
 import MVCFramework.BoardingModel;
@@ -132,9 +133,15 @@ public class SettingsPanel extends JPanel implements Observer {
             files = file.listFiles();
             if (files.length > 0) {
                 for (File f : files) {
-                    System.out.println(f);
-                    String[] name = f.toString().split("\\\\");
-                    aircraftTypeList.addItem(name[1]);
+                    if (f.toString().contains("\\")) {
+                        String[] name = f.toString().split("\\\\");
+                        aircraftTypeList.addItem(name[1]);
+                    } else if (f.toString().contains("/")){
+                        String[] name = f.toString().split("/");
+                        aircraftTypeList.addItem(name[1]);
+                    } else {
+                        new IncorrectAircraftException(f.toString());
+                    }
                 }
             } else {
                 new MissingAircraftException();

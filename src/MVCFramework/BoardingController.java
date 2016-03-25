@@ -1,6 +1,6 @@
 package MVCFramework;
 
-import Exceptions.NoSelectedException;
+import Exceptions.NoSelectionException;
 import Exceptions.NotIntegerException;
 
 import javax.swing.event.ChangeEvent;
@@ -72,10 +72,10 @@ public class BoardingController implements EventListener, Observer {
                             }
                         }
                     } else {
-                        new NoSelectedException("boarding method");
+                        new NoSelectionException("boarding method");
                     }
                 } else {
-                    new NoSelectedException("aircraft");
+                    new NoSelectionException("aircraft");
                 }
             } else {
                 theModel.timer.start();

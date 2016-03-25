@@ -10,7 +10,7 @@ public class MVCBoarder {
 
     public static void main(String[] args) {
 
-        System.out.println("Houston we have lift-off!");
+        //System.out.println("Houston we have lift-off!");
 
         BoardingModel theModel = new BoardingModel();
 
@@ -20,6 +20,6 @@ public class MVCBoarder {
 
         theView.setVisible(true);
 
-        System.out.println("What is going on?");
+        //System.out.println("What is going on?");
     }
 }

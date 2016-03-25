@@ -16,14 +16,11 @@ import javax.swing.*;
 
 public class AnimationPanel extends JPanel implements Observer {
 
-    private int count = 0;
-
     private int columnCount; //= 140;  //Total length 28m
     private int rowCount; //= 18;      //Total width 3.5m
     private int bufferCount;
 
     private List<Rectangle> cells;
-    private List<Point> selectedCell;
     private List<Point> layoutCells;
     private List<Point> seatCells;
     private List<PointPair> passengers;
@@ -42,7 +39,6 @@ public class AnimationPanel extends JPanel implements Observer {
         this.setBackground(Color.WHITE);
 
         cells = new ArrayList<>(columnCount * rowCount);
-        selectedCell = new ArrayList<>();
         layoutCells = new ArrayList<>();
         seatCells = new ArrayList<>();
         passengers = new ArrayList<>();
@@ -69,7 +65,6 @@ public class AnimationPanel extends JPanel implements Observer {
         passengers.clear();
         seatedPax.clear();
 
-        //selectedCell = null;
         super.invalidate();
     }
 
@@ -110,15 +105,6 @@ public class AnimationPanel extends JPanel implements Observer {
                 g2d.fillOval(10,10,10,10);
             }
 
-        }
-
-        if (!selectedCell.isEmpty()) {
-            for(Point sc : selectedCell) {
-                int index = sc.x + (sc.y * columnCount);
-                Rectangle cell = cells.get(index);
-                g2d.setColor(Color.BLUE);
-                g2d.fill(cell);
-            }
         }
 
         if (!seatCells.isEmpty()) {

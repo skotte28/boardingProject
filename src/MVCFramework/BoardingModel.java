@@ -2,7 +2,6 @@ package MVCFramework;
 
 import Aircraft.AircraftType;
 import Exceptions.DeadlockException;
-import Exceptions.NoSelectedException;
 import Methods.Method;
 import Passenger.Passenger;
 import Passenger.BlockPair;

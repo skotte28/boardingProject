@@ -8,10 +8,6 @@ import java.util.*;
 import java.util.List;
 
 
-/**
- * Created by Oscar on 2015-10-15.
- */
-
 @XmlRootElement(name="AircraftType")
 public class AircraftType {
 
